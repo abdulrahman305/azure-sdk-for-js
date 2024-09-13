@@ -23,8 +23,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/containerregistry/container-registry",
   "dependencies": {
+    "@azure-samples/container-registry-js": "file:",
     "@azure/container-registry": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

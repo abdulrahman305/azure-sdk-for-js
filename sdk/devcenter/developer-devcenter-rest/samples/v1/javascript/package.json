@@ -27,7 +27,8 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/devcenter/developer-devcenter-rest",
   "dependencies": {
     "@azure-rest/developer-devcenter": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure-samples/developer-devcenter-js": "file:",
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

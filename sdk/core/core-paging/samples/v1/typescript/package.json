@@ -28,12 +28,13 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/core/core-paging",
   "dependencies": {
+    "@azure-samples/core-paging-ts": "file:",
     "@azure/core-paging": "latest",
     "dotenv": "latest"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

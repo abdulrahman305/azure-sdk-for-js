@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/datadog/arm-datadog",
   "dependencies": {
+    "@azure-samples/arm-datadog-js": "file:",
     "@azure/arm-datadog": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

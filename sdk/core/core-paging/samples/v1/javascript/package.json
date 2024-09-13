@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/core/core-paging",
   "dependencies": {
+    "@azure-samples/core-paging-js": "file:",
     "@azure/core-paging": "latest",
     "dotenv": "latest"
   }

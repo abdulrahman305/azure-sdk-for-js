@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/dataprotection/arm-dataprotection",
   "dependencies": {
+    "@azure-samples/arm-dataprotection-js": "file:",
     "@azure/arm-dataprotection": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.0.1"
+    "@azure/identity": "^4.0.1",
+    "dotenv": "latest"
   }
 }
