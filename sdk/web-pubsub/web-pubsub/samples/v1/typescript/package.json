@@ -26,12 +26,13 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/web-pubsub/web-pubsub",
   "dependencies": {
+    "@azure-samples/web-pubsub-ts": "file:",
     "@azure/web-pubsub": "latest",
     "dotenv": "latest"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

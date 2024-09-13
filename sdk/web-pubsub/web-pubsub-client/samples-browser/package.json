@@ -27,14 +27,15 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js#readme",
   "sideEffects": false,
   "dependencies": {
-    "dotenv": "latest",
-    "events": "latest",
+    "@azure-samples/web-pubsub-client-samples-browser": "file:",
     "@azure/web-pubsub": "^1.0.0",
-    "@azure/web-pubsub-client": "file:../"
+    "@azure/web-pubsub-client": "file:../",
+    "dotenv": "latest",
+    "events": "latest"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^8.1.1",
     "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1",
-    "copy-webpack-plugin": "^8.1.1"
+    "webpack-cli": "^5.0.1"
   }
 }

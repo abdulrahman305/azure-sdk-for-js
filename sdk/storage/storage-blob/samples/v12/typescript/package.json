@@ -32,15 +32,16 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/storage/storage-blob",
   "dependencies": {
-    "@azure/storage-blob": "latest",
-    "dotenv": "latest",
+    "@azure-samples/storage-blob-ts": "file:",
     "@azure/abort-controller": "^2.1.2",
+    "@azure/identity": "^4.2.1",
     "@azure/logger": "^1.0.0",
-    "@azure/identity": "^4.2.1"
+    "@azure/storage-blob": "latest",
+    "dotenv": "latest"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

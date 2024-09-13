@@ -12,6 +12,7 @@
   "dependencies": {
     "@azure/app-configuration": "1.4.0-beta.1",
     "@azure/core-asynciterator-polyfill": "^1.0.2",
+    "appconfigBasic": "file:",
     "expo-modules-core": "^1.2.6",
     "isomorphic-webcrypto": "^2.3.8",
     "react": "18.2.0",

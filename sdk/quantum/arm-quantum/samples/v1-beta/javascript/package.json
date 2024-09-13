@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/quantum/arm-quantum",
   "dependencies": {
+    "@azure-samples/arm-quantum-js-beta": "file:",
     "@azure/arm-quantum": "next",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

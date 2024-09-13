@@ -27,8 +27,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/keyvault/keyvault-certificates",
   "dependencies": {
+    "@azure-samples/keyvault-certificates-js": "file:",
+    "@azure/identity": "^4.2.1",
     "@azure/keyvault-certificates": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "dotenv": "latest"
   }
 }

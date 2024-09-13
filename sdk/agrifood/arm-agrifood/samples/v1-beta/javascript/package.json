@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/agrifood/arm-agrifood",
   "dependencies": {
+    "@azure-samples/arm-agrifood-js-beta": "file:",
     "@azure/arm-agrifood": "next",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

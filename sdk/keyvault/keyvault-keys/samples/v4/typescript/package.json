@@ -31,14 +31,15 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/keyvault/keyvault-keys",
   "dependencies": {
-    "@azure/keyvault-keys": "latest",
-    "dotenv": "latest",
+    "@azure-samples/keyvault-keys-ts": "file:",
     "@azure/identity": "^4.2.1",
-    "dayjs": "^1.10.7"
+    "@azure/keyvault-keys": "latest",
+    "dayjs": "^1.10.7",
+    "dotenv": "latest"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

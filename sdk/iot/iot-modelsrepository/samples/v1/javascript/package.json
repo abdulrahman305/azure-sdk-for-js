@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/iot/iot-modelsrepository",
   "dependencies": {
+    "@azure-samples/iot-modelsrepository-js": "file:",
     "@azure/iot-modelsrepository": "next",
     "dotenv": "latest"
   }

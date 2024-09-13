@@ -27,11 +27,12 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/communication/communication-phone-numbers",
   "dependencies": {
+    "@azure-samples/communication-phone-numbers-ts": "file:",
     "@azure/communication-phone-numbers": "next",
     "dotenv": "latest"
   },
   "devDependencies": {
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

@@ -29,6 +29,7 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/translation/ai-translation-document-rest",
   "dependencies": {
     "@azure-rest/ai-translation-document": "next",
+    "@azure-samples/ai-translation-document-js-beta": "file:",
     "dotenv": "latest"
   }
 }

@@ -27,7 +27,8 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/batch/batch-rest",
   "dependencies": {
     "@azure-rest/batch": "next",
-    "dotenv": "latest",
-    "@azure/identity": "^4.0.1"
+    "@azure-samples/batch-js-beta": "file:",
+    "@azure/identity": "^4.0.1",
+    "dotenv": "latest"
   }
 }

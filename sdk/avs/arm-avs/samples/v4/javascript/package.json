@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/avs/arm-avs",
   "dependencies": {
+    "@azure-samples/arm-avs-js": "file:",
     "@azure/arm-avs": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

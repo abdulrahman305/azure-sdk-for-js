@@ -30,6 +30,7 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js#readme",
   "sideEffects": false,
   "dependencies": {
+    "@azure-samples/event-hubs-samples-express": "file:",
     "@azure/event-hubs": "^5.12.0",
     "@azure/identity": "^4.3.0",
     "express": "^4.17.1",

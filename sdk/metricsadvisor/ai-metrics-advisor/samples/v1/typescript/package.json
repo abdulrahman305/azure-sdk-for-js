@@ -30,11 +30,12 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/metricsadvisor/ai-metrics-advisor",
   "dependencies": {
+    "@azure-samples/ai-metrics-advisor-ts": "file:",
     "@azure/ai-metrics-advisor": "latest",
     "dotenv": "latest"
   },
   "devDependencies": {
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

@@ -27,7 +27,8 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/maps/maps-geolocation-rest",
   "dependencies": {
     "@azure-rest/maps-geolocation": "next",
-    "dotenv": "latest",
-    "@azure/identity": "^4.0.1"
+    "@azure-samples/maps-geolocation-js-beta": "file:",
+    "@azure/identity": "^4.0.1",
+    "dotenv": "latest"
   }
 }

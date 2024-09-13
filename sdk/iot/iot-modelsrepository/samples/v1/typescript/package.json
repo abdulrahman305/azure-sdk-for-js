@@ -27,11 +27,12 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/iot/iot-modelsrepository",
   "dependencies": {
+    "@azure-samples/iot-modelsrepository-ts": "file:",
     "@azure/iot-modelsrepository": "next",
     "dotenv": "latest"
   },
   "devDependencies": {
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

@@ -33,13 +33,14 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/storage/storage-blob-changefeed",
   "dependencies": {
+    "@azure-samples/storage-blob-changefeed-ts-beta": "file:",
+    "@azure/storage-blob": "^12.8.0",
     "@azure/storage-blob-changefeed": "next",
-    "dotenv": "latest",
-    "@azure/storage-blob": "^12.8.0"
+    "dotenv": "latest"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/healthbot/arm-healthbot",
   "dependencies": {
+    "@azure-samples/arm-healthbot-js": "file:",
     "@azure/arm-healthbot": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

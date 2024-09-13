@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/graphservices/arm-graphservices",
   "dependencies": {
+    "@azure-samples/arm-graphservices-js": "file:",
     "@azure/arm-graphservices": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

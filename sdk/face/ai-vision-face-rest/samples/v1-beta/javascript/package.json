@@ -27,8 +27,9 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/face/ai-vision-face-rest",
   "dependencies": {
     "@azure-rest/ai-vision-face": "next",
-    "dotenv": "latest",
+    "@azure-samples/ai-vision-face-js-beta": "file:",
+    "@azure/core-auth": "^1.6.0",
     "@azure/identity": "^4.2.1",
-    "@azure/core-auth": "^1.6.0"
+    "dotenv": "latest"
   }
 }

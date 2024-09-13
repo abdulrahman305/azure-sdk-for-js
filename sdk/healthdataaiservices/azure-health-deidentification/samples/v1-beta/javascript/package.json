@@ -27,7 +27,8 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/healthdataaiservices/azure-health-deidentification",
   "dependencies": {
     "@azure-rest/health-deidentification": "next",
-    "dotenv": "latest",
-    "@azure/identity": "~4.3.0-beta.1"
+    "@azure-samples/health-deidentification-js-beta": "file:",
+    "@azure/identity": "~4.3.0-beta.1",
+    "dotenv": "latest"
   }
 }

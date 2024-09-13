@@ -29,9 +29,10 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/communication/communication-rooms",
   "dependencies": {
-    "@azure/communication-rooms": "latest",
-    "dotenv": "latest",
+    "@azure-samples/communication-rooms-js": "file:",
     "@azure/communication-identity": "^1.1.0-beta.2",
-    "@azure/core-paging": "^1.5.0"
+    "@azure/communication-rooms": "latest",
+    "@azure/core-paging": "^1.5.0",
+    "dotenv": "latest"
   }
 }

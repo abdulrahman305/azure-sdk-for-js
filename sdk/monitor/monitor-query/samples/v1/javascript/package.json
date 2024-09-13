@@ -23,8 +23,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/monitor/monitor-query",
   "dependencies": {
+    "@azure-samples/monitor-query-js": "file:",
+    "@azure/identity": "^4.2.1",
     "@azure/monitor-query": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "dotenv": "latest"
   }
 }

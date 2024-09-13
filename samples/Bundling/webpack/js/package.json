@@ -11,5 +11,7 @@
     "@azure/core-lro": "^1.0.0",
     "@azure/storage-blob": "^12.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "storage-example": "file:"
+  }
 }

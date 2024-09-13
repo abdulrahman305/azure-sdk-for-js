@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/core/core-sse",
   "dependencies": {
+    "@azure-samples/core-sse-js": "file:",
     "@azure/core-sse": "^1.0.0",
     "dotenv": "latest"
   }

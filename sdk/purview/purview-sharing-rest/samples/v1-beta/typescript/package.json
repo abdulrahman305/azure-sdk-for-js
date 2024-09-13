@@ -31,12 +31,13 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/purview/purview-sharing-rest",
   "dependencies": {
     "@azure-rest/purview-sharing": "next",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure-samples/purview-sharing-ts-beta": "file:",
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

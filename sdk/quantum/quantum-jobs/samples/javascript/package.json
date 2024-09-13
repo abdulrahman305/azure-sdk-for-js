@@ -26,6 +26,7 @@
   },
   "main": "quantumJobs.js",
   "dependencies": {
+    "@azure-samples/quantum-jobs-js": "file:",
     "@azure/identity": "^4.2.1",
     "@azure/quantum-jobs": "latest",
     "@azure/storage-blob": "latest"

@@ -14,7 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "@azure-rest/ai-inference": "^1.0.0-beta.1",
-    "@azure/core-auth": "^1.7.2"
+    "@azure/core-auth": "^1.7.2",
+    "azure-inference-browser-completions": "file:"
   },
   "devDependencies": {
     "@webpack-cli/generators": "^3.0.4",

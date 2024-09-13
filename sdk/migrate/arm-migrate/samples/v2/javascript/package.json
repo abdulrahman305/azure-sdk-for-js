@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/migrate/arm-migrate",
   "dependencies": {
+    "@azure-samples/arm-migrate-js": "file:",
     "@azure/arm-migrate": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

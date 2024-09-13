@@ -31,12 +31,13 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/easm/defender-easm-rest",
   "dependencies": {
     "@azure-rest/defender-easm": "next",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure-samples/defender-easm-ts-beta": "file:",
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   },
   "devDependencies": {
     "@types/node": "^14.0.0",
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

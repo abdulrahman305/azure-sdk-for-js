@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/eventhub/arm-eventhub-profile-2020-09-01-hybrid",
   "dependencies": {
+    "@azure-samples/arm-eventhub-profile-2020-09-01-hybrid-js": "file:",
     "@azure/arm-eventhub-profile-2020-09-01-hybrid": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

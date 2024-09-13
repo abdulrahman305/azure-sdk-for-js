@@ -31,11 +31,12 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/purview/purview-administration-rest",
   "dependencies": {
     "@azure-rest/purview-administration": "next",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure-samples/purview-administration-ts": "file:",
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   },
   "devDependencies": {
-    "typescript": "~5.5.3",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "typescript": "~5.5.3"
   }
 }

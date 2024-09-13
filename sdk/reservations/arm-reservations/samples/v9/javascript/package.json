@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/reservations/arm-reservations",
   "dependencies": {
+    "@azure-samples/arm-reservations-js": "file:",
     "@azure/arm-reservations": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

@@ -26,6 +26,7 @@
     "@azure/logger": "^1.0.0",
     "@azure/service-bus": "^7.0.0",
     "@azure/storage-blob": "^12.3.0",
+    "electron-test-app": "file:",
     "qs": "^6.9.4"
   }
 }

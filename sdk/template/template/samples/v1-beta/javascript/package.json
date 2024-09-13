@@ -23,8 +23,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/template/template",
   "dependencies": {
+    "@azure-samples/template-js-beta": "file:",
+    "@azure/identity": "^4.2.1",
     "@azure/template": "next",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "dotenv": "latest"
   }
 }

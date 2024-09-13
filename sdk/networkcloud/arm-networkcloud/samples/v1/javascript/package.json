@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/networkcloud/arm-networkcloud",
   "dependencies": {
+    "@azure-samples/arm-networkcloud-js": "file:",
     "@azure/arm-networkcloud": "latest",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

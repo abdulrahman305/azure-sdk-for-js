@@ -25,8 +25,9 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/signalr/arm-signalr",
   "dependencies": {
+    "@azure-samples/arm-signalr-js-beta": "file:",
     "@azure/arm-signalr": "next",
-    "dotenv": "latest",
-    "@azure/identity": "^4.2.1"
+    "@azure/identity": "^4.2.1",
+    "dotenv": "latest"
   }
 }

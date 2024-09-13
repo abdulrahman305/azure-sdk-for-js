@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/communication/communication-phone-numbers",
   "dependencies": {
+    "@azure-samples/communication-phone-numbers-js": "file:",
     "@azure/communication-phone-numbers": "next",
     "dotenv": "latest"
   }

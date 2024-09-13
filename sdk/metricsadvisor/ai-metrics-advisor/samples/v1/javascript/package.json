@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/metricsadvisor/ai-metrics-advisor",
   "dependencies": {
+    "@azure-samples/ai-metrics-advisor-js": "file:",
     "@azure/ai-metrics-advisor": "latest",
     "dotenv": "latest"
   }
