@@ -31,6 +31,6 @@
     "@azure/identity-broker": "^1.0.0",
     "@azure/logger": "^1.0.4",
     "dotenv": "latest",
-    "electron": "^27.0.0"
+    "electron": "^31.7.2"
   }
 }
