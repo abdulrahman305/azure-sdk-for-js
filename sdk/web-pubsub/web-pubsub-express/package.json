@@ -65,7 +65,7 @@
     "eslint": "^9.9.0",
     "express": "^4.16.3",
     "typescript": "~5.6.2",
-    "vitest": "^2.0.5"
+    "vitest": "^3.0.5"
   },
   "//sampleConfiguration": {
     "productName": "Azure Web PubSub CloudEvents Handlers for Express",
