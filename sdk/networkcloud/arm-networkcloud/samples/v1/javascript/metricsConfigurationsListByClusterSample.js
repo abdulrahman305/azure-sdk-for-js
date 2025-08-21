@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get a list of metrics configurations for the provided cluster.
  *
  * @summary Get a list of metrics configurations for the provided cluster.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/ClusterMetricsConfigurations_ListByCluster.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/ClusterMetricsConfigurations_ListByCluster.json
  */
 async function listMetricsConfigurationsOfTheCluster() {
   const subscriptionId =
@@ -26,9 +24,9 @@ async function listMetricsConfigurationsOfTheCluster() {
   const credential = new DefaultAzureCredential();
   const client = new NetworkCloud(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.metricsConfigurations.listByCluster(
+  for await (const item of client.metricsConfigurations.listByCluster(
     resourceGroupName,
-    clusterName
+    clusterName,
   )) {
     resArray.push(item);
   }
@@ -36,7 +34,7 @@ async function listMetricsConfigurationsOfTheCluster() {
 }
 
 async function main() {
-  listMetricsConfigurationsOfTheCluster();
+  await listMetricsConfigurationsOfTheCluster();
 }
 
 main().catch(console.error);

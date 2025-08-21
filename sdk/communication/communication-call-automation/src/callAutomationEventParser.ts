@@ -2,10 +2,8 @@
 // Licensed under the MIT License.
 
 import { createSerializer } from "@azure/core-client";
-
-import { communicationIdentifierConverter, callParticipantConverter } from "./utli/converters";
-
-import {
+import { communicationIdentifierConverter, callParticipantConverter } from "./utli/converters.js";
+import type {
   CallAutomationEvent,
   AddParticipantSucceeded,
   AddParticipantFailed,
@@ -37,10 +35,16 @@ import {
   CreateCallFailed,
   AnswerFailed,
   HoldFailed,
-} from "./models/events";
+  ConnectFailed,
+  MediaStreamingStarted,
+  MediaStreamingStopped,
+  MediaStreamingFailed,
+  PlayStarted,
+  StartRecordingFailed,
+} from "./models/events.js";
 
-import { CloudEventMapper } from "./models/mapper";
-import { CallParticipantInternal } from "./generated/src";
+import { CloudEventMapper } from "./models/mapper.js";
+import type { CallParticipantInternal } from "./generated/src/index.js";
 
 const serializer = createSerializer();
 
@@ -161,6 +165,24 @@ export function parseCallAutomationEvent(
       break;
     case "Microsoft.Communication.HoldFailed":
       callbackEvent = { kind: "HoldFailed" } as HoldFailed;
+      break;
+    case "Microsoft.Communication.ConnectFailed":
+      callbackEvent = { kind: "ConnectFailed" } as ConnectFailed;
+      break;
+    case "Microsoft.Communication.MediaStreamingStarted":
+      callbackEvent = { kind: "MediaStreamingStarted" } as MediaStreamingStarted;
+      break;
+    case "Microsoft.Communication.MediaStreamingStopped":
+      callbackEvent = { kind: "MediaStreamingStopped" } as MediaStreamingStopped;
+      break;
+    case "Microsoft.Communication.MediaStreamingFailed":
+      callbackEvent = { kind: "MediaStreamingFailed" } as MediaStreamingFailed;
+      break;
+    case "Microsoft.Communication.PlayStarted":
+      callbackEvent = { kind: "PlayStarted" } as PlayStarted;
+      break;
+    case "Microsoft.Communication.StartRecordingFailed":
+      callbackEvent = { kind: "StartRecordingFailed" } as StartRecordingFailed;
       break;
     default:
       throw new TypeError(`Unknown Call Automation Event type: ${eventType}`);

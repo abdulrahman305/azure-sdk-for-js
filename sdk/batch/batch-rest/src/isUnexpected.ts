@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
+import type {
   ListApplications200Response,
   ListApplicationsDefaultResponse,
   GetApplication200Response,
@@ -63,6 +63,16 @@ import {
   ListJobPreparationAndReleaseTaskStatusDefaultResponse,
   GetJobTaskCounts200Response,
   GetJobTaskCountsDefaultResponse,
+  CreateCertificate201Response,
+  CreateCertificateDefaultResponse,
+  ListCertificates200Response,
+  ListCertificatesDefaultResponse,
+  CancelCertificateDeletion204Response,
+  CancelCertificateDeletionDefaultResponse,
+  DeleteCertificate202Response,
+  DeleteCertificateDefaultResponse,
+  GetCertificate200Response,
+  GetCertificateDefaultResponse,
   JobScheduleExists200Response,
   JobScheduleExists404Response,
   JobScheduleExistsDefaultResponse,
@@ -120,6 +130,12 @@ import {
   GetNodeDefaultResponse,
   RebootNode202Response,
   RebootNodeDefaultResponse,
+  StartNode202Response,
+  StartNodeDefaultResponse,
+  DeallocateNode202Response,
+  DeallocateNodeDefaultResponse,
+  ReimageNode202Response,
+  ReimageNodeDefaultResponse,
   DisableNodeScheduling200Response,
   DisableNodeSchedulingDefaultResponse,
   EnableNodeScheduling200Response,
@@ -175,6 +191,14 @@ const responseMap: Record<string, string[]> = {
   "GET /jobschedules/{jobScheduleId}/jobs": ["200"],
   "GET /jobs/{jobId}/jobpreparationandreleasetaskstatus": ["200"],
   "GET /jobs/{jobId}/taskcounts": ["200"],
+  "POST /certificates": ["201"],
+  "GET /certificates": ["200"],
+  "POST /certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete":
+    ["204"],
+  "DELETE /certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})": [
+    "202",
+  ],
+  "GET /certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})": ["200"],
   "HEAD /jobschedules/{jobScheduleId}": ["200", "404"],
   "DELETE /jobschedules/{jobScheduleId}": ["202"],
   "GET /jobschedules/{jobScheduleId}": ["200"],
@@ -203,6 +227,9 @@ const responseMap: Record<string, string[]> = {
   "PUT /pools/{poolId}/nodes/{nodeId}/users/{userName}": ["200"],
   "GET /pools/{poolId}/nodes/{nodeId}": ["200"],
   "POST /pools/{poolId}/nodes/{nodeId}/reboot": ["202"],
+  "POST /pools/{poolId}/nodes/{nodeId}/start": ["202"],
+  "POST /pools/{poolId}/nodes/{nodeId}/deallocate": ["202"],
+  "POST /pools/{poolId}/nodes/{nodeId}/reimage": ["202"],
   "POST /pools/{poolId}/nodes/{nodeId}/disablescheduling": ["200"],
   "POST /pools/{poolId}/nodes/{nodeId}/enablescheduling": ["200"],
   "GET /pools/{poolId}/nodes/{nodeId}/remoteloginsettings": ["200"],
@@ -309,6 +336,21 @@ export function isUnexpected(
   response: GetJobTaskCounts200Response | GetJobTaskCountsDefaultResponse,
 ): response is GetJobTaskCountsDefaultResponse;
 export function isUnexpected(
+  response: CreateCertificate201Response | CreateCertificateDefaultResponse,
+): response is CreateCertificateDefaultResponse;
+export function isUnexpected(
+  response: ListCertificates200Response | ListCertificatesDefaultResponse,
+): response is ListCertificatesDefaultResponse;
+export function isUnexpected(
+  response: CancelCertificateDeletion204Response | CancelCertificateDeletionDefaultResponse,
+): response is CancelCertificateDeletionDefaultResponse;
+export function isUnexpected(
+  response: DeleteCertificate202Response | DeleteCertificateDefaultResponse,
+): response is DeleteCertificateDefaultResponse;
+export function isUnexpected(
+  response: GetCertificate200Response | GetCertificateDefaultResponse,
+): response is GetCertificateDefaultResponse;
+export function isUnexpected(
   response:
     | JobScheduleExists200Response
     | JobScheduleExists404Response
@@ -395,6 +437,15 @@ export function isUnexpected(
 export function isUnexpected(
   response: RebootNode202Response | RebootNodeDefaultResponse,
 ): response is RebootNodeDefaultResponse;
+export function isUnexpected(
+  response: StartNode202Response | StartNodeDefaultResponse,
+): response is StartNodeDefaultResponse;
+export function isUnexpected(
+  response: DeallocateNode202Response | DeallocateNodeDefaultResponse,
+): response is DeallocateNodeDefaultResponse;
+export function isUnexpected(
+  response: ReimageNode202Response | ReimageNodeDefaultResponse,
+): response is ReimageNodeDefaultResponse;
 export function isUnexpected(
   response: DisableNodeScheduling200Response | DisableNodeSchedulingDefaultResponse,
 ): response is DisableNodeSchedulingDefaultResponse;
@@ -491,6 +542,16 @@ export function isUnexpected(
     | ListJobPreparationAndReleaseTaskStatusDefaultResponse
     | GetJobTaskCounts200Response
     | GetJobTaskCountsDefaultResponse
+    | CreateCertificate201Response
+    | CreateCertificateDefaultResponse
+    | ListCertificates200Response
+    | ListCertificatesDefaultResponse
+    | CancelCertificateDeletion204Response
+    | CancelCertificateDeletionDefaultResponse
+    | DeleteCertificate202Response
+    | DeleteCertificateDefaultResponse
+    | GetCertificate200Response
+    | GetCertificateDefaultResponse
     | JobScheduleExists200Response
     | JobScheduleExists404Response
     | JobScheduleExistsDefaultResponse
@@ -548,6 +609,12 @@ export function isUnexpected(
     | GetNodeDefaultResponse
     | RebootNode202Response
     | RebootNodeDefaultResponse
+    | StartNode202Response
+    | StartNodeDefaultResponse
+    | DeallocateNode202Response
+    | DeallocateNodeDefaultResponse
+    | ReimageNode202Response
+    | ReimageNodeDefaultResponse
     | DisableNodeScheduling200Response
     | DisableNodeSchedulingDefaultResponse
     | EnableNodeScheduling200Response
@@ -601,6 +668,11 @@ export function isUnexpected(
   | ListJobsFromScheduleDefaultResponse
   | ListJobPreparationAndReleaseTaskStatusDefaultResponse
   | GetJobTaskCountsDefaultResponse
+  | CreateCertificateDefaultResponse
+  | ListCertificatesDefaultResponse
+  | CancelCertificateDeletionDefaultResponse
+  | DeleteCertificateDefaultResponse
+  | GetCertificateDefaultResponse
   | JobScheduleExistsDefaultResponse
   | DeleteJobScheduleDefaultResponse
   | GetJobScheduleDefaultResponse
@@ -629,6 +701,9 @@ export function isUnexpected(
   | ReplaceNodeUserDefaultResponse
   | GetNodeDefaultResponse
   | RebootNodeDefaultResponse
+  | StartNodeDefaultResponse
+  | DeallocateNodeDefaultResponse
+  | ReimageNodeDefaultResponse
   | DisableNodeSchedulingDefaultResponse
   | EnableNodeSchedulingDefaultResponse
   | GetNodeRemoteLoginSettingsDefaultResponse

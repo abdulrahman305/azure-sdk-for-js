@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 import { createRecorder, createModelClient } from "../utils/recordedClient.js";
-import { Recorder } from "@azure-tools/test-recorder";
+import type { Recorder } from "@azure-tools/test-recorder";
 import { assert, beforeEach, afterEach, it, describe } from "vitest";
-import { ModelClient } from "../../../src/index.js";
+import type { ModelClient } from "../../../src/index.js";
 
 describe("chat test suite", () => {
   let recorder: Recorder;
@@ -18,18 +18,19 @@ describe("chat test suite", () => {
   afterEach(async () => {
     await recorder.stop();
   });
-  it("chat streaming test", async function () {
-    const response = await client.path("/chat/completions").post({
-      body: {
-        messages: [
-          { role: "user", content: "How many feet are in a mile?" },
-        ],
-        stream: true
-      }
-    }).asBrowserStream();
+  it("chat streaming test", async () => {
+    const response = await client
+      .path("/chat/completions")
+      .post({
+        body: {
+          messages: [{ role: "user", content: "How many feet are in a mile?" }],
+          stream: true,
+        },
+      })
+      .asBrowserStream();
 
     assert.equal(response.status, "200");
-    const stream = response.body;
+    const stream: any = response.body;
     assert.isDefined(stream);
 
     const getBuffersLength = (buffers: Uint8Array[]): number => {
@@ -48,12 +49,11 @@ describe("chat test suite", () => {
       return res;
     };
 
-    const streamToString = async (stream: ReadableStream<Uint8Array>): Promise<string> => {
+    const streamToString = async (readableStream: ReadableStream<Uint8Array>): Promise<string> => {
       let length = 0;
-      const reader = (stream as any).getReader();
+      const reader = (readableStream as any).getReader();
       const buffers: Uint8Array[] = [];
       try {
-        // eslint-disable-next-line no-constant-condition
         while (true) {
           const { value, done } = await reader.read();
           if (done) {
@@ -69,7 +69,5 @@ describe("chat test suite", () => {
 
     const text = await streamToString(stream);
     assert.isNotEmpty(text);
-
   });
-
 });

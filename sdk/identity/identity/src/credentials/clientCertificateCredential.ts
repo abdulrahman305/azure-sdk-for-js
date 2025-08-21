@@ -1,64 +1,35 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AccessToken, GetTokenOptions, TokenCredential } from "@azure/core-auth";
-import { MsalClient, createMsalClient } from "../msal/nodeFlows/msalClient";
-import { createHash, createPrivateKey } from "crypto";
+import type { AccessToken, GetTokenOptions, TokenCredential } from "@azure/core-auth";
+import type { MsalClient } from "../msal/nodeFlows/msalClient.js";
+import { createMsalClient } from "../msal/nodeFlows/msalClient.js";
+import { createHash, createPrivateKey } from "node:crypto";
 import {
   processMultiTenantRequest,
   resolveAdditionallyAllowedTenantIds,
-} from "../util/tenantIdUtils";
+} from "../util/tenantIdUtils.js";
 
-import { CertificateParts } from "../msal/types";
-import { ClientCertificateCredentialOptions } from "./clientCertificateCredentialOptions";
-import { credentialLogger } from "../util/logging";
-import { readFile } from "fs/promises";
-import { tracingClient } from "../util/tracing";
+import type { CertificateParts } from "../msal/types.js";
+import type { ClientCertificateCredentialOptions } from "./clientCertificateCredentialOptions.js";
+import { credentialLogger } from "../util/logging.js";
+import { readFile } from "node:fs/promises";
+import { tracingClient } from "../util/tracing.js";
+import type {
+  ClientCertificateCredentialPEMConfiguration,
+  ClientCertificatePEMCertificate,
+  ClientCertificatePEMCertificatePath,
+} from "./clientCertificateCredentialModels.js";
 
 const credentialName = "ClientCertificateCredential";
 const logger = credentialLogger(credentialName);
-
-/**
- * Required configuration options for the {@link ClientCertificateCredential}, with the string contents of a PEM certificate
- */
-export interface ClientCertificatePEMCertificate {
-  /**
-   * The PEM-encoded public/private key certificate on the filesystem.
-   */
-  certificate: string;
-
-  /**
-   * The password for the certificate file.
-   */
-  certificatePassword?: string;
-}
-/**
- * Required configuration options for the {@link ClientCertificateCredential}, with the path to a PEM certificate.
- */
-export interface ClientCertificatePEMCertificatePath {
-  /**
-   * The path to the PEM-encoded public/private key certificate on the filesystem.
-   */
-  certificatePath: string;
-
-  /**
-   * The password for the certificate file.
-   */
-  certificatePassword?: string;
-}
-/**
- * Required configuration options for the {@link ClientCertificateCredential}, with either the string contents of a PEM certificate, or the path to a PEM certificate.
- */
-export type ClientCertificateCredentialPEMConfiguration =
-  | ClientCertificatePEMCertificate
-  | ClientCertificatePEMCertificatePath;
 
 /**
  * Enables authentication to Microsoft Entra ID using a PEM-encoded
  * certificate that is assigned to an App Registration. More information
  * on how to configure certificate authentication can be found here:
  *
- * https://learn.microsoft.com/en-us/azure/active-directory/develop/active-directory-certificate-credentials#register-your-certificate-with-azure-ad
+ * https://learn.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials#register-your-certificate-with-azure-ad
  *
  */
 export class ClientCertificateCredential implements TokenCredential {
@@ -75,6 +46,7 @@ export class ClientCertificateCredential implements TokenCredential {
    * @param tenantId - The Microsoft Entra tenant (directory) ID.
    * @param clientId - The client (application) ID of an App Registration in the tenant.
    * @param certificatePath - The path to a PEM-encoded public/private key certificate on the filesystem.
+   * Ensure that certificate is in PEM format and contains both the public and private keys.
    * @param options - Options for configuring the client which makes the authentication request.
    */
   constructor(
@@ -139,12 +111,10 @@ export class ClientCertificateCredential implements TokenCredential {
           }
         : certificatePathOrConfiguration),
     };
-    const certificate: string | undefined = (
-      this.certificateConfiguration as ClientCertificatePEMCertificate
-    ).certificate;
-    const certificatePath: string | undefined = (
-      this.certificateConfiguration as ClientCertificatePEMCertificatePath
-    ).certificatePath;
+    const certificate = (this.certificateConfiguration as ClientCertificatePEMCertificate)
+      .certificate;
+    const certificatePath = (this.certificateConfiguration as ClientCertificatePEMCertificatePath)
+      .certificatePath;
     if (!this.certificateConfiguration || !(certificate || certificatePath)) {
       throw new Error(
         `${credentialName}: Provide either a PEM certificate in string form, or the path to that certificate in the filesystem. To troubleshoot, visit https://aka.ms/azsdk/js/identity/serviceprincipalauthentication/troubleshoot.`,
@@ -209,6 +179,7 @@ export class ClientCertificateCredential implements TokenCredential {
 
     return {
       thumbprint: parts.thumbprint,
+      thumbprintSha256: parts.thumbprintSha256,
       privateKey,
       x5c: parts.x5c,
     };
@@ -226,12 +197,9 @@ export async function parseCertificate(
   certificateConfiguration: ClientCertificateCredentialPEMConfiguration,
   sendCertificateChain: boolean,
 ): Promise<Omit<CertificateParts, "privateKey"> & { certificateContents: string }> {
-  const certificate: string | undefined = (
-    certificateConfiguration as ClientCertificatePEMCertificate
-  ).certificate;
-  const certificatePath: string | undefined = (
-    certificateConfiguration as ClientCertificatePEMCertificatePath
-  ).certificatePath;
+  const certificate = (certificateConfiguration as ClientCertificatePEMCertificate).certificate;
+  const certificatePath = (certificateConfiguration as ClientCertificatePEMCertificatePath)
+    .certificatePath;
   const certificateContents = certificate || (await readFile(certificatePath!, "utf8"));
   const x5c = sendCertificateChain ? certificateContents : undefined;
 
@@ -252,13 +220,19 @@ export async function parseCertificate(
     throw new Error("The file at the specified path does not contain a PEM-encoded certificate.");
   }
 
-  const thumbprint = createHash("sha1")
+  const thumbprint = createHash("sha1") // CodeQL [SM04514] Needed for backward compatibility reason
+    .update(Buffer.from(publicKeys[0], "base64"))
+    .digest("hex")
+    .toUpperCase();
+
+  const thumbprintSha256 = createHash("sha256")
     .update(Buffer.from(publicKeys[0], "base64"))
     .digest("hex")
     .toUpperCase();
 
   return {
     certificateContents,
+    thumbprintSha256,
     thumbprint,
     x5c,
   };

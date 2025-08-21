@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Replace the provided bare metal machine.
  *
  * @summary Replace the provided bare metal machine.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/BareMetalMachines_Replace.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/BareMetalMachines_Replace.json
  */
 async function replaceBareMetalMachine() {
   const subscriptionId =
@@ -24,7 +22,10 @@ async function replaceBareMetalMachine() {
   const resourceGroupName = process.env["NETWORKCLOUD_RESOURCE_GROUP"] || "resourceGroupName";
   const bareMetalMachineName = "bareMetalMachineName";
   const bareMetalMachineReplaceParameters = {
-    bmcCredentials: { password: "{password}", username: "bmcuser" },
+    bmcCredentials: {
+      password: "https://keyvaultname.vault.azure.net/secrets/secretName",
+      username: "bmcuser",
+    },
     bmcMacAddress: "00:00:4f:00:57:ad",
     bootMacAddress: "00:00:4e:00:58:af",
     machineName: "name",
@@ -38,13 +39,13 @@ async function replaceBareMetalMachine() {
   const result = await client.bareMetalMachines.beginReplaceAndWait(
     resourceGroupName,
     bareMetalMachineName,
-    options
+    options,
   );
   console.log(result);
 }
 
 async function main() {
-  replaceBareMetalMachine();
+  await replaceBareMetalMachine();
 }
 
 main().catch(console.error);

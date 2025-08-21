@@ -1,27 +1,27 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import assert from "assert";
-import { Container, CosmosClient } from "../../../../src";
-import { endpoint } from "../../common/_testConfig";
-import { masterKey } from "../../common/_fakeTestSecrets";
-import { getTestContainer, removeAllDatabases } from "../../common/TestHelpers";
-import { IndexingPolicy, VectorEmbeddingPolicy } from "../../../../src";
+import type { Container } from "../../../../src/index.js";
+import { CosmosClient } from "../../../../src/index.js";
+import { endpoint } from "../../common/_testConfig.js";
+import { masterKey } from "../../common/_fakeTestSecrets.js";
+import { getTestContainer, removeAllDatabases } from "../../common/TestHelpers.js";
+import type { IndexingPolicy, VectorEmbeddingPolicy } from "../../../../src/index.js";
 import {
   VectorEmbeddingDataType,
   VectorEmbeddingDistanceFunction,
   VectorIndexType,
-} from "../../../../src/documents";
+} from "../../../../src/documents/index.js";
+import { describe, it, assert, beforeAll, afterAll } from "vitest";
 
-describe("Test nonStreaming Queries", function () {
-  this.timeout(process.env.MOCHA_TIMEOUT || 30000);
+describe("Test nonStreaming Queries", { timeout: 30000 }, () => {
   let container: Container;
   const client = new CosmosClient({
     endpoint,
     key: masterKey,
   });
 
-  before(async () => {
+  beforeAll(async () => {
     const vectorEmbeddingPolicy: VectorEmbeddingPolicy = {
       vectorEmbeddings: [
         {
@@ -507,7 +507,7 @@ describe("Test nonStreaming Queries", function () {
     } catch (err) {
       assert.equal(
         err.message,
-        "Executing a vector search query without TOP or LIMIT can consume a large number of RUs very fast and have long runtimes. Please ensure you are using one of the above two filters with your vector search query.",
+        "Executing a non-streaming search query without TOP or LIMIT can consume a large number of RUs very fast and have long runtimes. Please ensure you are using one of the above two filters with your vector search query.",
       );
     }
   });
@@ -627,7 +627,7 @@ describe("Test nonStreaming Queries", function () {
     }
   });
 
-  after(async function () {
+  afterAll(async () => {
     await removeAllDatabases();
   });
 });

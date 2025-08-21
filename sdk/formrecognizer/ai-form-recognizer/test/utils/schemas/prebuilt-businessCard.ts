@@ -6,7 +6,7 @@
 // API Version: 2023-07-31
 // Created:     Tue Aug 01 2023
 
-import * as fr from "../../../src";
+import * as fr from "../../../src/index.js";
 
 /**
  * Extract key information from business cards.
@@ -130,7 +130,7 @@ export interface BusinessCardContactNamesElement {
 /**
  * The raw model schema.
  */
-function modelInfo() {
+function modelInfo(): any {
   return {
     modelId: "prebuilt-businessCard",
     description: "Extract key information from business cards.",

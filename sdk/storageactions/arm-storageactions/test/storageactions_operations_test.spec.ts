@@ -6,23 +6,13 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-import {
-  env,
-  Recorder,
-  RecorderStartOptions,
-  delay,
-  isPlaybackMode,
-} from "@azure-tools/test-recorder";
+import { env, Recorder, RecorderStartOptions, isPlaybackMode } from "@azure-tools/test-recorder";
 import { createTestCredential } from "@azure-tools/test-credential";
-import { assert } from "chai";
-import { Context } from "mocha";
-import { StorageActionsManagementClient } from "../src/storageActionsManagementClient";
+import { StorageActionsManagementClient } from "../src/storageActionsManagementClient.js";
+import { describe, it, assert, beforeEach, afterEach } from "vitest";
 
 const replaceableVariables: Record<string, string> = {
-  AZURE_CLIENT_ID: "azure_client_id",
-  AZURE_CLIENT_SECRET: "azure_client_secret",
-  AZURE_TENANT_ID: "88888888-8888-8888-8888-888888888888",
-  SUBSCRIPTION_ID: "88888888-8888-8888-8888-888888888888"
+  SUBSCRIPTION_ID: "88888888-8888-8888-8888-888888888888",
 };
 
 const recorderOptions: RecorderStartOptions = {
@@ -45,39 +35,40 @@ describe("StorageActions test", () => {
   let resourceGroup: string;
   let resourcename: string;
 
-  beforeEach(async function (this: Context) {
-    recorder = new Recorder(this.currentTest);
+  beforeEach(async (ctx) => {
+    recorder = new Recorder(ctx);
     await recorder.start(recorderOptions);
-    subscriptionId = env.SUBSCRIPTION_ID || '';
+    subscriptionId = env.SUBSCRIPTION_ID || "";
     // This is an example of how the environment variables are used
     const credential = createTestCredential();
-    client = new StorageActionsManagementClient(credential, subscriptionId, recorder.configureClientOptions({}));
-    location = "eastus2euap";
+    client = new StorageActionsManagementClient(
+      credential,
+      subscriptionId,
+      recorder.configureClientOptions({}),
+    );
+    location = "westus";
     resourceGroup = "myjstest";
     resourcename = "resourcetest";
-
   });
 
   afterEach(async function () {
     await recorder.stop();
   });
 
-  it("storageTasks create test", async function () {
-    const res = await client.storageTasks.beginCreateAndWait(
+  it("storageTasks create test", async () => {
+    const res = await client.storageTasks.create(
       resourceGroup,
       resourcename,
       {
         identity: {
-          type: "SystemAssigned"
+          type: "SystemAssigned",
         },
         location,
         properties: {
           description: "My Storage task",
           action: {
             else: {
-              operations: [
-                { name: "DeleteBlob", onFailure: "break", onSuccess: "continue" },
-              ],
+              operations: [{ name: "DeleteBlob", onFailure: "break", onSuccess: "continue" }],
             },
             if: {
               condition: "[[equals(AccessTier, 'Cool')]]",
@@ -94,18 +85,17 @@ describe("StorageActions test", () => {
           enabled: true,
         },
       },
-      testPollingOptions);
+      testPollingOptions,
+    );
     assert.equal(res.name, resourcename);
   });
 
-  it("storageTasks get test", async function () {
-    const res = await client.storageTasks.get(
-      resourceGroup,
-      resourcename);
+  it("storageTasks get test", async () => {
+    const res = await client.storageTasks.get(resourceGroup, resourcename);
     assert.equal(res.name, resourcename);
   });
 
-  it("storageTasks list test", async function () {
+  it("storageTasks list test", async () => {
     const resArray = new Array();
     for await (let item of client.storageTasks.listByResourceGroup(resourceGroup)) {
       resArray.push(item);
@@ -113,13 +103,13 @@ describe("StorageActions test", () => {
     assert.equal(resArray.length, 1);
   });
 
-  it("storageTasks delete test", async function () {
+  it("storageTasks delete test", async () => {
     const resArray = new Array();
-    const res = await client.storageTasks.beginDeleteAndWait(resourceGroup, resourcename
-    )
+    await client.storageTasks.delete(resourceGroup, resourcename);
+
     for await (let item of client.storageTasks.listByResourceGroup(resourceGroup)) {
       resArray.push(item);
     }
     assert.equal(resArray.length, 0);
   });
-})
+});

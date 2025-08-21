@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createNetworkManagementClient, {
-  VpnConnectionsCreateOrUpdateParameters,
-  getLongRunningPoller,
-} from "@azure-rest/arm-network";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Creates a vpn connection to a scalable vpn gateway if it doesn't exist else updates the existing connection.
  *
  * @summary Creates a vpn connection to a scalable vpn gateway if it doesn't exist else updates the existing connection.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/VpnConnectionPut.json
  */
-async function vpnConnectionPut() {
+
+import type { VpnConnectionsCreateOrUpdateParameters } from "@azure-rest/arm-network";
+import createNetworkManagementClient, { getLongRunningPoller } from "@azure-rest/arm-network";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function vpnConnectionPut(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";

@@ -1,23 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createComputeManagementClient, {
-  VirtualMachineImagesGetParameters,
-} from "@azure-rest/arm-compute";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Gets a virtual machine image.
  *
  * @summary Gets a virtual machine image.
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-08-01/examples/virtualMachineImageExamples/VirtualMachineImages_Get_MaximumSet_Gen.json
  */
-async function virtualMachineImagesGetMaximumSetGen() {
+
+import type { VirtualMachineImagesGetParameters } from "@azure-rest/arm-compute";
+import createComputeManagementClient from "@azure-rest/arm-compute";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function virtualMachineImagesGetMaximumSetGen(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";
@@ -50,7 +46,7 @@ virtualMachineImagesGetMaximumSetGen().catch(console.error);
  * @summary Gets a virtual machine image.
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-08-01/examples/virtualMachineImageExamples/VirtualMachineImages_Get_MinimumSet_Gen.json
  */
-async function virtualMachineImagesGetMinimumSetGen() {
+async function virtualMachineImagesGetMinimumSetGen(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";

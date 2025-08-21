@@ -1,12 +1,50 @@
 # Release History
 
-## 4.5.1 (Unreleased)
+## 4.7.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 4.7.0 (2025-06-10)
+
+### Features Added
+
+- Added support for service API version `7.6` which is now the default. [#34657](https://github.com/Azure/azure-sdk-for-js/pull/34657)
+- Added `KeyVaultBackupClient.beginPreBackup` and `KeyVaultBackupClient.beginPreRestore` methods for checking if it is possible to perform a full key backup or full key restore. [#32947](https://github.com/Azure/azure-sdk-for-js/pull/32947)
+
+### Bugs Fixed
+
+- Fixed a typing issue in `KeyVaultBackupResult` and `KeyVaultRestoreResult` where `startTime` was marked as a required field. This field can be `undefined` if the operation never started successfully. [#32123](https://github.com/Azure/azure-sdk-for-js/pull/32123)
+
+### Other Changes
+
+- Generate code from TypeSpec. This is an internal change that should not affect customers. [#32123](https://github.com/Azure/azure-sdk-for-js/pull/32123)
+
+## 4.7.0-beta.1 (2025-03-11)
+
+### Features Added
+
+- Added support for service API version `7.6-preview.2`. [#32947](https://github.com/Azure/azure-sdk-for-js/pull/32947)
+- Added `KeyVaultBackupClient.beginPreBackup` and `KeyVaultBackupClient.beginPreRestore` methods for checking if it is possible to perform a full key backup or full key restore. [#32947](https://github.com/Azure/azure-sdk-for-js/pull/32947)
+
+### Bugs Fixed
+
+- Fixed a typing issue in `KeyVaultBackupResult` and `KeyVaultRestoreResult` where `startTime` was marked as a required field. This field can be `undefined` if the operation never started successfully. [#32123](https://github.com/Azure/azure-sdk-for-js/pull/32123)
+
+### Other Changes
+
+- Generate code from TypeSpec. This is an internal change that should not affect customers. [#32123](https://github.com/Azure/azure-sdk-for-js/pull/32123)
+
+## 4.6.0 (2024-10-16)
+
+### Features Added
+
+- Add support for Continuous Access Evaluation (CAE). [#31140](https://github.com/Azure/azure-sdk-for-js/pull/31140)
 
 ### Other Changes
 
@@ -17,11 +55,13 @@
 ### Features Added
 
 Since 4.4.0:
+
 - Managed Identity can now be used in place of a SAS token to access the blob storage resource when performing backup and restore operations.
 
 ### Breaking Changes
 
 Since 4.5.0-beta.1:
+
 - Change signature of backup and restore operations to use an overload when using Managed Identity to access the blob storage resource. This means
   `undefined` no longer has to be passed in the `sasToken` parameter in order to set additional request options when using Managed Identity.
   This change is only breaking for customers using 4.5.0-beta.1 and does not impact customers using the previous GA version, 4.4.0.

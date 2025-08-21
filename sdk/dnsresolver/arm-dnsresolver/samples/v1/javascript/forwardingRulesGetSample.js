@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Gets properties of a forwarding rule in a DNS forwarding ruleset.
  *
  * @summary Gets properties of a forwarding rule in a DNS forwarding ruleset.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/ForwardingRule_Get.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/ForwardingRule_Get.json
  */
 async function retrieveForwardingRuleInADnsForwardingRuleset() {
   const subscriptionId =
@@ -29,13 +27,13 @@ async function retrieveForwardingRuleInADnsForwardingRuleset() {
   const result = await client.forwardingRules.get(
     resourceGroupName,
     dnsForwardingRulesetName,
-    forwardingRuleName
+    forwardingRuleName,
   );
   console.log(result);
 }
 
 async function main() {
-  retrieveForwardingRuleInADnsForwardingRuleset();
+  await retrieveForwardingRuleInADnsForwardingRuleset();
 }
 
 main().catch(console.error);

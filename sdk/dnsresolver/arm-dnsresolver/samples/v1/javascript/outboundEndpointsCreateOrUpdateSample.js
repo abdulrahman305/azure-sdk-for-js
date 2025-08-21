@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Creates or updates an outbound endpoint for a DNS resolver.
  *
  * @summary Creates or updates an outbound endpoint for a DNS resolver.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/OutboundEndpoint_Put.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/OutboundEndpoint_Put.json
  */
 async function upsertOutboundEndpointForDnsResolver() {
   const subscriptionId =
@@ -37,13 +35,13 @@ async function upsertOutboundEndpointForDnsResolver() {
     resourceGroupName,
     dnsResolverName,
     outboundEndpointName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
 async function main() {
-  upsertOutboundEndpointForDnsResolver();
+  await upsertOutboundEndpointForDnsResolver();
 }
 
 main().catch(console.error);

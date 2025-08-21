@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get properties of the provided the Kubernetes cluster.
  *
  * @summary Get properties of the provided the Kubernetes cluster.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/KubernetesClusters_Get.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/KubernetesClusters_Get.json
  */
 async function getKubernetesCluster() {
   const subscriptionId =
@@ -30,7 +28,7 @@ async function getKubernetesCluster() {
 }
 
 async function main() {
-  getKubernetesCluster();
+  await getKubernetesCluster();
 }
 
 main().catch(console.error);

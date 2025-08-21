@@ -6,11 +6,9 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create a new storage appliance or update the properties of the existing one.
@@ -18,7 +16,7 @@ All customer initiated requests will be rejected as the life cycle of this resou
  *
  * @summary Create a new storage appliance or update the properties of the existing one.
 All customer initiated requests will be rejected as the life cycle of this resource is managed by the system.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/StorageAppliances_Create.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/StorageAppliances_Create.json
  */
 async function createOrUpdateStorageAppliance() {
   const subscriptionId =
@@ -44,13 +42,13 @@ async function createOrUpdateStorageAppliance() {
   const result = await client.storageAppliances.beginCreateOrUpdateAndWait(
     resourceGroupName,
     storageApplianceName,
-    storageApplianceParameters
+    storageApplianceParameters,
   );
   console.log(result);
 }
 
 async function main() {
-  createOrUpdateStorageAppliance();
+  await createOrUpdateStorageAppliance();
 }
 
 main().catch(console.error);

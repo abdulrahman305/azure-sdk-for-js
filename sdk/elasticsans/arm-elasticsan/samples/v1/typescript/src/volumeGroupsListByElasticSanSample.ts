@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ElasticSanManagement } from "@azure/arm-elasticsan";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to List VolumeGroups.
  *
  * @summary List VolumeGroups.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/VolumeGroups_ListByElasticSan_MaximumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/VolumeGroups_ListByElasticSan_MaximumSet_Gen.json
  */
-async function volumeGroupsListByElasticSanMaximumSetGen() {
+async function volumeGroupsListByElasticSanMaximumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -31,7 +29,7 @@ async function volumeGroupsListByElasticSanMaximumSetGen() {
   const resArray = new Array();
   for await (let item of client.volumeGroups.listByElasticSan(
     resourceGroupName,
-    elasticSanName
+    elasticSanName,
   )) {
     resArray.push(item);
   }
@@ -42,9 +40,9 @@ async function volumeGroupsListByElasticSanMaximumSetGen() {
  * This sample demonstrates how to List VolumeGroups.
  *
  * @summary List VolumeGroups.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/VolumeGroups_ListByElasticSan_MinimumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/VolumeGroups_ListByElasticSan_MinimumSet_Gen.json
  */
-async function volumeGroupsListByElasticSanMinimumSetGen() {
+async function volumeGroupsListByElasticSanMinimumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -55,14 +53,14 @@ async function volumeGroupsListByElasticSanMinimumSetGen() {
   const resArray = new Array();
   for await (let item of client.volumeGroups.listByElasticSan(
     resourceGroupName,
-    elasticSanName
+    elasticSanName,
   )) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
-async function main() {
+async function main(): Promise<void> {
   volumeGroupsListByElasticSanMaximumSetGen();
   volumeGroupsListByElasticSanMinimumSetGen();
 }

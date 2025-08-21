@@ -6,7 +6,7 @@
  * Notification Hubs using the Registration APIs.  This also uses the createRegistrationId() method to create a
  * registration ID for us before saving it to the backend.
  *
- * See https://docs.microsoft.com/azure/notification-hubs/notification-hubs-push-notification-registration-management
+ * See https://learn.microsoft.com/azure/notification-hubs/notification-hubs-push-notification-registration-management
  * to learn about registrations.
  *
  *
@@ -14,16 +14,13 @@
  * @azsdk-weight 100
  */
 
-import * as dotenv from "dotenv";
+import "dotenv/config";
 import {
   createClientContext,
   createRegistrationId,
   createOrUpdateRegistration,
 } from "@azure/notification-hubs/api";
 import { createAppleRegistrationDescription } from "@azure/notification-hubs/models";
-
-// Load the .env file if it exists
-dotenv.config();
 
 // Define connection string and hub name
 const connectionString = process.env.NOTIFICATIONHUBS_CONNECTION_STRING || "<connection string>";

@@ -4,16 +4,17 @@
 import os from "node:os";
 import fs from "node:fs";
 import childProcess from "child_process";
-import { env, isLiveMode, isPlaybackMode, Recorder } from "@azure-tools/test-recorder";
+import type { Recorder } from "@azure-tools/test-recorder";
+import { env, isLiveMode, isPlaybackMode } from "@azure-tools/test-recorder";
 import { SecretClient } from "@azure/keyvault-secrets";
-import { ClientSecretCredential } from "@azure/identity";
+import type { ClientSecretCredential } from "@azure/identity";
 import { isNodeLike } from "@azure/core-util";
 
-import { CertificateClient } from "../../src/index.js";
+import type { CertificateClient } from "../../src/index.js";
 import { assertThrowsAbortError } from "./utils/common.js";
 import { testPollerProperties } from "./utils/recorderUtils.js";
 import { authenticate } from "./utils/testAuthentication.js";
-import TestClient from "./utils/testClient.js";
+import type TestClient from "./utils/testClient.js";
 import { toSupportTracing } from "@azure-tools/test-utils-vitest";
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 expect.extend({ toSupportTracing });
@@ -65,6 +66,16 @@ describe("Certificates client - create, read, update and delete", () => {
     expect(pendingCertificate!.properties.name).toEqual(certificateName);
   });
 
+  it("can create a certificate with preserveCertificateOrder", async (ctx) => {
+    const certificateName = testClient.formatName(`${prefix}-${ctx.task.name}-${suffix}`);
+    const poller = await client.beginCreateCertificate(certificateName, basicCertificatePolicy, {
+      ...testPollerProperties,
+      preserveCertificateOrder: true,
+    });
+    const pendingCertificate = poller.getResult(); // Pending certificate
+    expect(pendingCertificate!.properties.preserveCertificateOrder).toEqual(true);
+  });
+
   it("can abort creating a certificate", async function (ctx) {
     const certificateName = testClient.formatName(`${prefix}-${ctx.task.name}-${suffix}`);
     const controller = new AbortController();
@@ -79,7 +90,7 @@ describe("Certificates client - create, read, update and delete", () => {
     });
   });
 
-  it("cannot create a certificate with an empty name", async function () {
+  it("cannot create a certificate with an empty name", async () => {
     const certificateName = "";
     await expect(
       client.beginCreateCertificate(certificateName, basicCertificatePolicy, testPollerProperties),
@@ -437,7 +448,7 @@ describe("Certificates client - create, read, update and delete", () => {
     expect(updated.policy!.issuerName).toEqual("Self");
   });
 
-  it("can read, cancel and delete a certificate's operation", { retry: 5 }, async function () {
+  it("can read, cancel and delete a certificate's operation", async () => {
     const certificateName = recorder.variable(
       "crudcertoperation",
       `crudcertoperation-${Math.floor(Math.random() * 10000)}`,
@@ -464,17 +475,21 @@ describe("Certificates client - create, read, update and delete", () => {
     // Delete
     await client.deleteCertificateOperation(certificateName);
 
-    let error;
+    let errorMessage: string;
     try {
       await client.getCertificateOperation(certificateName);
       throw Error("Expecting an error but not catching one.");
     } catch (e: any) {
-      error = e;
+      errorMessage = e.message;
     }
-    expect(error.message).toEqual(`Pending certificate not found: ${certificateName}`);
+    const expectedErrorMessage = new RegExp(
+      `pending certificate not found: ${certificateName}`,
+      /* case insensitive */ "i",
+    );
+    expect(errorMessage).toMatch(expectedErrorMessage);
   });
 
-  it("can set, read and delete a certificate's contacts", async function () {
+  it("can set, read and delete a certificate's contacts", async () => {
     const contacts = [
       {
         email: "a@a.com",

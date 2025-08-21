@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import type {
+  KeepAliveOptions,
+  ExtendedServiceClientOptions,
+  HttpPipelineLogLevel,
+} from "@azure/core-http-compat";
 import {
   CompatResponse as HttpOperationResponse,
   RequestPolicy as IHttpClient,
@@ -9,42 +14,46 @@ import {
   RequestPolicyFactory,
   RequestPolicyOptionsLike as RequestPolicyOptions,
   WebResourceLike as WebResource,
-  KeepAliveOptions,
-  ExtendedServiceClientOptions,
   convertHttpClient,
   createRequestPolicyFactoryPolicy,
-  HttpPipelineLogLevel,
 } from "@azure/core-http-compat";
-import {
-  RequestBodyType as HttpRequestBody,
+import type {
   ProxySettings as ProxyOptions,
   UserAgentPolicyOptions as UserAgentOptions,
-  bearerTokenAuthenticationPolicy,
   Pipeline as CorePipeline,
-  decompressResponsePolicyName,
   PipelinePolicy,
   HttpClient,
 } from "@azure/core-rest-pipeline";
+import {
+  RequestBodyType as HttpRequestBody,
+  bearerTokenAuthenticationPolicy,
+  decompressResponsePolicyName,
+} from "@azure/core-rest-pipeline";
 import { authorizeRequestOnTenantChallenge, createClientPipeline } from "@azure/core-client";
 import { parseXML, stringifyXML } from "@azure/core-xml";
-import { TokenCredential, isTokenCredential } from "@azure/core-auth";
+import type { TokenCredential } from "@azure/core-auth";
+import { isTokenCredential } from "@azure/core-auth";
 
-import { logger } from "./log";
-import { StorageRetryOptions, StorageRetryPolicyFactory } from "@azure/storage-blob";
-import { StorageSharedKeyCredential } from "./credentials/StorageSharedKeyCredential";
+import { logger } from "./log.js";
+import type { StorageRetryOptions } from "@azure/storage-blob";
+import { StorageRetryPolicyFactory } from "@azure/storage-blob";
+import { StorageSharedKeyCredential } from "./credentials/StorageSharedKeyCredential.js";
 import { AnonymousCredential } from "@azure/storage-blob";
 import {
   StorageOAuthScopes,
   StorageDataLakeLoggingAllowedHeaderNames,
   StorageDataLakeLoggingAllowedQueryParameters,
   SDK_VERSION,
-} from "./utils/constants";
-import { getCachedDefaultHttpClient } from "../../storage-blob/src/utils/cache";
-import { storageBrowserPolicy } from "../../storage-blob/src/policies/StorageBrowserPolicyV2";
-import { storageRetryPolicy } from "../../storage-blob/src/policies/StorageRetryPolicyV2";
-import { storageSharedKeyCredentialPolicy } from "../../storage-blob/src/policies/StorageSharedKeyCredentialPolicyV2";
-import { StorageBrowserPolicyFactory } from "@azure/storage-blob";
-
+} from "./utils/constants.js";
+import {
+  getCachedDefaultHttpClient,
+  storageRequestFailureDetailsParserPolicy,
+} from "@azure/storage-common";
+import { storageBrowserPolicy } from "@azure/storage-common";
+import { StorageBrowserPolicyFactory } from "@azure/storage-common";
+import { storageCorrectContentLengthPolicy } from "@azure/storage-common";
+import { storageRetryPolicy } from "@azure/storage-common";
+import { storageSharedKeyCredentialPolicy } from "@azure/storage-common";
 import {
   ServiceClientOptions,
   PipelineOptions,
@@ -52,7 +61,6 @@ import {
   isPipelineLike,
   Pipeline,
 } from "@azure/storage-blob";
-import { storageCorrectContentLengthPolicy } from "../../storage-blob/src/policies/StorageCorrectContentLengthPolicy";
 
 // Export following interfaces and types for customers who want to implement their
 // own RequestPolicy or HTTPClient
@@ -202,6 +210,7 @@ export function getCoreClientOptions(pipeline: PipelineLike): ExtendedServiceCli
     corePipeline.removePolicy({ name: decompressResponsePolicyName });
     corePipeline.addPolicy(storageCorrectContentLengthPolicy());
     corePipeline.addPolicy(storageRetryPolicy(restOptions.retryOptions), { phase: "Retry" });
+    corePipeline.addPolicy(storageRequestFailureDetailsParserPolicy());
     corePipeline.addPolicy(storageBrowserPolicy());
     const downlevelResults = processDownlevelPipeline(pipeline);
     if (downlevelResults) {

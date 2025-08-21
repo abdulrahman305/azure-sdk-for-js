@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createComputeManagementClient, {
-  DedicatedHostsUpdateParameters,
-  getLongRunningPoller,
-} from "@azure-rest/arm-compute";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Update an dedicated host .
  *
  * @summary Update an dedicated host .
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-08-01/examples/dedicatedHostExamples/DedicatedHosts_Update_MaximumSet_Gen.json
  */
-async function dedicatedHostsUpdateMaximumSetGen() {
+
+import type { DedicatedHostsUpdateParameters } from "@azure-rest/arm-compute";
+import createComputeManagementClient, { getLongRunningPoller } from "@azure-rest/arm-compute";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function dedicatedHostsUpdateMaximumSetGen(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";
@@ -29,20 +24,6 @@ async function dedicatedHostsUpdateMaximumSetGen() {
     body: {
       properties: {
         autoReplaceOnFailure: true,
-        instanceView: {
-          availableCapacity: {
-            allocatableVMs: [{ count: 26, vmSize: "aaaaaaaaaaaaaaaaaaaa" }],
-          },
-          statuses: [
-            {
-              code: "aaaaaaaaaaaaaaaaaaaaaaa",
-              displayStatus: "aaaaaa",
-              level: "Info",
-              message: "a",
-              time: new Date("2021-11-30T12:58:26.522Z"),
-            },
-          ],
-        },
         licenseType: "Windows_Server_Hybrid",
         platformFaultDomain: 1,
       },
@@ -59,7 +40,7 @@ async function dedicatedHostsUpdateMaximumSetGen() {
       hostName,
     )
     .patch(options);
-  const poller = getLongRunningPoller(client, initialResponse);
+  const poller = await getLongRunningPoller(client, initialResponse);
   const result = await poller.pollUntilDone();
   console.log(result);
 }
@@ -71,7 +52,7 @@ dedicatedHostsUpdateMaximumSetGen().catch(console.error);
  * @summary Update an dedicated host .
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-08-01/examples/dedicatedHostExamples/DedicatedHosts_Update_MinimumSet_Gen.json
  */
-async function dedicatedHostsUpdateMinimumSetGen() {
+async function dedicatedHostsUpdateMinimumSetGen(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";
@@ -91,7 +72,7 @@ async function dedicatedHostsUpdateMinimumSetGen() {
       hostName,
     )
     .patch(options);
-  const poller = getLongRunningPoller(client, initialResponse);
+  const poller = await getLongRunningPoller(client, initialResponse);
   const result = await poller.pollUntilDone();
   console.log(result);
 }

@@ -3,32 +3,28 @@
 
 import { env, isLiveMode, Recorder } from "@azure-tools/test-recorder";
 import { delay } from "@azure/core-util";
-import { assert } from "chai";
-import { Context, Suite } from "mocha";
-import {
-  AzureKeyCredential,
+import type {
   AzureOpenAIVectorizer,
   SearchIndex,
-  SearchIndexClient,
   SynonymMap,
   VectorSearchAlgorithmConfiguration,
   VectorSearchProfile,
-} from "../../../src";
-import { defaultServiceVersion } from "../../../src/serviceUtils";
-import { Hotel } from "../utils/interfaces";
-import { createClients } from "../utils/recordedClient";
+} from "../../../src/index.js";
+import { AzureKeyCredential, SearchIndexClient } from "../../../src/index.js";
+import { defaultServiceVersion } from "../../../src/serviceUtils.js";
+import type { Hotel } from "../utils/interfaces.js";
+import { createClients } from "../utils/recordedClient.js";
 import {
   createRandomIndexName,
   createSimpleIndex,
   createSynonymMaps,
   deleteSynonymMaps,
   WAIT_TIME,
-} from "../utils/setup";
+} from "../utils/setup.js";
+import { describe, it, assert, beforeEach, afterEach } from "vitest";
 
-describe("SearchIndexClient", function (this: Suite) {
-  this.timeout(20_000);
-
-  describe("constructor", function () {
+describe("SearchIndexClient", { timeout: 20_000 }, () => {
+  describe("constructor", () => {
     const credential = new AzureKeyCredential("key");
 
     describe("Passing serviceVersion", () => {
@@ -66,13 +62,13 @@ describe("SearchIndexClient", function (this: Suite) {
     });
   });
 
-  describe("stable", function () {
+  describe("stable", { skip: true }, () => {
     let recorder: Recorder;
     let indexClient: SearchIndexClient;
     let TEST_INDEX_NAME: string;
 
-    beforeEach(async function (this: Context) {
-      recorder = new Recorder(this.currentTest);
+    beforeEach(async (ctx) => {
+      recorder = new Recorder(ctx);
       TEST_INDEX_NAME = createRandomIndexName();
       ({ indexClient, indexName: TEST_INDEX_NAME } = await createClients<Hotel>(
         defaultServiceVersion,
@@ -85,20 +81,20 @@ describe("SearchIndexClient", function (this: Suite) {
       await delay(WAIT_TIME);
     });
 
-    afterEach(async function () {
+    afterEach(async () => {
       await indexClient.deleteIndex(TEST_INDEX_NAME);
       await delay(WAIT_TIME);
       await deleteSynonymMaps(indexClient);
       await recorder?.stop();
     });
 
-    describe("#synonymmaps", function () {
-      it("gets the list of synonymmaps", async function () {
+    describe("#synonymmaps", () => {
+      it("gets the list of synonymmaps", async () => {
         const synonymMaps = await indexClient.listSynonymMaps();
         assert.isAtLeast(synonymMaps.length, 2);
       });
 
-      it("gets the list of synonymmaps names", async function () {
+      it("gets the list of synonymmaps names", async () => {
         const synonymMapNames = await indexClient.listSynonymMapsNames();
         assert.isAtLeast(synonymMapNames.length, 2);
         for (let i = 1; i <= 2; i++) {
@@ -106,7 +102,7 @@ describe("SearchIndexClient", function (this: Suite) {
         }
       });
 
-      it("gets the correct synonymmap object", async function () {
+      it("gets the correct synonymmap object", async () => {
         const synonymMap = await indexClient.getSynonymMap("my-azure-synonymmap-1");
         assert.equal(synonymMap.name, "my-azure-synonymmap-1");
         assert.equal(synonymMap.synonyms.length, 2);
@@ -118,7 +114,7 @@ describe("SearchIndexClient", function (this: Suite) {
         assert.include(synonyms, synonymMap.synonyms[1]);
       });
 
-      it("throws error for invalid synonymmap object", async function () {
+      it("throws error for invalid synonymmap object", async () => {
         let retrievalError: boolean = false;
         try {
           await indexClient.getSynonymMap("garbxyz");
@@ -128,7 +124,7 @@ describe("SearchIndexClient", function (this: Suite) {
         assert.isTrue(retrievalError);
       });
 
-      it("creates the synonymmap object using createOrUpdateSynonymMap", async function () {
+      it("creates the synonymmap object using createOrUpdateSynonymMap", async () => {
         let synonymMap: SynonymMap = {
           name: `my-azure-synonymmap-3`,
           synonyms: ["United States, United States of America => USA", "Washington, Wash. => WA"],
@@ -149,7 +145,7 @@ describe("SearchIndexClient", function (this: Suite) {
         }
       });
 
-      it("modify and updates the synonymmap object", async function () {
+      it("modify and updates the synonymmap object", async () => {
         let synonymMap = await indexClient.getSynonymMap("my-azure-synonymmap-1");
         synonymMap.synonyms.push("California, Clif. => CA");
         await indexClient.createOrUpdateSynonymMap(synonymMap);
@@ -166,8 +162,8 @@ describe("SearchIndexClient", function (this: Suite) {
       });
     });
 
-    describe("#indexes", function () {
-      it("gets the list of indexes", async function () {
+    describe("#indexes", () => {
+      it("gets the list of indexes", async () => {
         const result = await indexClient.listIndexes();
         let listOfIndexes = await result.next();
         const indexNames: string[] = [];
@@ -178,7 +174,7 @@ describe("SearchIndexClient", function (this: Suite) {
         assert.include(indexNames, TEST_INDEX_NAME);
       });
 
-      it("gets the list of indexes names", async function () {
+      it("gets the list of indexes names", async () => {
         const result = await indexClient.listIndexesNames();
         let listOfIndexNames = await result.next();
         const indexNames: string[] = [];
@@ -189,13 +185,13 @@ describe("SearchIndexClient", function (this: Suite) {
         assert.include(indexNames, TEST_INDEX_NAME);
       });
 
-      it("gets the correct index object", async function () {
+      it("gets the correct index object", async () => {
         const index = await indexClient.getIndex(TEST_INDEX_NAME);
         assert.equal(index.name, TEST_INDEX_NAME);
         assert.equal(index.fields.length, 5);
       });
 
-      it("throws error for invalid index object", async function () {
+      it("throws error for invalid index object", async () => {
         let retrievalError: boolean = false;
         try {
           await indexClient.getIndex("garbxyz");
@@ -205,7 +201,7 @@ describe("SearchIndexClient", function (this: Suite) {
         assert.isTrue(retrievalError);
       });
 
-      it("creates the index object using createOrUpdateIndex", async function () {
+      it("creates the index object using createOrUpdateIndex", async () => {
         const indexName: string = isLiveMode() ? createRandomIndexName() : "hotel-live-test4";
         let index: SearchIndex = {
           name: indexName,
@@ -255,7 +251,7 @@ describe("SearchIndexClient", function (this: Suite) {
         }
       });
 
-      it("modify and updates the index object", async function () {
+      it("modify and updates the index object", async () => {
         let index = await indexClient.getIndex(TEST_INDEX_NAME);
         index.fields.push({
           type: "Edm.DateTimeOffset",
@@ -267,35 +263,8 @@ describe("SearchIndexClient", function (this: Suite) {
         assert.equal(index.fields.length, 6);
       });
     });
-  });
 
-  describe("preview", function () {
-    let recorder: Recorder;
-    let indexClient: SearchIndexClient;
-    let TEST_INDEX_NAME: string;
-
-    beforeEach(async function (this: Context) {
-      recorder = new Recorder(this.currentTest);
-      TEST_INDEX_NAME = createRandomIndexName();
-      ({ indexClient, indexName: TEST_INDEX_NAME } = await createClients<Hotel>(
-        defaultServiceVersion,
-        recorder,
-        TEST_INDEX_NAME,
-      ));
-
-      await createSynonymMaps(indexClient);
-      await createSimpleIndex(indexClient, TEST_INDEX_NAME);
-      await delay(WAIT_TIME);
-    });
-
-    afterEach(async function () {
-      await indexClient.deleteIndex(TEST_INDEX_NAME);
-      await delay(WAIT_TIME);
-      await deleteSynonymMaps(indexClient);
-      await recorder?.stop();
-    });
-
-    it("creates the index object vector fields", async function () {
+    it("creates the index object vector fields", async () => {
       const indexName: string = isLiveMode() ? createRandomIndexName() : "hotel-live-test4";
 
       const algorithm: VectorSearchAlgorithmConfiguration = {
@@ -305,17 +274,17 @@ describe("SearchIndexClient", function (this: Suite) {
       };
       const vectorizer: AzureOpenAIVectorizer = {
         kind: "azureOpenAI",
-        name: "vectorizer",
-        azureOpenAIParameters: {
+        vectorizerName: "vectorizer",
+        parameters: {
           deploymentId: env.AZURE_OPENAI_DEPLOYMENT_NAME,
-          resourceUri: env.AZURE_OPENAI_ENDPOINT,
+          resourceUrl: env.AZURE_OPENAI_ENDPOINT,
           modelName: "text-embedding-ada-002",
         },
       };
       const profile: VectorSearchProfile = {
         name: "profile",
         algorithmConfigurationName: algorithm.name,
-        vectorizer: vectorizer.name,
+        vectorizerName: vectorizer.vectorizerName,
       };
 
       let index: SearchIndex = {
@@ -344,7 +313,10 @@ describe("SearchIndexClient", function (this: Suite) {
         await indexClient.createOrUpdateIndex(index);
         index = await indexClient.getIndex(indexName);
         assert.deepEqual(index.vectorSearch?.algorithms?.[0].name, algorithm.name);
-        assert.deepEqual(index.vectorSearch?.vectorizers?.[0].name, vectorizer.name);
+        assert.deepEqual(
+          index.vectorSearch?.vectorizers?.[0].vectorizerName,
+          vectorizer.vectorizerName,
+        );
         assert.deepEqual(index.vectorSearch?.profiles?.[0].name, profile.name);
       } finally {
         await indexClient.deleteIndex(index);

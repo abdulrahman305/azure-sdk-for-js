@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get metrics configuration of the provided cluster.
  *
  * @summary Get metrics configuration of the provided cluster.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/ClusterMetricsConfigurations_Get.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/ClusterMetricsConfigurations_Get.json
  */
 async function getMetricsConfigurationOfCluster() {
   const subscriptionId =
@@ -29,13 +27,13 @@ async function getMetricsConfigurationOfCluster() {
   const result = await client.metricsConfigurations.get(
     resourceGroupName,
     clusterName,
-    metricsConfigurationName
+    metricsConfigurationName,
   );
   console.log(result);
 }
 
 async function main() {
-  getMetricsConfigurationOfCluster();
+  await getMetricsConfigurationOfCluster();
 }
 
 main().catch(console.error);

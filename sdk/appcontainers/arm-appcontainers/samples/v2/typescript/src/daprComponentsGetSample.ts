@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Get a dapr component.
  *
  * @summary Get a dapr component.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/DaprComponents_Get_SecretStoreComponent.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/DaprComponents_Get_SecretStoreComponent.json
  */
-async function getDaprComponentWithSecretStoreComponent() {
+async function getDaprComponentWithSecretStoreComponent(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "8efdecc5-919e-44eb-b179-915dca89ebf9";
@@ -42,9 +40,9 @@ async function getDaprComponentWithSecretStoreComponent() {
  * This sample demonstrates how to Get a dapr component.
  *
  * @summary Get a dapr component.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/DaprComponents_Get_Secrets.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/DaprComponents_Get_Secrets.json
  */
-async function getDaprComponentWithSecrets() {
+async function getDaprComponentWithSecrets(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "8efdecc5-919e-44eb-b179-915dca89ebf9";
@@ -62,9 +60,9 @@ async function getDaprComponentWithSecrets() {
   console.log(result);
 }
 
-async function main() {
-  getDaprComponentWithSecretStoreComponent();
-  getDaprComponentWithSecrets();
+async function main(): Promise<void> {
+  await getDaprComponentWithSecretStoreComponent();
+  await getDaprComponentWithSecrets();
 }
 
 main().catch(console.error);

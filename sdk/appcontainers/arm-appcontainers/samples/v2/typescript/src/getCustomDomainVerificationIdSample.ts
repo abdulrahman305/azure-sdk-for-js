@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Get the verification id of a subscription used for verifying custom domains
  *
  * @summary Get the verification id of a subscription used for verifying custom domains
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Subscriptions_GetCustomDomainVerificationId.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Subscriptions_GetCustomDomainVerificationId.json
  */
-async function listAllOperations() {
+async function listAllOperations(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "d27c3573-f76e-4b26-b871-0ccd2203d08c";
@@ -30,8 +28,8 @@ async function listAllOperations() {
   console.log(result);
 }
 
-async function main() {
-  listAllOperations();
+async function main(): Promise<void> {
+  await listAllOperations();
 }
 
 main().catch(console.error);

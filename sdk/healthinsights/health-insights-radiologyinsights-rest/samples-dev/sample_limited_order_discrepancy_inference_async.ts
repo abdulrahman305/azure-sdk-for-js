@@ -2,34 +2,32 @@
 // Licensed under the MIT License.
 
 /**
- * Displays the limited order discrepancy of the Radiology Insights request.
+ * @summary Displays the limited order discrepancy of the Radiology Insights request.
  */
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-import AzureHealthInsightsClient, {
-  ClinicalDocumentTypeEnum,
+import "dotenv/config";
+import type {
   CreateJobParameters,
   RadiologyInsightsJobOutput,
+} from "@azure-rest/health-insights-radiologyinsights";
+import AzureHealthInsightsClient, {
   getLongRunningPoller,
-  isUnexpected
-} from "../src";
-
-dotenv.config();
+  isUnexpected,
+} from "@azure-rest/health-insights-radiologyinsights";
 
 // You will need to set this environment variables or edit the following values
 
 const endpoint = process.env["HEALTH_INSIGHTS_ENDPOINT"] || "";
 
 /**
-    * Print the limited order discrepancy inference
+ * Print the limited order discrepancy inference
  */
 
 function printResults(radiologyInsightsResult: RadiologyInsightsJobOutput): void {
   if (radiologyInsightsResult.status === "succeeded") {
     const results = radiologyInsightsResult.result;
     if (results !== undefined) {
-      results.patientResults.forEach((patientResult: { inferences: any[]; }) => {
+      results.patientResults.forEach((patientResult: { inferences: any[] }) => {
         if (patientResult.inferences) {
           patientResult.inferences.forEach((inference) => {
             if (inference.kind === "limitedOrderDiscrepancy") {
@@ -37,7 +35,7 @@ function printResults(radiologyInsightsResult: RadiologyInsightsJobOutput): void
               if ("orderType" in inference) {
                 console.log(" Ordertype: ");
                 displayCodes(inference.orderType);
-              };
+              }
 
               inference.presentBodyParts?.forEach((bodyparts: any) => {
                 console.log("   Present Body Parts: ");
@@ -63,38 +61,40 @@ function printResults(radiologyInsightsResult: RadiologyInsightsJobOutput): void
   function displayCodes(codeableConcept: any): void {
     codeableConcept.coding?.forEach((coding: any) => {
       if ("code" in coding) {
-        console.log("      Coding: " + coding.code + ", " + coding.display + " (" + coding.system + ")");
+        if ("display" in coding && "system" in coding && "code" in coding) {
+          console.log(
+            "         Coding: " + coding.code + ", " + coding.display + " (" + coding.system + ")",
+          );
+        }
       }
     });
   }
-
 }
 
 // Create request body for radiology insights
 function createRequestBody(): CreateJobParameters {
-
   const codingData = {
-    system: "Http://hl7.org/fhir/ValueSet/cpt-all",
-    code: "30704-1",
-    display: "US ABDOMEN LIMITED"
+    system: "http://www.ama-assn.org/go/cpt",
+    code: "76705",
+    display: "US ABDOMEN LIMITED",
   };
 
   const code = {
-    coding: [codingData]
+    coding: [codingData],
   };
 
   const patientInfo = {
     sex: "female",
-    birthDate: new Date("1959-11-11T19:00:00+00:00"),
+    birthDate: "1959-11-11T19:00:00+00:00",
   };
 
   const encounterData = {
     id: "encounterid1",
     period: {
-      "start": "2021-8-28T00:00:00",
-      "end": "2021-8-28T00:00:00"
+      start: "2021-8-28T00:00:00",
+      end: "2021-8-28T00:00:00",
     },
-    class: "inpatient"
+    class: "inpatient",
   };
 
   const authorData = {
@@ -104,12 +104,12 @@ function createRequestBody(): CreateJobParameters {
 
   const orderedProceduresData = {
     code: code,
-    description: "US ABDOMEN LIMITED"
+    description: "US ABDOMEN LIMITED",
   };
 
   const administrativeMetadata = {
     orderedProcedures: [orderedProceduresData],
-    encounterId: "encounterid1"
+    encounterId: "encounterid1",
   };
 
   const content = {
@@ -150,21 +150,21 @@ function createRequestBody(): CreateJobParameters {
 
   const patientDocumentData = {
     type: "note",
-    clinicalType: ClinicalDocumentTypeEnum.RadiologyReport,
+    clinicalType: "radiologyReport",
     id: "docid1",
     language: "en",
     authors: [authorData],
     specialtyType: "radiology",
     administrativeMetadata: administrativeMetadata,
     content: content,
-    createdAt: new Date("2021-05-31T16:00:00.000Z"),
-    orderedProceduresAsCsv: "US ABDOMEN LIMITED"
+    createdAt: "2021-05-31T16:00:00.000Z",
+    orderedProceduresAsCsv: "US ABDOMEN LIMITED",
   };
   const patientData = {
     id: "Samantha Jones",
     details: patientInfo,
     encounters: [encounterData],
-    patientDocuments: [patientDocumentData]
+    patientDocuments: [patientDocumentData],
   };
 
   const inferenceTypes = [
@@ -178,21 +178,25 @@ function createRequestBody(): CreateJobParameters {
     "criticalRecommendation",
     "followupRecommendation",
     "followupCommunication",
-    "radiologyProcedure"];
+    "radiologyProcedure",
+    "scoringAndAssessment",
+    "guidance",
+    "qualityMeasure",
+  ];
 
   const followupRecommendationOptions = {
     includeRecommendationsWithNoSpecifiedModality: true,
     includeRecommendationsInReferences: true,
-    provideFocusedSentenceEvidence: true
+    provideFocusedSentenceEvidence: true,
   };
 
   const findingOptions = {
-    provideFocusedSentenceEvidence: true
+    provideFocusedSentenceEvidence: true,
   };
 
   const inferenceOptions = {
     followupRecommendationOptions: followupRecommendationOptions,
-    findingOptions: findingOptions
+    findingOptions: findingOptions,
   };
 
   // Create RI Configuration
@@ -201,7 +205,7 @@ function createRequestBody(): CreateJobParameters {
     inferenceTypes: inferenceTypes,
     locale: "en-US",
     verbose: false,
-    includeEvidence: true
+    includeEvidence: true,
   };
 
   // create RI Data
@@ -209,16 +213,15 @@ function createRequestBody(): CreateJobParameters {
     jobData: {
       patients: [patientData],
       configuration: configuration,
-    }
+    },
   };
 
   return {
     body: RadiologyInsightsJob,
   };
-
 }
 
-export async function main() {
+export async function main(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = AzureHealthInsightsClient(endpoint, credential);
 
@@ -228,7 +231,9 @@ export async function main() {
   // Initiate radiology insights job and retrieve results
   const dateString = Date.now();
   const jobID = "jobId-" + dateString;
-  const initialResponse = await client.path("/radiology-insights/jobs/{id}", jobID).put(radiologyInsightsParameter);
+  const initialResponse = await client
+    .path("/radiology-insights/jobs/{id}", jobID)
+    .put(radiologyInsightsParameter);
   if (isUnexpected(initialResponse)) {
     throw initialResponse;
   }
@@ -238,7 +243,7 @@ export async function main() {
     throw RadiologyInsightsResult;
   }
   const resultBody = RadiologyInsightsResult.body;
-  printResults(resultBody);
+  await printResults(resultBody);
 }
 
 main().catch((err) => {

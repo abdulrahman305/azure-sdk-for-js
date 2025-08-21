@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create a new Kubernetes cluster agent pool or update the properties of the existing one.
  *
  * @summary Create a new Kubernetes cluster agent pool or update the properties of the existing one.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/AgentPools_Create.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/AgentPools_Create.json
  */
 async function createOrUpdateKubernetesClusterAgentPool() {
   const subscriptionId =
@@ -69,9 +67,9 @@ async function createOrUpdateKubernetesClusterAgentPool() {
     location: "location",
     mode: "System",
     tags: { key1: "myvalue1", key2: "myvalue2" },
-    taints: [{ key: "kubernetes.taint", value: "true" }],
+    taints: [{ key: "kubernetes.taint", value: "true:NoSchedule" }],
     upgradeSettings: { maxSurge: "1" },
-    vmSkuName: "NC_M16_v1",
+    vmSkuName: "NC_P46_224_v1",
   };
   const credential = new DefaultAzureCredential();
   const client = new NetworkCloud(credential, subscriptionId);
@@ -79,13 +77,13 @@ async function createOrUpdateKubernetesClusterAgentPool() {
     resourceGroupName,
     kubernetesClusterName,
     agentPoolName,
-    agentPoolParameters
+    agentPoolParameters,
   );
   console.log(result);
 }
 
 async function main() {
-  createOrUpdateKubernetesClusterAgentPool();
+  await createOrUpdateKubernetesClusterAgentPool();
 }
 
 main().catch(console.error);

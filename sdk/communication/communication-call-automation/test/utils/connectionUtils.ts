@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { isNode } from "@azure/core-util";
+import { isNodeLike } from "@azure/core-util";
 
 export const baseUri = "https://contoso.api.fake";
 
@@ -13,6 +13,8 @@ export const CALL_CALLER_ID = "callerId";
 export const CALL_CALLER_DISPLAY_NAME = "callerDisplayName";
 export const CALL_TARGET_ID = "targetId";
 export const CALL_TARGET_ID_2 = "targetId2";
+export const PHONE_TARGET_ID = "phoneTargetId";
+export const PHONE_TARGET_ID_2 = "phoneTargetId2";
 export const CALL_CONNECTION_STATE = "connected";
 export const CALL_SUBJECT = "subject";
 export const CALL_CALLBACK_URL = "https://REDACTED.com/events";
@@ -30,6 +32,6 @@ export const generateToken = (): string => {
   const validForMinutes = 60;
   const expiresOn = (Date.now() + validForMinutes * 60 * 1000) / 1000;
   const tokenString = JSON.stringify({ exp: expiresOn });
-  const base64Token = isNode ? Buffer.from(tokenString).toString("base64") : btoa(tokenString);
+  const base64Token = isNodeLike ? Buffer.from(tokenString).toString("base64") : btoa(tokenString);
   return `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${base64Token}.adM-ddBZZlQ1WlN3pdPBOF5G4Wh9iZpxNP_fSvpF4cWs`;
 };

@@ -1,5 +1,33 @@
 # Release History
 
+## 1.13.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.13.0 (2025-07-10)
+
+### Other Changes
+
+- Update `engines` to `"node": ">=20.0.0"`. Please refer to our [support policy](https://github.com/Azure/azure-sdk-for-js/blob/main/SUPPORT.md) for more information on our supported Node.js versions.
+
+## 1.12.0 (2025-05-01)
+
+### Other Changes
+
+- Depend on `@typespec/ts-http-runtime`. [PR #33721](https://github.com/Azure/azure-sdk-for-js/pull/33721)
+
+## 1.11.0 (2024-10-15)
+
+### Features Added
+
+- Added support for `HttpMethods` type
+
 ## 1.10.0 (2024-09-12)
 
 ### Features Added

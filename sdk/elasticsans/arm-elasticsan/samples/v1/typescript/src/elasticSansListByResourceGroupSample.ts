@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ElasticSanManagement } from "@azure/arm-elasticsan";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Gets a list of ElasticSan in a resource group.
  *
  * @summary Gets a list of ElasticSan in a resource group.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/ElasticSans_ListByResourceGroup_MaximumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/ElasticSans_ListByResourceGroup_MaximumSet_Gen.json
  */
-async function elasticSansListByResourceGroupMaximumSetGen() {
+async function elasticSansListByResourceGroupMaximumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -29,7 +27,7 @@ async function elasticSansListByResourceGroupMaximumSetGen() {
   const client = new ElasticSanManagement(credential, subscriptionId);
   const resArray = new Array();
   for await (let item of client.elasticSans.listByResourceGroup(
-    resourceGroupName
+    resourceGroupName,
   )) {
     resArray.push(item);
   }
@@ -40,9 +38,9 @@ async function elasticSansListByResourceGroupMaximumSetGen() {
  * This sample demonstrates how to Gets a list of ElasticSan in a resource group.
  *
  * @summary Gets a list of ElasticSan in a resource group.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/ElasticSans_ListByResourceGroup_MinimumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/ElasticSans_ListByResourceGroup_MinimumSet_Gen.json
  */
-async function elasticSansListByResourceGroupMinimumSetGen() {
+async function elasticSansListByResourceGroupMinimumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -51,14 +49,14 @@ async function elasticSansListByResourceGroupMinimumSetGen() {
   const client = new ElasticSanManagement(credential, subscriptionId);
   const resArray = new Array();
   for await (let item of client.elasticSans.listByResourceGroup(
-    resourceGroupName
+    resourceGroupName,
   )) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
-async function main() {
+async function main(): Promise<void> {
   elasticSansListByResourceGroupMaximumSetGen();
   elasticSansListByResourceGroupMinimumSetGen();
 }

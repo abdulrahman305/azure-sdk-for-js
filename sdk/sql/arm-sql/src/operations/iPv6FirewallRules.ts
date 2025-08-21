@@ -7,12 +7,12 @@
  */
 
 import { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
-import { setContinuationToken } from "../pagingHelper";
-import { IPv6FirewallRules } from "../operationsInterfaces";
+import { setContinuationToken } from "../pagingHelper.js";
+import { IPv6FirewallRules } from "../operationsInterfaces/index.js";
 import * as coreClient from "@azure/core-client";
-import * as Mappers from "../models/mappers";
-import * as Parameters from "../models/parameters";
-import { SqlManagementClient } from "../sqlManagementClient";
+import * as Mappers from "../models/mappers.js";
+import * as Parameters from "../models/parameters.js";
+import { SqlManagementClient } from "../sqlManagementClient.js";
 import {
   IPv6FirewallRule,
   IPv6FirewallRulesListByServerNextOptionalParams,
@@ -24,7 +24,7 @@ import {
   IPv6FirewallRulesCreateOrUpdateResponse,
   IPv6FirewallRulesDeleteOptionalParams,
   IPv6FirewallRulesListByServerNextResponse,
-} from "../models";
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Class containing IPv6FirewallRules operations. */
@@ -232,7 +232,7 @@ const listByServerOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion11],
+  queryParameters: [Parameters.apiVersion10],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -251,7 +251,7 @@ const getOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion11],
+  queryParameters: [Parameters.apiVersion10],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -274,8 +274,8 @@ const createOrUpdateOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  requestBody: Parameters.parameters92,
-  queryParameters: [Parameters.apiVersion11],
+  requestBody: Parameters.parameters90,
+  queryParameters: [Parameters.apiVersion10],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -291,7 +291,7 @@ const deleteOperationSpec: coreClient.OperationSpec = {
   path: "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/ipv6FirewallRules/{firewallRuleName}",
   httpMethod: "DELETE",
   responses: { 200: {}, 204: {}, default: {} },
-  queryParameters: [Parameters.apiVersion11],
+  queryParameters: [Parameters.apiVersion10],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,

@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Update properties of the provided cloud services network, or update the tags associated with it. Properties and tag updates can be done independently.
  *
  * @summary Update properties of the provided cloud services network, or update the tags associated with it. Properties and tag updates can be done independently.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/CloudServicesNetworks_Patch.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/CloudServicesNetworks_Patch.json
  */
 async function patchCloudServicesNetwork() {
   const subscriptionId =
@@ -27,12 +25,7 @@ async function patchCloudServicesNetwork() {
     additionalEgressEndpoints: [
       {
         category: "azure-resource-management",
-        endpoints: [
-          {
-            domainName: "https://storageaccountex.blob.core.windows.net",
-            port: 443,
-          },
-        ],
+        endpoints: [{ domainName: "storageaccountex.blob.core.windows.net", port: 443 }],
       },
     ],
     enableDefaultEgressEndpoints: "False",
@@ -46,13 +39,13 @@ async function patchCloudServicesNetwork() {
   const result = await client.cloudServicesNetworks.beginUpdateAndWait(
     resourceGroupName,
     cloudServicesNetworkName,
-    options
+    options,
   );
   console.log(result);
 }
 
 async function main() {
-  patchCloudServicesNetwork();
+  await patchCloudServicesNetwork();
 }
 
 main().catch(console.error);

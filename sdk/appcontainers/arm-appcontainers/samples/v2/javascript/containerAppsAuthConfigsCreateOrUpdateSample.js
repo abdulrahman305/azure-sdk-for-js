@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create or update the AuthConfig for a Container App.
  *
  * @summary Create or update the AuthConfig for a Container App.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/AuthConfigs_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/AuthConfigs_CreateOrUpdate.json
  */
 async function createOrUpdateContainerAppAuthConfig() {
   const subscriptionId =
@@ -49,7 +49,7 @@ async function createOrUpdateContainerAppAuthConfig() {
 }
 
 async function main() {
-  createOrUpdateContainerAppAuthConfig();
+  await createOrUpdateContainerAppAuthConfig();
 }
 
 main().catch(console.error);

@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Context as AzureFnV3Context } from "@azure/functions-old";
-import { InvocationContext as AzureFnV4Context } from "@azure/functions";
-import { context, propagation, Context as OpenTelemetryContext } from "@opentelemetry/api";
-import { Logger } from "../shared/logging";
+import type { Context as AzureFnV3Context } from "@azure/functions-old";
+import type { InvocationContext as AzureFnV4Context } from "@azure/functions";
+import type { Context as OpenTelemetryContext } from "@opentelemetry/api";
+import { context, propagation } from "@opentelemetry/api";
+import { Logger } from "../shared/logging/index.js";
+import { loadAzureFunctionCore } from "../shared/module.js";
 
 type AzureFnContext = AzureFnV3Context & AzureFnV4Context;
 
@@ -38,9 +40,14 @@ export class AzureFunctionsHook {
 
   constructor() {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      this._functionsCoreModule = require("@azure/functions-core");
-      this._addPreInvocationHook();
+      this._functionsCoreModule = loadAzureFunctionCore();
+      if (this._functionsCoreModule) {
+        this._addPreInvocationHook();
+      } else {
+        Logger.getInstance().debug(
+          "@azure/functions-core failed to load, not running in Azure Functions",
+        );
+      }
     } catch (error) {
       Logger.getInstance().debug(
         "@azure/functions-core failed to load, not running in Azure Functions",

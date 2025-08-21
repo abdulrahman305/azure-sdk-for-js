@@ -1,15 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
-import {
+import type { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
+import type {
   ContainerItem,
   CpkInfo as BlobCpkInfo,
   PublicAccessType as ContainerPublicAccessType,
 } from "@azure/storage-blob";
-
-import { AclFailedEntry, CpkInfo } from "./generated/src/models";
-import {
+import type { AclFailedEntry, CpkInfo } from "./generated/src/models/index.js";
+import type {
   AccessControlChangeError,
   FileSystemItem,
   Metadata,
@@ -20,9 +19,9 @@ import {
   RolePermissions,
   ServiceListContainersSegmentResponse,
   ServiceListFileSystemsSegmentResponse,
-} from "./models";
-import { ToBlobEndpointHostMappings, ToDfsEndpointHostMappings } from "./utils/constants";
-import { base64encode } from "./utils/utils.common";
+} from "./models.js";
+import { ToBlobEndpointHostMappings, ToDfsEndpointHostMappings } from "./utils/constants.js";
+import { base64encode } from "./utils/utils.common.js";
 
 /**
  * Get a blob endpoint URL from incoming blob or dfs endpoint URLs.

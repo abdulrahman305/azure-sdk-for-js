@@ -1,21 +1,22 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-import { Constants } from "../common/constants";
-import { sleep } from "../common/helper";
-import { StatusCodes, SubStatusCodes } from "../common/statusCodes";
-import { DiagnosticNodeInternal, DiagnosticNodeType } from "../diagnostics/DiagnosticNodeInternal";
-import { Response } from "../request";
-import { RequestContext } from "../request/RequestContext";
-import { TimeoutErrorCode } from "../request/TimeoutError";
-import { addDignosticChild } from "../utils/diagnostics";
-import { getCurrentTimestampInMs } from "../utils/time";
-import { DefaultRetryPolicy } from "./defaultRetryPolicy";
-import { EndpointDiscoveryRetryPolicy } from "./endpointDiscoveryRetryPolicy";
-import { ResourceThrottleRetryPolicy } from "./resourceThrottleRetryPolicy";
-import { RetryContext } from "./RetryContext";
-import { RetryPolicy } from "./RetryPolicy";
-import { SessionRetryPolicy } from "./sessionRetryPolicy";
-import { TimeoutFailoverRetryPolicy } from "./timeoutFailoverRetryPolicy";
+import { Constants } from "../common/constants.js";
+import { sleep } from "../common/helper.js";
+import { StatusCodes, SubStatusCodes } from "../common/statusCodes.js";
+import type { DiagnosticNodeInternal } from "../diagnostics/DiagnosticNodeInternal.js";
+import { DiagnosticNodeType } from "../diagnostics/DiagnosticNodeInternal.js";
+import type { Response } from "../request/index.js";
+import type { RequestContext } from "../request/RequestContext.js";
+import { TimeoutErrorCode } from "../request/TimeoutError.js";
+import { addDiagnosticChild } from "../utils/diagnostics.js";
+import { getCurrentTimestampInMs } from "../utils/time.js";
+import { DefaultRetryPolicy } from "./defaultRetryPolicy.js";
+import { EndpointDiscoveryRetryPolicy } from "./endpointDiscoveryRetryPolicy.js";
+import { ResourceThrottleRetryPolicy } from "./resourceThrottleRetryPolicy.js";
+import type { RetryContext } from "./RetryContext.js";
+import type { RetryPolicy } from "./RetryPolicy.js";
+import { SessionRetryPolicy } from "./sessionRetryPolicy.js";
+import { TimeoutFailoverRetryPolicy } from "./timeoutFailoverRetryPolicy.js";
 
 /**
  * @hidden
@@ -53,7 +54,7 @@ export async function execute({
   executeRequest,
 }: ExecuteArgs): Promise<Response<any>> {
   // TODO: any response
-  return addDignosticChild(
+  return addDiagnosticChild(
     async (localDiagnosticNode: DiagnosticNodeInternal) => {
       localDiagnosticNode.addData({ requestAttempNumber: retryContext.retryCount });
       if (!retryPolicies) {
@@ -61,11 +62,10 @@ export async function execute({
           endpointDiscoveryRetryPolicy: new EndpointDiscoveryRetryPolicy(
             requestContext.globalEndpointManager,
             requestContext.operationType,
+            requestContext.globalPartitionEndpointManager,
           ),
           resourceThrottleRetryPolicy: new ResourceThrottleRetryPolicy(
-            requestContext.connectionPolicy.retryOptions.maxRetryAttemptCount,
-            requestContext.connectionPolicy.retryOptions.fixedRetryIntervalInMilliseconds,
-            requestContext.connectionPolicy.retryOptions.maxWaitTimeInSeconds,
+            requestContext.connectionPolicy.retryOptions ?? {},
           ),
           sessionReadRetryPolicy: new SessionRetryPolicy(
             requestContext.globalEndpointManager,
@@ -81,6 +81,8 @@ export async function execute({
             requestContext.resourceType,
             requestContext.operationType,
             requestContext.connectionPolicy.enableEndpointDiscovery,
+            requestContext.connectionPolicy.enablePartitionLevelFailover,
+            requestContext.globalPartitionEndpointManager,
           ),
         };
       }
@@ -105,6 +107,18 @@ export async function execute({
       const startTimeUTCInMs = getCurrentTimestampInMs();
       const correlatedActivityId =
         requestContext.headers[Constants.HttpHeaders.CorrelatedActivityId];
+
+      if (requestContext.globalPartitionEndpointManager) {
+        // Try partition level location override
+        // This is used to override the partition level location for the request
+        // if there has been a partition level failover
+        requestContext =
+          await requestContext.globalPartitionEndpointManager.tryAddPartitionLevelLocationOverride(
+            requestContext,
+            localDiagnosticNode,
+          );
+      }
+
       try {
         const response = await executeRequest(localDiagnosticNode, requestContext);
         response.headers[Constants.ThrottleRetryCount] =
@@ -122,15 +136,15 @@ export async function execute({
         if (correlatedActivityId) {
           headers[Constants.HttpHeaders.CorrelatedActivityId] = correlatedActivityId;
         }
+
         if (
-          err.code === StatusCodes.ENOTFOUND ||
           err.code === "REQUEST_SEND_ERROR" ||
           (err.code === StatusCodes.Forbidden &&
             (err.substatus === SubStatusCodes.DatabaseAccountNotFound ||
               err.substatus === SubStatusCodes.WriteForbidden))
         ) {
           retryPolicy = retryPolicies.endpointDiscoveryRetryPolicy;
-        } else if (err.code === StatusCodes.TooManyRequests) {
+        } else if (err.code === StatusCodes.TooManyRequests && !isBulkRequest(requestContext)) {
           retryPolicy = retryPolicies.resourceThrottleRetryPolicy;
         } else if (
           err.code === StatusCodes.NotFound &&
@@ -147,6 +161,7 @@ export async function execute({
           localDiagnosticNode,
           retryContext,
           requestContext.endpoint,
+          requestContext,
         );
         if (!results) {
           headers[Constants.ThrottleRetryCount] =
@@ -182,5 +197,15 @@ export async function execute({
     },
     diagnosticNode,
     DiagnosticNodeType.HTTP_REQUEST,
+  );
+}
+
+/**
+ * @hidden
+ */
+function isBulkRequest(requestContext: RequestContext): boolean {
+  return (
+    requestContext.operationType === "batch" &&
+    !requestContext.headers[Constants.HttpHeaders.IsBatchAtomic]
   );
 }

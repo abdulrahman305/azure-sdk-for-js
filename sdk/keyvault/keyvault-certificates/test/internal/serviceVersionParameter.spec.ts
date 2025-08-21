@@ -2,15 +2,16 @@
 // Licensed under the MIT License.
 import { CertificateClient } from "../../src/index.js";
 import { LATEST_API_VERSION } from "../../src/certificatesModels.js";
-import {
+import type {
   HttpClient,
-  createHttpHeaders,
   PipelineRequest,
   PipelineResponse,
   SendRequest,
 } from "@azure/core-rest-pipeline";
+import { createHttpHeaders } from "@azure/core-rest-pipeline";
 import { ClientSecretCredential } from "@azure/identity";
-import { describe, it, expect, vi, beforeEach, afterEach, MockInstance } from "vitest";
+import type { MockInstance } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 describe("The Certificates client should set the serviceVersion", () => {
   const keyVaultUrl = `https://keyvaultname.vault.azure.net`;
@@ -40,7 +41,7 @@ describe("The Certificates client should set the serviceVersion", () => {
     vi.restoreAllMocks();
   });
 
-  it("it should default to the latest API version", async function () {
+  it("it should default to the latest API version", async () => {
     const client = new CertificateClient(keyVaultUrl, credential, {
       httpClient: mockHttpClient,
     });
@@ -48,14 +49,14 @@ describe("The Certificates client should set the serviceVersion", () => {
     expect(spy).toHaveBeenCalled();
     const url = spy.mock.lastCall![0].url;
     expect(url).toEqual(
-      `https://keyvaultname.vault.azure.net/certificates/certificateName/?api-version=${LATEST_API_VERSION}`,
+      `https://keyvaultname.vault.azure.net/certificates/certificateName/?api%2Dversion=${LATEST_API_VERSION}`,
     );
   });
 
   // Adding this to the source would change the public API.
   type ApiVersions = "7.0" | "7.1" | "7.2" | "7.3" | "7.4";
 
-  it("it should allow us to specify an API version from a specific set of versions", async function () {
+  it("it should allow us to specify an API version from a specific set of versions", async () => {
     const versions: ApiVersions[] = ["7.0", "7.1", "7.2", "7.3", "7.4"];
     for (const serviceVersion in versions) {
       const client = new CertificateClient(keyVaultUrl, credential, {
@@ -67,7 +68,7 @@ describe("The Certificates client should set the serviceVersion", () => {
       expect(spy).toHaveBeenCalled();
       const url = spy.mock.lastCall![0].url;
       expect(url).toEqual(
-        `https://keyvaultname.vault.azure.net/certificates/certificateName/?api-version=${serviceVersion}`,
+        `https://keyvaultname.vault.azure.net/certificates/certificateName/?api%2Dversion=${serviceVersion}`,
       );
     }
   });

@@ -1,13 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-import { AzureMonitorExporterOptions } from "@azure/monitor-opentelemetry-exporter";
-import { InstrumentationConfig } from "@opentelemetry/instrumentation";
-import { Resource } from "@opentelemetry/resources";
-import { LogRecordProcessor } from "@opentelemetry/sdk-logs";
-import { SpanProcessor } from "@opentelemetry/sdk-trace-base";
+import type { AzureMonitorExporterOptions } from "@azure/monitor-opentelemetry-exporter";
+import type { InstrumentationConfig } from "@opentelemetry/instrumentation";
+import type { Resource } from "@opentelemetry/resources";
+import type { LogRecordProcessor } from "@opentelemetry/sdk-logs";
+import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
 
 /**
  * Azure Monitor OpenTelemetry Options
@@ -19,12 +16,16 @@ export interface AzureMonitorOpenTelemetryOptions {
   resource?: Resource;
   /** The rate of telemetry items tracked that should be transmitted (Default 1.0) */
   samplingRatio?: number;
+  /** The maximum number of traces to sample per second (Default undefined) */
+  tracesPerSecond?: number;
   /** Enable Live Metrics feature (Default false)*/
   enableLiveMetrics?: boolean;
   /** Enable Standard Metrics feature (Default true)*/
   enableStandardMetrics?: boolean;
   /** Enable log sampling based on trace (Default true) */
   enableTraceBasedSamplingForLogs?: boolean;
+  /** Enable Performance Counter feature */
+  enablePerformanceCounters?: boolean;
   /** OpenTelemetry Instrumentations options included as part of Azure Monitor (azureSdk, http, mongoDb, mySql, postgreSql, redis, redis4) */
   instrumentationOptions?: InstrumentationOptions;
   /** Application Insights Web Instrumentation options (enabled, connectionString, src, config)*/
@@ -70,6 +71,9 @@ export interface StatsbeatFeatures {
   distro?: boolean;
   liveMetrics?: boolean;
   shim?: boolean;
+  customerSdkStats?: boolean;
+  multiIkey?: boolean;
+  rateLimitedSampler?: boolean;
 }
 
 /**
@@ -83,6 +87,9 @@ export const StatsbeatFeaturesMap = new Map<string, number>([
   ["distro", 8],
   ["liveMetrics", 16],
   ["shim", 32],
+  ["customerSdkStats", 64],
+  ["multiIkey", 128],
+  ["rateLimitedSampler", 256],
 ]);
 
 /**
@@ -148,10 +155,11 @@ export interface BrowserSdkLoaderOptions {
   connectionString?: string;
 }
 
-export const AZURE_MONITOR_OPENTELEMETRY_VERSION = "1.7.0";
+export const AZURE_MONITOR_OPENTELEMETRY_VERSION = "1.12.0";
 export const AZURE_MONITOR_STATSBEAT_FEATURES = "AZURE_MONITOR_STATSBEAT_FEATURES";
 export const AZURE_MONITOR_PREFIX = "AZURE_MONITOR_PREFIX";
 export const AZURE_MONITOR_AUTO_ATTACH = "AZURE_MONITOR_AUTO_ATTACH";
+export const APPLICATION_INSIGHTS_SHIM_VERSION = "APPLICATION_INSIGHTS_SHIM_VERSION";
 
 export enum AttachTypePrefix {
   INTEGRATED_AUTO = "i",
@@ -181,6 +189,13 @@ export const DEFAULT_LIVEMETRICS_ENDPOINT = "https://global.livediagnostics.moni
  */
 export const AzureMonitorSampleRate = "microsoft.sample_rate";
 
+/**
+ * Enables the preview version of customer-facing SDK Stats.
+ * @internal
+ */
+export const APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW =
+  "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW";
+
 export enum StatsbeatFeature {
   NONE = 0,
   DISK_RETRY = 1,
@@ -189,6 +204,8 @@ export enum StatsbeatFeature {
   DISTRO = 8,
   LIVE_METRICS = 16,
   SHIM = 32,
+  CUSTOMER_SDKSTATS = 64,
+  MULTI_IKEY = 128,
 }
 
 export enum StatsbeatInstrumentation {
@@ -202,7 +219,7 @@ export enum StatsbeatInstrumentation {
   BUNYAN = 32,
   WINSTON = 64,
   /** OpenTelemetry Supported Instrumentations */
-  AMQPLIB = 128,
+  // Console instrumentation is not supported here - occupies 128
   CUCUMBER = 256,
   DATALOADER = 512,
   FS = 1024,
@@ -230,6 +247,7 @@ export enum StatsbeatInstrumentation {
   PINO = 4294967296,
   RESTIFY = 8589934592,
   ROUTER = 17179869184,
+  AMQPLIB = 34359738368,
 }
 
 /**

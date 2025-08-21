@@ -1,20 +1,21 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { DefaultAzureCredential, TokenCredential } from "@azure/identity";
-import { coreLogger } from "./logger";
+import type { TokenCredential } from "@azure/identity";
+import { DefaultAzureCredential } from "@azure/identity";
+import { coreLogger } from "./logger.js";
 import {
   EntraIdAccessTokenConstants,
   InternalEnvironmentVariables,
   ServiceEnvironmentVariable,
-} from "./constants";
-import { AccessTokenClaims } from "./types";
-import { parseJwt } from "../utils/utils";
-import { ServiceErrorMessageConstants } from "./messages";
+} from "./constants.js";
+import type { AccessTokenClaims } from "./types.js";
+import { parseJwt } from "../utils/parseJwt.js";
+import { ServiceErrorMessageConstants } from "./messages.js";
 
-class EntraIdAccessToken {
+export class EntraIdAccessToken {
   public token?: string;
-  private _expiryTimestamp?: number; // in milli seconds
+  private _expiryTimestamp?: number; // in milliseconds
   private _credential?: TokenCredential;
 
   constructor(credential?: TokenCredential) {
@@ -46,7 +47,7 @@ class EntraIdAccessToken {
     } catch (err) {
       coreLogger.error(err);
       process.env[InternalEnvironmentVariables.MPT_SETUP_FATAL_ERROR] = "true";
-      throw new Error(ServiceErrorMessageConstants.NO_AUTH_ERROR);
+      throw new Error(ServiceErrorMessageConstants.NO_AUTH_ERROR.message);
     }
   };
 
@@ -85,4 +86,6 @@ class EntraIdAccessToken {
   };
 }
 
-export { EntraIdAccessToken };
+export function createEntraIdAccessToken(credential?: TokenCredential): EntraIdAccessToken {
+  return new EntraIdAccessToken(credential);
+}

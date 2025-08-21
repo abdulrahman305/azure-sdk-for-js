@@ -1,23 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createComputeManagementClient, {
-  CloudServicesGetInstanceViewParameters,
-} from "@azure-rest/arm-compute";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Gets the status of a cloud service.
  *
  * @summary Gets the status of a cloud service.
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/CloudserviceRP/stable/2022-04-04/examples/CloudService_Get_InstanceViewWithMultiRole.json
  */
-async function getCloudServiceInstanceViewWithMultipleRoles() {
+
+import type { CloudServicesGetInstanceViewParameters } from "@azure-rest/arm-compute";
+import createComputeManagementClient from "@azure-rest/arm-compute";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function getCloudServiceInstanceViewWithMultipleRoles(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";

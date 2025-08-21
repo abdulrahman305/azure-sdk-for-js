@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the Certificates in a given connected environment.
  *
  * @summary Get the Certificates in a given connected environment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironmentsCertificates_ListByConnectedEnvironment.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironmentsCertificates_ListByConnectedEnvironment.json
  */
 async function listCertificatesByConnectedEnvironment() {
   const subscriptionId =
@@ -26,7 +26,7 @@ async function listCertificatesByConnectedEnvironment() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.connectedEnvironmentsCertificates.list(
+  for await (const item of client.connectedEnvironmentsCertificates.list(
     resourceGroupName,
     connectedEnvironmentName,
   )) {
@@ -36,7 +36,7 @@ async function listCertificatesByConnectedEnvironment() {
 }
 
 async function main() {
-  listCertificatesByConnectedEnvironment();
+  await listCertificatesByConnectedEnvironment();
 }
 
 main().catch(console.error);

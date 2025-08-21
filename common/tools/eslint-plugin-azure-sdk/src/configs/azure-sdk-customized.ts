@@ -10,6 +10,7 @@ import tsdoc from "eslint-plugin-tsdoc";
 const tsEslintCustomization: Record<string, SharedConfig.RuleEntry> = {
   "@typescript-eslint/no-invalid-this": "off",
   "@typescript-eslint/no-require-imports": "error",
+  "@typescript-eslint/consistent-type-imports": "warn",
   "@typescript-eslint/no-use-before-define": ["error", { functions: false, classes: false }],
   "@typescript-eslint/explicit-module-boundary-types": ["error"],
   "@typescript-eslint/no-redeclare": ["error", { builtinGlobals: true }],
@@ -42,7 +43,7 @@ const tsEslintCustomization: Record<string, SharedConfig.RuleEntry> = {
   "@typescript-eslint/no-empty-object-type": "off",
   "@typescript-eslint/no-namespace": "error",
   "@typescript-eslint/no-non-null-assertion": "off",
-  "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+  "@typescript-eslint/no-unused-vars": "off", // typescript compiler already checks this
   "@typescript-eslint/no-unused-expressions": "off",
   "@typescript-eslint/no-useless-constructor": "error",
   "@typescript-eslint/no-var-requires": "off",
@@ -71,9 +72,7 @@ const tsEslintCustomization: Record<string, SharedConfig.RuleEntry> = {
 
 const azsdkDefault: Record<string, SharedConfig.RuleEntry> = {
   "@azure/azure-sdk/github-source-headers": "error",
-  "@azure/azure-sdk/ts-apiextractor-json-types": "error",
   "@azure/azure-sdk/ts-apisurface-standardized-verbs": "error",
-  "@azure/azure-sdk/ts-config-include": "error",
   "@azure/azure-sdk/ts-doc-internal-private-member": "warn",
   "@azure/azure-sdk/ts-error-handling": "off",
   "@azure/azure-sdk/ts-modules-only-named": "error",
@@ -81,6 +80,7 @@ const azsdkDefault: Record<string, SharedConfig.RuleEntry> = {
   "@azure/azure-sdk/ts-naming-options": "error",
   "@azure/azure-sdk/ts-naming-subclients": "error",
   "@azure/azure-sdk/ts-no-const-enums": "warn",
+  "@azure/azure-sdk/ts-no-invalid-test-imports": "off",
   "@azure/azure-sdk/ts-no-window": "error",
   "@azure/azure-sdk/ts-package-json-author": "error",
   "@azure/azure-sdk/ts-package-json-bugs": "error",
@@ -89,7 +89,6 @@ const azsdkDefault: Record<string, SharedConfig.RuleEntry> = {
   "@azure/azure-sdk/ts-package-json-keywords": "error",
   "@azure/azure-sdk/ts-package-json-license": "error",
   "@azure/azure-sdk/ts-package-json-main-is-cjs": "error",
-  "@azure/azure-sdk/ts-package-json-module": "error",
   "@azure/azure-sdk/ts-package-json-name": "error",
   "@azure/azure-sdk/ts-package-json-repo": "error",
   "@azure/azure-sdk/ts-package-json-required-scripts": "error",
@@ -169,7 +168,7 @@ export default (parser: FlatConfig.Parser): FlatConfig.ConfigArray => [
     languageOptions: {
       parser,
       parserOptions: {
-        project: ["./tsconfig.json"],
+        projectService: true,
       },
     },
     rules,
@@ -205,6 +204,20 @@ export default (parser: FlatConfig.Parser): FlatConfig.ConfigArray => [
     files: ["samples-dev/**/*.ts", "*/*/samples-dev/**/*.ts"],
     rules: {
       "tsdoc/syntax": "off",
+      "n/no-process-exit": "off",
+    },
+  },
+  {
+    files: ["test/snippets.spec.ts", "**/*/test/snippets.spec.ts"],
+    rules: {
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
+  {
+    files: ["**/src/**/*.ts"],
+    rules: {
+      "@azure/azure-sdk/ts-use-cjs-polyfill": "error",
     },
   },
 ];

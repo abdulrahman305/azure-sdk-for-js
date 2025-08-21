@@ -6,19 +6,20 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import { DataMigrationManagementClient } from "@azure/arm-datamigration";
 import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to This method deletes a file.
  *
  * @summary This method deletes a file.
- * x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/preview/2021-10-30-preview/examples/Files_Delete.json
+ * x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/preview/2025-03-15-preview/examples/Files_Delete.json
  */
-async function filesDelete() {
-  const subscriptionId = "fc04246f-04c5-437e-ac5e-206a19e7193f";
+async function filesDelete(): Promise<void> {
+  const subscriptionId =
+    process.env["DATAMIGRATION_SUBSCRIPTION_ID"] ||
+    "fc04246f-04c5-437e-ac5e-206a19e7193f";
   const groupName = "DmsSdkRg";
   const serviceName = "DmsSdkService";
   const projectName = "DmsSdkProject";
@@ -29,9 +30,13 @@ async function filesDelete() {
     groupName,
     serviceName,
     projectName,
-    fileName
+    fileName,
   );
   console.log(result);
 }
 
-filesDelete().catch(console.error);
+async function main(): Promise<void> {
+  await filesDelete();
+}
+
+main().catch(console.error);

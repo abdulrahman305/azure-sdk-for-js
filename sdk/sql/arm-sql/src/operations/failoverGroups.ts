@@ -7,18 +7,18 @@
  */
 
 import { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
-import { setContinuationToken } from "../pagingHelper";
-import { FailoverGroups } from "../operationsInterfaces";
+import { setContinuationToken } from "../pagingHelper.js";
+import { FailoverGroups } from "../operationsInterfaces/index.js";
 import * as coreClient from "@azure/core-client";
-import * as Mappers from "../models/mappers";
-import * as Parameters from "../models/parameters";
-import { SqlManagementClient } from "../sqlManagementClient";
+import * as Mappers from "../models/mappers.js";
+import * as Parameters from "../models/parameters.js";
+import { SqlManagementClient } from "../sqlManagementClient.js";
 import {
   SimplePollerLike,
   OperationState,
   createHttpPoller,
 } from "@azure/core-lro";
-import { createLroSpec } from "../lroImpl";
+import { createLroSpec } from "../lroImpl.js";
 import {
   FailoverGroup,
   FailoverGroupsListByServerNextOptionalParams,
@@ -39,7 +39,7 @@ import {
   FailoverGroupsTryPlannedBeforeForcedFailoverOptionalParams,
   FailoverGroupsTryPlannedBeforeForcedFailoverResponse,
   FailoverGroupsListByServerNextResponse,
-} from "../models";
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Class containing FailoverGroups operations. */
@@ -798,7 +798,7 @@ const listByServerOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion1],
+  queryParameters: [Parameters.apiVersion4],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -817,7 +817,7 @@ const getOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion1],
+  queryParameters: [Parameters.apiVersion4],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -846,8 +846,8 @@ const createOrUpdateOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  requestBody: Parameters.parameters96,
-  queryParameters: [Parameters.apiVersion1],
+  requestBody: Parameters.parameters94,
+  queryParameters: [Parameters.apiVersion4],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -863,7 +863,7 @@ const deleteOperationSpec: coreClient.OperationSpec = {
   path: "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/failoverGroups/{failoverGroupName}",
   httpMethod: "DELETE",
   responses: { 200: {}, 201: {}, 202: {}, 204: {}, default: {} },
-  queryParameters: [Parameters.apiVersion1],
+  queryParameters: [Parameters.apiVersion4],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -891,8 +891,8 @@ const updateOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  requestBody: Parameters.parameters97,
-  queryParameters: [Parameters.apiVersion1],
+  requestBody: Parameters.parameters95,
+  queryParameters: [Parameters.apiVersion4],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -922,7 +922,7 @@ const failoverOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion1],
+  queryParameters: [Parameters.apiVersion4],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -951,7 +951,7 @@ const forceFailoverAllowDataLossOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion1],
+  queryParameters: [Parameters.apiVersion4],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -980,7 +980,7 @@ const tryPlannedBeforeForcedFailoverOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion1],
+  queryParameters: [Parameters.apiVersion4],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,

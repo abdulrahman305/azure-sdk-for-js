@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Delete the provided layer 3 (L3) network.
  *
  * @summary Delete the provided layer 3 (L3) network.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/L3Networks_Delete.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/L3Networks_Delete.json
  */
 async function deleteL3Network() {
   const subscriptionId =
@@ -30,7 +28,7 @@ async function deleteL3Network() {
 }
 
 async function main() {
-  deleteL3Network();
+  await deleteL3Network();
 }
 
 main().catch(console.error);

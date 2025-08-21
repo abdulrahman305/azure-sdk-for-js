@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createNetworkManagementClient, {
-  HubRouteTablesDeleteParameters,
-  getLongRunningPoller,
-} from "@azure-rest/arm-network";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Deletes a RouteTable.
  *
  * @summary Deletes a RouteTable.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/HubRouteTableDelete.json
  */
-async function routeTableDelete() {
+
+import type { HubRouteTablesDeleteParameters } from "@azure-rest/arm-network";
+import createNetworkManagementClient, { getLongRunningPoller } from "@azure-rest/arm-network";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function routeTableDelete(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";

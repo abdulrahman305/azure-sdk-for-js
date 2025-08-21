@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Azure SDK Core client library samples for TypeScript",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "build": "tsc",
@@ -26,12 +26,11 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/core/core-rest-pipeline",
   "dependencies": {
-    "@azure-samples/core-rest-pipeline-ts": "file:",
     "@azure/core-rest-pipeline": "latest",
     "dotenv": "latest"
   },
   "devDependencies": {
-    "rimraf": "latest",
-    "typescript": "~5.5.3"
+    "typescript": "~5.8.2",
+    "rimraf": "latest"
   }
 }

@@ -1,23 +1,23 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-import { isNode } from "@azure/core-util";
-import { BlobImmutabilityPolicyMode } from "./generatedModels";
+import { isNodeLike } from "@azure/core-util";
+import type { BlobImmutabilityPolicyMode } from "./generatedModels.js";
 
-import {
+import type {
   BlobDownloadHeaders,
   BlobType,
   CopyStatusType,
   LeaseDurationType,
   LeaseStateType,
   LeaseStatusType,
-} from "./generatedModels";
-import { BlobDownloadResponseParsed, Metadata, ObjectReplicationPolicy } from "./models";
-import {
+} from "./generatedModels.js";
+import type { BlobDownloadResponseParsed, Metadata, ObjectReplicationPolicy } from "./models.js";
+import type {
   ReadableStreamGetter,
-  RetriableReadableStream,
   RetriableReadableStreamOptions,
-} from "./utils/RetriableReadableStream";
-import { ResponseWithHeaders } from "./utils/utils.common";
+} from "./utils/RetriableReadableStream.js";
+import { RetriableReadableStream } from "./utils/RetriableReadableStream.js";
+import type { ResponseWithHeaders } from "./utils/utils.common.js";
 
 /**
  * ONLY AVAILABLE IN NODE.JS RUNTIME.
@@ -500,7 +500,7 @@ export class BlobDownloadResponse implements BlobDownloadResponseParsed {
    * @readonly
    */
   public get readableStreamBody(): NodeJS.ReadableStream | undefined {
-    return isNode ? this.blobDownloadStream : undefined;
+    return isNodeLike ? this.blobDownloadStream : undefined;
   }
 
   /**

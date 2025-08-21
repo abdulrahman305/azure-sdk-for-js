@@ -1,8 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { CommunicationIdentifier, CommunicationIdentifierKind } from "@azure/communication-common";
-import { ChatError, ChatMessageType } from "../generated/src";
+import type {
+  CommunicationIdentifier,
+  CommunicationIdentifierKind,
+} from "@azure/communication-common";
+import type { ChatError, ChatMessageType } from "../generated/src/index.js";
 
 export {
   AddChatParticipantsResult,
@@ -10,7 +13,7 @@ export {
   ChatThreadItem,
   ChatError,
   SendChatMessageResult,
-} from "../generated/src/models";
+} from "../generated/src/models/index.js";
 
 /** Chat thread. */
 export interface ChatThreadProperties {
@@ -24,7 +27,28 @@ export interface ChatThreadProperties {
   readonly createdBy?: CommunicationIdentifierKind;
   /** The timestamp when the chat thread was deleted. The timestamp is in RFC3339 format: `yyyy-MM-ddTHH:mm:ssZ`. */
   deletedOn?: Date;
+  /** metadata */
+  metadata?: Record<string, string>;
+  /** Data retention policy for auto deletion. */
+  retentionPolicy?: ChatRetentionPolicy;
 }
+
+/** Thread retention policy based on thread creation date. */
+export interface ThreadCreationDateRetentionPolicy {
+  /** Polymorphic discriminator, which specifies the different types this object can be */
+  kind: "threadCreationDate";
+  /** Indicates how many days after the thread creation the thread will be deleted. */
+  deleteThreadAfterDays: number;
+}
+
+/** No thread retention policy. */
+export interface NoneRetentionPolicy {
+  /** Polymorphic discriminator, which specifies the different types this object can be */
+  kind: "none";
+}
+
+/** Data retention policy for auto deletion. */
+export declare type ChatRetentionPolicy = ThreadCreationDateRetentionPolicy | NoneRetentionPolicy;
 
 /** Chat message. */
 export interface ChatMessage {
@@ -84,6 +108,8 @@ export interface ChatParticipant {
   displayName?: string;
   /** Time from which the chat history is shared with the participant. The timestamp is in RFC3339 format: `yyyy-MM-ddTHH:mm:ssZ`. */
   shareHistoryTime?: Date;
+  /** metadata */
+  metadata?: Record<string, string>;
 }
 
 /** Result of the create chat thread operation. */

@@ -3,27 +3,38 @@
 
 import { describe, it, assert, vi, beforeEach, afterEach } from "vitest";
 import { PassThrough, Writable } from "node:stream";
-import { ClientRequest, IncomingHttpHeaders, IncomingMessage } from "http";
-import { createDefaultHttpClient, createPipelineRequest } from "../../src/index.js";
+import type { ClientRequest, IncomingHttpHeaders, IncomingMessage } from "http";
+import { createPipelineRequest } from "../../src/index.js";
 
-vi.mock("https", async () => {
-  const actual = await vi.importActual("https");
+vi.mock("node:https", async () => {
+  const actual = await vi.importActual("node:https");
   return {
-    ...actual,
-    request: vi.fn(),
+    default: {
+      ...(actual as any).default,
+      request: vi.fn(),
+    },
   };
 });
 
-vi.mock("http", async () => {
-  const actual = await vi.importActual("http");
+vi.mock("node:http", async () => {
+  const actual = await vi.importActual("node:http");
   return {
-    ...actual,
-    request: vi.fn(),
+    default: {
+      ...(actual as any).default,
+      request: vi.fn(),
+    },
   };
 });
 
-import * as https from "https";
-import * as http from "http";
+import https from "node:https";
+import http from "node:http";
+import { createDefaultHttpClient } from "../../src/defaultHttpClient.js";
+
+function delay(timeInMs: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, timeInMs);
+  });
+}
 
 class FakeResponse extends PassThrough {
   public statusCode?: number;
@@ -452,5 +463,39 @@ describe("NodeHttpClient", function () {
     } catch (e: any) {
       assert.strictEqual(e.name, "AbortError");
     }
+  });
+
+  it("should release abort listener when stream body ends already", async function () {
+    vi.useRealTimers();
+    const client = createDefaultHttpClient();
+    const writable = new Writable({
+      write: (_chunk, _, next) => {
+        next();
+      },
+    }) as unknown as ClientRequest;
+    vi.mocked(https.request).mockReturnValueOnce(writable);
+
+    const controller = new AbortController();
+    const removeEventListenerSpy = vi.spyOn(controller.signal, "removeEventListener");
+
+    const stream = new PassThrough();
+    stream.end();
+    const request = createPipelineRequest({
+      url: "https://example.com",
+      body: stream,
+      abortSignal: controller.signal,
+    });
+
+    const promise = client.sendRequest(request);
+    yieldHttpsResponse(createResponse(200));
+    await Promise.all([promise, delay(10)]);
+    assert.strictEqual(
+      removeEventListenerSpy.mock.calls.length,
+      1,
+      "removeEventListener should be called once",
+    );
+    const [eventName] = removeEventListenerSpy.mock.calls[0];
+    assert.strictEqual(eventName, "abort", "should remove abort listener");
+    removeEventListenerSpy.mockRestore();
   });
 });

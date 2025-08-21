@@ -6,24 +6,20 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import {
   VirtualNetworkLinkPatch,
-  DnsResolverManagementClient
+  DnsResolverManagementClient,
 } from "@azure/arm-dnsresolver";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Updates a virtual network link to a DNS forwarding ruleset.
  *
  * @summary Updates a virtual network link to a DNS forwarding ruleset.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/VirtualNetworkLink_Patch.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/VirtualNetworkLink_Patch.json
  */
-async function updateVirtualNetworkLinkToADnsForwardingRuleset() {
+async function updateVirtualNetworkLinkToADnsForwardingRuleset(): Promise<void> {
   const subscriptionId =
     process.env["DNSRESOLVER_SUBSCRIPTION_ID"] ||
     "abdd4249-9f34-4cc6-8e42-c2e32110603e";
@@ -32,7 +28,7 @@ async function updateVirtualNetworkLinkToADnsForwardingRuleset() {
   const dnsForwardingRulesetName = "sampleDnsForwardingRuleset";
   const virtualNetworkLinkName = "sampleVirtualNetworkLink";
   const parameters: VirtualNetworkLinkPatch = {
-    metadata: { additionalProp1: "value1" }
+    metadata: { additionalProp1: "value1" },
   };
   const credential = new DefaultAzureCredential();
   const client = new DnsResolverManagementClient(credential, subscriptionId);
@@ -40,13 +36,13 @@ async function updateVirtualNetworkLinkToADnsForwardingRuleset() {
     resourceGroupName,
     dnsForwardingRulesetName,
     virtualNetworkLinkName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
-async function main() {
-  updateVirtualNetworkLinkToADnsForwardingRuleset();
+async function main(): Promise<void> {
+  await updateVirtualNetworkLinkToADnsForwardingRuleset();
 }
 
 main().catch(console.error);

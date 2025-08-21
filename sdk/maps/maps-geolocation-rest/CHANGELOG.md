@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.4 (Unreleased)
+## 1.0.0-beta.6 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,23 @@
 
 ### Bugs Fixed
 
-- Fix the Microsoft Entra ID authentication when providing `baseUrl`.
-
 ### Other Changes
+
+## 1.0.0-beta.5 (2025-03-14)
+
+### Bugs Fixed
+
+- Fix ESM module file not found.
+
+## 1.0.0-beta.4 (2024-12-10)
+
+### Breaking Changes
+
+- Marked fields in various interfaces as readonly, which may impact code that previously modified these properties.
+
+### Bugs Fixed
+
+- Fix the Microsoft Entra ID authentication when providing `baseUrl`.
 
 ## 1.0.0-beta.3 (2024-01-09)
 

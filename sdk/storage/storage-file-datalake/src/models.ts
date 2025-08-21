@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-import { AbortSignalLike } from "@azure/abort-controller";
-import { TransferProgressEvent } from "@azure/core-rest-pipeline";
 
-import {
+import type { AbortSignalLike } from "@azure/abort-controller";
+import type { TransferProgressEvent } from "@azure/core-rest-pipeline";
+import type {
   LeaseAccessConditions,
   ModifiedAccessConditions as ModifiedAccessConditionsModel,
   UserDelegationKeyModel,
@@ -13,7 +13,7 @@ import {
   ContainerUndeleteResponse,
   WithResponse,
 } from "@azure/storage-blob";
-import { DataLakePathClient } from "./clients";
+import type { DataLakePathClient } from "./clients.js";
 export type ModifiedAccessConditions = Omit<ModifiedAccessConditionsModel, "ifTags">;
 
 /**
@@ -36,7 +36,7 @@ export type FileSystemRenameResponse = ContainerRenameResponse;
  */
 export type FileSystemUndeleteResponse = ContainerUndeleteResponse;
 
-import {
+import type {
   CpkInfo,
   FileSystemListBlobHierarchySegmentHeaders,
   FileSystemListPathsHeaders,
@@ -51,13 +51,13 @@ import {
   PathSetAccessControlHeaders,
   PathSetExpiryHeaders,
   PathUndeleteHeaders,
-} from "./generated/src/models";
-import { DataLakeSASPermissions } from "./sas/DataLakeSASPermissions";
-import { DirectorySASPermissions } from "./sas/DirectorySASPermissions";
-import { FileSystemSASPermissions } from "./sas/FileSystemSASPermissions";
-import { SasIPRange } from "./sas/SasIPRange";
-import { SASProtocol } from "./sas/SASQueryParameters";
-import { CommonOptions } from "./StorageClient";
+} from "./generated/src/models/index.js";
+import type { DataLakeSASPermissions } from "./sas/DataLakeSASPermissions.js";
+import type { DirectorySASPermissions } from "./sas/DirectorySASPermissions.js";
+import type { FileSystemSASPermissions } from "./sas/FileSystemSASPermissions.js";
+import type { SasIPRange } from "./sas/SasIPRange.js";
+import type { SASProtocol } from "./sas/SASQueryParameters.js";
+import type { CommonOptions } from "./StorageClient.js";
 
 export {
   LeaseAccessConditions,
@@ -93,7 +93,7 @@ export {
   PathRenameMode as PathRenameModeModel,
   PathExpiryOptions as FileExpiryMode,
   PathSetExpiryHeaders as FileSetExpiryHeaders,
-} from "./generated/src/models";
+} from "./generated/src/models/index.js";
 
 export type PathCreateResponse = WithResponse<PathCreateHeaders, PathCreateHeaders>;
 export type PathDeleteResponse = WithResponse<PathDeleteHeaders, PathDeleteHeaders>;
@@ -144,7 +144,7 @@ export interface CommonGenerateSasUrlOptions {
   /**
    * Optional. The name of the access policy on the container this SAS references if any.
    *
-   * @see https://docs.microsoft.com/en-us/rest/api/storageservices/establishing-a-stored-access-policy
+   * @see https://learn.microsoft.com/rest/api/storageservices/establishing-a-stored-access-policy
    */
   identifier?: string;
 

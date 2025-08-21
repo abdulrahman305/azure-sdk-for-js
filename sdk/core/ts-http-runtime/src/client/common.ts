@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
+import type {
   HttpClient,
   PipelineRequest,
   PipelineResponse,
@@ -10,14 +10,14 @@ import {
   TransferProgressEvent,
   RawHttpHeadersInput,
 } from "../interfaces.js";
-import { Pipeline, PipelinePolicy } from "../pipeline.js";
-import { AbortSignalLike } from "../abort-controller/AbortSignalLike.js";
-import { OperationTracingOptions } from "../tracing/interfaces.js";
-import { PipelineOptions } from "../createPipelineFromOptions.js";
-import { LogPolicyOptions } from "../policies/logPolicy.js";
+import type { Pipeline, PipelinePolicy } from "../pipeline.js";
+import type { PipelineOptions } from "../createPipelineFromOptions.js";
+import type { LogPolicyOptions } from "../policies/logPolicy.js";
+import type { AuthScheme } from "../auth/schemes.js";
+import type { ClientCredential } from "../auth/credentials.js";
 
 /**
- * Shape of the default request parameters, this may be overriden by the specific
+ * Shape of the default request parameters, this may be overridden by the specific
  * request types to provide strong types
  */
 export type RequestParameters = {
@@ -71,12 +71,7 @@ export type RequestParameters = {
   /**
    * The signal which can be used to abort requests.
    */
-  abortSignal?: AbortSignalLike;
-
-  /**
-   * Options used when tracing is enabled.
-   */
-  tracingOptions?: OperationTracingOptions;
+  abortSignal?: AbortSignal;
 
   /**
    * A function to be called each time a response is received from the server
@@ -91,6 +86,7 @@ export type RequestParameters = {
  * while performing the requested operation.
  * May be called multiple times.
  */
+// UNBRANDED DIFFERENCE: onResponse callback does not have a second __legacyError parameter which was provided for backwards compatibility
 export type RawResponseCallback = (rawResponse: FullOperationResponse, error?: unknown) => void;
 
 /**
@@ -121,16 +117,11 @@ export interface OperationOptions {
   /**
    * The signal which can be used to abort requests.
    */
-  abortSignal?: AbortSignalLike;
+  abortSignal?: AbortSignal;
   /**
    * Options used when creating and sending HTTP requests for this operation.
    */
   requestOptions?: OperationRequestOptions;
-  /**
-   * Options used when tracing is enabled.
-   */
-  tracingOptions?: OperationTracingOptions;
-
   /**
    * A function to be called each time a response is received from the server
    * while performing the requested operation.
@@ -190,12 +181,14 @@ export interface Client {
   pipeline: Pipeline;
   /**
    * This method will be used to send request that would check the path to provide
-   * strong types. When used by the codegen this type gets overriden wit the generated
+   * strong types. When used by the codegen this type gets overridden with the generated
    * types. For example:
-   * ```typescript
-   * export type MyClient = Client & {
-   *    path: Routes;
-   * }
+   * ```typescript snippet:ReadmeSamplePathExample
+   * import { Client } from "@typespec/ts-http-runtime";
+   *
+   * type MyClient = Client & {
+   *   path: Routes;
+   * };
    * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -231,7 +224,14 @@ export type HttpBrowserStreamResponse = HttpResponse & {
  * a raw stream
  */
 export type StreamableMethod<TResponse = PathUncheckedResponse> = PromiseLike<TResponse> & {
+  /**
+   * Returns the response body as a NodeJS stream. Only available in Node-like environments.
+   */
   asNodeStream: () => Promise<HttpNodeStreamResponse>;
+  /**
+   * Returns the response body as a browser (Web) stream. Only available in the browser. If you require a Web Stream of the response in Node, consider using the
+   * `Readable.toWeb` Node API on the result of `asNodeStream`.
+   */
   asBrowserStream: () => Promise<HttpBrowserStreamResponse>;
 };
 
@@ -303,23 +303,19 @@ export interface AdditionalPolicyConfig {
  */
 export type ClientOptions = PipelineOptions & {
   /**
-   * Credentials information
+   * List of authentication schemes supported by the client.
+   * These schemes define how the client can authenticate requests.
    */
-  credentials?: {
-    /**
-     * Authentication scopes for AAD
-     */
-    scopes?: string[];
-    /**
-     * Heder name for Client Secret authentication
-     */
-    apiKeyHeaderName?: string;
-  };
+  authSchemes?: AuthScheme[];
+
   /**
-   * Base url for the client
-   * @deprecated This property is deprecated and will be removed soon, please use endpoint instead
+   * The credential used to authenticate requests.
+   * Must be compatible with one of the specified authentication schemes.
    */
-  baseUrl?: string;
+  credential?: ClientCredential;
+
+  // UNBRANDED DIFFERENCE: The deprecated baseUrl property is removed in favor of the endpoint property in the unbranded Core package
+
   /**
    * Endpoint for the client
    */
@@ -344,6 +340,12 @@ export type ClientOptions = PipelineOptions & {
    * Options to configure request/response logging.
    */
   loggingOptions?: LogPolicyOptions;
+  /**
+   * Pipeline to use for the client. If not provided, a default pipeline will be created using the options provided.
+   * Use with caution -- when setting this option, all client options that are used in the creation of the default pipeline
+   * will be ignored.
+   */
+  pipeline?: Pipeline;
 };
 
 /**
@@ -387,7 +389,10 @@ export type PathParameters<
     // additional parameters we can call RouteParameters recursively on the Tail to match the remaining parts,
     // in case the Tail has more parameters, it will return a tuple with the parameters found in tail.
     // We spread the second path params to end up with a single dimension tuple at the end.
-    [pathParameter: string, ...pathParameters: PathParameters<Tail>]
+    [
+      pathParameter: string | number | PathParameterWithOptions,
+      ...pathParameters: PathParameters<Tail>,
+    ]
   : // When the path doesn't match the template, it means that we have no path parameters so we return
     // an empty tuple.
     [];
@@ -418,4 +423,20 @@ export interface InnerError {
   code: string;
   /** Inner error. */
   innererror?: InnerError;
+}
+
+/**
+ * An object that can be passed as a path parameter, allowing for additional options to be set relating to how the parameter is encoded.
+ */
+export interface PathParameterWithOptions {
+  /**
+   * The value of the parameter.
+   */
+  value: string | number;
+
+  /**
+   * Whether to allow for reserved characters in the value. If set to true, special characters such as '/' in the parameter's value will not be URL encoded.
+   * Defaults to false.
+   */
+  allowReserved?: boolean;
 }

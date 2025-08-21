@@ -1,15 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { CosmosDiagnostics, MetadataLookUpType } from "../CosmosDiagnostics";
+import type { MetadataLookUpType } from "../CosmosDiagnostics.js";
+import { CosmosDiagnostics } from "../CosmosDiagnostics.js";
+import type { DiagnosticDataValue } from "../diagnostics/DiagnosticNodeInternal.js";
 import {
-  DiagnosticDataValue,
   DiagnosticNodeInternal,
   DiagnosticNodeType,
-} from "../diagnostics/DiagnosticNodeInternal";
-import { ClientContext } from "../ClientContext";
-import { getCurrentTimestampInMs } from "./time";
-import { CosmosDbDiagnosticLevel } from "../diagnostics/CosmosDbDiagnosticLevel";
+} from "../diagnostics/DiagnosticNodeInternal.js";
+import type { ClientContext } from "../ClientContext.js";
+import { getCurrentTimestampInMs } from "./time.js";
+import { CosmosDbDiagnosticLevel } from "../diagnostics/CosmosDbDiagnosticLevel.js";
 import { randomUUID } from "@azure/core-util";
 
 /**
@@ -54,7 +55,7 @@ export type ExtractPromise<T> = T extends Promise<infer U> ? U : never;
  * Created a Diagnostic node and add it as a child to existing diagnostic session.
  * @hidden
  */
-export async function addDignosticChild<
+export async function addDiagnosticChild<
   Callback extends (node: DiagnosticNodeInternal) => Promise<any>,
 >(
   callback: Callback,

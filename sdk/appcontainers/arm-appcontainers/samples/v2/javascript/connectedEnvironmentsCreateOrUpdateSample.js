@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Creates or updates an connectedEnvironment.
  *
  * @summary Creates or updates an connectedEnvironment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironments_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironments_CreateOrUpdate.json
  */
 async function createKubeEnvironments() {
   const subscriptionId =
@@ -45,7 +45,7 @@ async function createKubeEnvironments() {
 }
 
 async function main() {
-  createKubeEnvironments();
+  await createKubeEnvironments();
 }
 
 main().catch(console.error);

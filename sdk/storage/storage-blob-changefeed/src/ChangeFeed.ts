@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { ContainerClient, CommonOptions } from "@azure/storage-blob";
-import { Segment } from "./Segment";
-import { SegmentFactory } from "./SegmentFactory";
-import { BlobChangeFeedEvent } from "./models/BlobChangeFeedEvent";
-import { ChangeFeedCursor } from "./models/ChangeFeedCursor";
-import { getSegmentsInYear, minDate, getHost } from "./utils/utils.common";
-import { AbortSignalLike } from "@azure/abort-controller";
-import { tracingClient } from "./utils/tracing";
+import type { ContainerClient, CommonOptions } from "@azure/storage-blob";
+import type { Segment } from "./Segment.js";
+import type { SegmentFactory } from "./SegmentFactory.js";
+import type { BlobChangeFeedEvent } from "./models/BlobChangeFeedEvent.js";
+import type { ChangeFeedCursor } from "./models/ChangeFeedCursor.js";
+import { getSegmentsInYear, minDate, getHost } from "./utils/utils.common.js";
+import type { AbortSignalLike } from "@azure/abort-controller";
+import { tracingClient } from "./utils/tracing.js";
 
 /**
  * Options to configure {@link ChangeFeed.getChange} operation.

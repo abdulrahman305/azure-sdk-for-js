@@ -4,13 +4,13 @@ This package provides a plugin to the Azure Identity library for JavaScript ([`@
 
 An authentication broker is an application that runs on a user’s machine that manages the authentication handshakes and token maintenance for connected accounts. Currently, only the Windows authentication broker, Web Account Manager (WAM), is supported.
 
-[Source code](https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/identity/identity-broker) | [Samples](https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/identity/identity-broker/samples) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/javascript/azure-identity-broker/1.0.0-beta.1/index.html) | [Microsoft Entra ID documentation] (https://learn.microsoft.com/entra/identity/)
+[Source code](https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/identity/identity-broker) | [Samples](https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/identity/identity-broker/samples) | [API reference documentation](https://learn.microsoft.com/javascript/api/overview/azure/identity-broker-readme?view=azure-node-latest) | [Microsoft Entra ID documentation] (https://learn.microsoft.com/entra/identity/)
 
 ## Getting started
 
-```typescript
-import { nativeBrokerPlugin } from "@azure/identity-broker";
+```ts snippet:getting_started
 import { useIdentityPlugin } from "@azure/identity";
+import { nativeBrokerPlugin } from "@azure/identity-broker";
 
 useIdentityPlugin(nativeBrokerPlugin);
 ```
@@ -18,6 +18,14 @@ useIdentityPlugin(nativeBrokerPlugin);
 ### Prerequisites
 
 - An [Azure subscription](https://azure.microsoft.com/free/nodejs/).
+
+> Note: For local development with `@azure/identity-broker`, you may need to install additional tools. [node-gyp](https://github.com/nodejs/node-gyp) is used to compile [addons](https://nodejs.org/api/addons.html) for accessing system APIs. Installation requirements are listed in the [node-gyp README](https://github.com/nodejs/node-gyp#installation).
+
+On Linux, the library uses `libsecret` so you may need to install it. Depending on your distribution, you will need to run the following command:
+
+- Debian/Ubuntu: `sudo apt-get install libsecret-1-dev`
+- Red Hat-based: `sudo yum install libsecret-devel`
+- Arch Linux: `sudo pacman -S libsecret`
 
 ### Install the package
 
@@ -56,51 +64,55 @@ ms-appx-web://Microsoft.AAD.BrokerPlugin/{client_id}
 
 As of `@azure/identity` version 2.0.0, the Identity client library for JavaScript includes a plugin API. This package (`@azure/identity-broker`) exports a plugin object that you must pass as an argument to the top-level `useIdentityPlugin` function from the `@azure/identity` package. Enable native broker in your program as follows:
 
-```typescript
-import { nativeBrokerPlugin } from "@azure/identity-broker";
+```ts snippet:using_plugins
 import { useIdentityPlugin, InteractiveBrowserCredential } from "@azure/identity";
+import { nativeBrokerPlugin } from "@azure/identity-broker";
 
 useIdentityPlugin(nativeBrokerPlugin);
 
 const credential = new InteractiveBrowserCredential({
   brokerOptions: {
     enabled: true,
+    parentWindowHandle: new Uint8Array(0), // This should be a handle to the parent window
   },
 });
 ```
 
 After calling `useIdentityPlugin`, the native broker plugin is registered to the `@azure/identity` package and will be available on the `InteractiveBrowserCredential` that supports WAM broker authentication. This credential has `brokerOptions` in the constructor options.
 
+**Notes**: As of `@azure/identity` version 4.11.0-beta.1, `DefaultAzureCredential` provides support to sign-in via the Windows Web Account Manager. Enable native broker in your program as follows:
+
+```ts snippet:using_plugins_dac
+import { useIdentityPlugin, DefaultAzureCredential } from "@azure/identity";
+import { nativeBrokerPlugin } from "@azure/identity-broker";
+
+useIdentityPlugin(nativeBrokerPlugin);
+
+const credential = new DefaultAzureCredential();
+```
+
 ## Examples
 
 Once the plugin is registered, you can enable WAM broker authentication by passing `brokerOptions` with an `enabled` property set to `true` to a credential constructor. In the following example, we use the `InteractiveBrowserCredential`.
 
-<!-- eslint-skip -->
-```typescript
-import { nativeBrokerPlugin } from "@azure/identity-broker";
+```ts snippet:usage_example
 import { useIdentityPlugin, InteractiveBrowserCredential } from "@azure/identity";
+import { nativeBrokerPlugin } from "@azure/identity-broker";
 
 useIdentityPlugin(nativeBrokerPlugin);
 
-async function main() {
-  const credential = new InteractiveBrowserCredential({
-    brokerOptions: {
-      enabled: true,
-      parentWindowHandle: <insert_current_window_handle>
-    },
-  });
-
-  // We'll use the Microsoft Graph scope as an example
-  const scope = "https://graph.microsoft.com/.default";
-
-  // Print out part of the access token
-  console.log((await credential.getToken(scope)).token.substr(0, 10), "...");
-}
-
-main().catch((error) => {
-  console.error("An error occurred:", error);
-  process.exit(1);
+const credential = new InteractiveBrowserCredential({
+  brokerOptions: {
+    enabled: true,
+    parentWindowHandle: new Uint8Array(0), // This should be a handle to the parent window
+  },
 });
+
+// We'll use the Microsoft Graph scope as an example
+const scope = "https://graph.microsoft.com/.default";
+
+// Print out part of the access token
+console.log((await credential.getToken(scope)).token.substring(0, 10), "...");
 ```
 
 For a complete example of using an Electron app for retrieving a window handle, see [this sample](https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/identity/identity-broker/samples/v1/typescript/src/index.ts).
@@ -109,33 +121,25 @@ For a complete example of using an Electron app for retrieving a window handle, 
 
 When the `useDefaultBrokerAccount` option is set to `true`, the credential will attempt to silently use the default broker account. If using the default account fails, the credential will fall back to interactive authentication.
 
-<!-- eslint-skip -->
-```typescript
-import { nativeBrokerPlugin } from "@azure/identity-broker";
+```ts snippet:use_default_account
 import { useIdentityPlugin, InteractiveBrowserCredential } from "@azure/identity";
+import { nativeBrokerPlugin } from "@azure/identity-broker";
 
 useIdentityPlugin(nativeBrokerPlugin);
 
-async function main() {
-  const credential = new InteractiveBrowserCredential({
-    brokerOptions: {
-      enabled: true,
-      useDefaultBrokerAccount: true,
-      parentWindowHandle: <insert_current_window_handle>
-    },
-  });
-
-  // We'll use the Microsoft Graph scope as an example
-  const scope = "https://graph.microsoft.com/.default";
-
-  // Print out part of the access token
-  console.log((await credential.getToken(scope)).token.substr(0, 10), "...");
-}
-
-main().catch((error) => {
-  console.error("An error occurred:", error);
-  process.exit(1);
+const credential = new InteractiveBrowserCredential({
+  brokerOptions: {
+    enabled: true,
+    useDefaultBrokerAccount: true,
+    parentWindowHandle: new Uint8Array(0), // This should be a handle to the parent window
+  },
 });
+
+// We'll use the Microsoft Graph scope as an example
+const scope = "https://graph.microsoft.com/.default";
+
+// Print out part of the access token
+console.log((await credential.getToken(scope)).token.substr(0, 10), "...");
 ```
 
 ## Troubleshooting
@@ -146,7 +150,7 @@ See the Azure Identity [troubleshooting guide][https://github.com/Azure/azure-sd
 
 Enabling logging may help uncover useful information about failures. In order to see a log of HTTP requests and responses, set the `AZURE_LOG_LEVEL` environment variable to `info`. Alternatively, logging can be enabled at runtime by calling `setLogLevel` in the `@azure/logger`:
 
-```typescript
+```ts snippet:logging
 import { setLogLevel } from "@azure/logger";
 
 setLogLevel("info");
@@ -161,5 +165,3 @@ If you encounter bugs or have suggestions, please [open an issue](https://github
 ## Contributing
 
 If you'd like to contribute to this library, see the [contributing guide](https://github.com/Azure/azure-sdk-for-js/blob/main/CONTRIBUTING.md) to learn more about how to build and test the code.
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-js%2Fsdk%2Fidentity%2Fidentity%2FREADME.png)

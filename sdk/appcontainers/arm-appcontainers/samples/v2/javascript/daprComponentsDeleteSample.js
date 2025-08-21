@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Delete a Dapr Component from a Managed Environment.
  *
  * @summary Delete a Dapr Component from a Managed Environment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/DaprComponents_Delete.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/DaprComponents_Delete.json
  */
 async function deleteDaprComponent() {
   const subscriptionId =
@@ -35,7 +35,7 @@ async function deleteDaprComponent() {
 }
 
 async function main() {
-  deleteDaprComponent();
+  await deleteDaprComponent();
 }
 
 main().catch(console.error);

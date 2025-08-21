@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { AbortError } from "./abort-controller/AbortError.js";
-import {
+import type {
   HttpClient,
   HttpHeaders,
   PipelineRequest,
@@ -39,7 +39,7 @@ class XhrHttpClient implements HttpClient {
     const abortSignal = request.abortSignal;
     if (abortSignal) {
       if (abortSignal.aborted) {
-        throw new AbortError("The operation was aborted.");
+        throw new AbortError("The operation was aborted. Request has already been canceled.");
       }
 
       const listener = (): void => {

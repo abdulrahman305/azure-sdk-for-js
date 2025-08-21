@@ -6,11 +6,9 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create a new rack or update properties of the existing one.
@@ -18,7 +16,7 @@ All customer initiated requests will be rejected as the life cycle of this resou
  *
  * @summary Create a new rack or update properties of the existing one.
 All customer initiated requests will be rejected as the life cycle of this resource is managed by the system.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/Racks_Create.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/Racks_Create.json
  */
 async function createOrUpdateRack() {
   const subscriptionId =
@@ -34,7 +32,8 @@ async function createOrUpdateRack() {
     location: "location",
     rackLocation: "Rack 28",
     rackSerialNumber: "RACK_SERIAL_NUMBER",
-    rackSkuId: "RACK-TYPE-1",
+    rackSkuId:
+      "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/rackSkus/rackSkuName",
     tags: { key1: "myvalue1", key2: "myvalue2" },
   };
   const credential = new DefaultAzureCredential();
@@ -42,13 +41,13 @@ async function createOrUpdateRack() {
   const result = await client.racks.beginCreateOrUpdateAndWait(
     resourceGroupName,
     rackName,
-    rackParameters
+    rackParameters,
   );
   console.log(result);
 }
 
 async function main() {
-  createOrUpdateRack();
+  await createOrUpdateRack();
 }
 
 main().catch(console.error);

@@ -15,7 +15,7 @@ import {
   NetworkSecurityPerimeterConfigurationsGetResponse,
   NetworkSecurityPerimeterConfigurationsReconcileOptionalParams,
   NetworkSecurityPerimeterConfigurationsReconcileResponse,
-} from "../models";
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Interface representing a NetworkSecurityPerimeterConfigurations. */
@@ -39,7 +39,7 @@ export interface NetworkSecurityPerimeterConfigurations {
    *                          obtain this value from the Azure Resource Manager API or the portal.
    * @param searchServiceName The name of the Azure AI Search service associated with the specified
    *                          resource group.
-   * @param nspConfigName The network security configuration name.
+   * @param nspConfigName The network security perimeter configuration name.
    * @param options The options parameters.
    */
   get(
@@ -56,7 +56,7 @@ export interface NetworkSecurityPerimeterConfigurations {
    *                          obtain this value from the Azure Resource Manager API or the portal.
    * @param searchServiceName The name of the Azure AI Search service associated with the specified
    *                          resource group.
-   * @param nspConfigName The network security configuration name.
+   * @param nspConfigName The network security perimeter configuration name.
    * @param options The options parameters.
    */
   beginReconcile(
@@ -78,7 +78,7 @@ export interface NetworkSecurityPerimeterConfigurations {
    *                          obtain this value from the Azure Resource Manager API or the portal.
    * @param searchServiceName The name of the Azure AI Search service associated with the specified
    *                          resource group.
-   * @param nspConfigName The network security configuration name.
+   * @param nspConfigName The network security perimeter configuration name.
    * @param options The options parameters.
    */
   beginReconcileAndWait(

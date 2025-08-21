@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createComputeManagementClient, {
-  VirtualMachineScaleSetVMsPerformMaintenanceParameters,
-  getLongRunningPoller,
-} from "@azure-rest/arm-compute";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Performs maintenance on a virtual machine in a VM scale set.
  *
  * @summary Performs maintenance on a virtual machine in a VM scale set.
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-08-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSetVMs_PerformMaintenance_MaximumSet_Gen.json
  */
-async function virtualMachineScaleSetVMSPerformMaintenanceMaximumSetGen() {
+
+import type { VirtualMachineScaleSetVMsPerformMaintenanceParameters } from "@azure-rest/arm-compute";
+import createComputeManagementClient, { getLongRunningPoller } from "@azure-rest/arm-compute";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function virtualMachineScaleSetVMSPerformMaintenanceMaximumSetGen(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";
@@ -37,7 +32,7 @@ async function virtualMachineScaleSetVMSPerformMaintenanceMaximumSetGen() {
       instanceId,
     )
     .post(options);
-  const poller = getLongRunningPoller(client, initialResponse);
+  const poller = await getLongRunningPoller(client, initialResponse);
   const result = await poller.pollUntilDone();
   console.log(result);
 }
@@ -49,7 +44,7 @@ virtualMachineScaleSetVMSPerformMaintenanceMaximumSetGen().catch(console.error);
  * @summary Performs maintenance on a virtual machine in a VM scale set.
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-08-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSetVMs_PerformMaintenance_MinimumSet_Gen.json
  */
-async function virtualMachineScaleSetVMSPerformMaintenanceMinimumSetGen() {
+async function virtualMachineScaleSetVMSPerformMaintenanceMinimumSetGen(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";
@@ -68,7 +63,7 @@ async function virtualMachineScaleSetVMSPerformMaintenanceMinimumSetGen() {
       instanceId,
     )
     .post(options);
-  const poller = getLongRunningPoller(client, initialResponse);
+  const poller = await getLongRunningPoller(client, initialResponse);
   const result = await poller.pollUntilDone();
   console.log(result);
 }

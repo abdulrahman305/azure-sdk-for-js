@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Get a diagnostics result of a Container App.
  *
  * @summary Get a diagnostics result of a Container App.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerAppsDiagnostics_Get.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerAppsDiagnostics_Get.json
  */
-async function getContainerAppDiagnosticsInfo() {
+async function getContainerAppDiagnosticsInfo(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "f07f3711-b45e-40fe-a941-4e6d93f851e6";
@@ -38,8 +36,8 @@ async function getContainerAppDiagnosticsInfo() {
   console.log(result);
 }
 
-async function main() {
-  getContainerAppDiagnosticsInfo();
+async function main(): Promise<void> {
+  await getContainerAppDiagnosticsInfo();
 }
 
 main().catch(console.error);

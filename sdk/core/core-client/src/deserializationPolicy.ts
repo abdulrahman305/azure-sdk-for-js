@@ -1,23 +1,23 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
+import type {
   FullOperationResponse,
   OperationRequest,
   OperationResponseMap,
   OperationSpec,
   RequiredSerializerOptions,
   SerializerOptions,
-  XML_CHARKEY,
   XmlOptions,
 } from "./interfaces.js";
-import {
+import { XML_CHARKEY } from "./interfaces.js";
+import type {
   PipelinePolicy,
   PipelineRequest,
   PipelineResponse,
-  RestError,
   SendRequest,
 } from "@azure/core-rest-pipeline";
+import { RestError } from "@azure/core-rest-pipeline";
 import { MapperTypeNames } from "./serializer.js";
 import { getOperationRequestInfo } from "./operationHelpers.js";
 
@@ -259,13 +259,17 @@ function handleErrorResponse(
   });
 
   // If the item failed but there's no error spec or default spec to deserialize the error,
+  // and the parsed body doesn't look like an error object,
   // we should fail so we just throw the parsed response
-  if (!errorResponseSpec) {
+  if (
+    !errorResponseSpec &&
+    !(parsedResponse.parsedBody?.error?.code && parsedResponse.parsedBody?.error?.message)
+  ) {
     throw error;
   }
 
-  const defaultBodyMapper = errorResponseSpec.bodyMapper;
-  const defaultHeadersMapper = errorResponseSpec.headersMapper;
+  const defaultBodyMapper = errorResponseSpec?.bodyMapper;
+  const defaultHeadersMapper = errorResponseSpec?.headersMapper;
 
   try {
     // If error response has a body, try to deserialize it using default body mapper.

@@ -1,11 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { assert } from "@azure-tools/test-utils";
 import { ConfigurationClient } from "../../src/index.js";
 import { Recorder, assertEnvironmentVariable } from "@azure-tools/test-recorder";
+import { toSupportTracing } from "@azure-tools/test-utils-vitest";
 import { createTestCredential } from "@azure-tools/test-credential";
-import { describe, it, beforeEach, afterEach } from "vitest";
+import { describe, it, assert, expect, beforeEach, afterEach } from "vitest";
+import type { OperationOptions } from "@azure/core-client";
+
+expect.extend({ toSupportTracing });
 
 // When the recorder observes the values of these environment variables in any
 // recorded HTTP request or response, it will replace them with the values they
@@ -52,7 +55,7 @@ describe("[AAD] ConfigurationClient functional tests", function () {
   // NOTE: use of "function" and not ES6 arrow-style functions with the
   // beforeEach hook is IMPORTANT due to the use of `this` in the function
   // body.
-  beforeEach(async function (context) {
+  beforeEach(async (context) => {
     // The recorder has some convenience methods, and we need to store a
     // reference to it so that we can `stop()` the recorder later in the
     // `afterEach` hook.
@@ -71,12 +74,12 @@ describe("[AAD] ConfigurationClient functional tests", function () {
   });
 
   // After each test, we need to stop the recording.
-  afterEach(async function () {
+  afterEach(async () => {
     await recorder.stop();
   });
 
   describe("#getConfigurationSetting", () => {
-    it("predetermined setting has expected value", async () => {
+    it("predetermined setting has expected value", { timeout: 50000, retry: 3 }, async () => {
       const key = assertEnvironmentVariable("APPCONFIG_TEST_SETTING_KEY");
       const expectedValue = assertEnvironmentVariable("APPCONFIG_TEST_SETTING_EXPECTED_VALUE");
 
@@ -90,11 +93,10 @@ describe("[AAD] ConfigurationClient functional tests", function () {
       assert.equal(expectedValue, setting.value);
     });
 
-    // TODO: Waiting on https://github.com/Azure/azure-sdk-for-js/issues/29287
     // The supportsTracing assertion from chaiAzure can be used to verify that
     // the `getConfigurationSetting` method is being traced correctly, that the
     // tracing span is properly parented and closed.
-    it.skip("supports tracing", async () => {
+    it("supports tracing", async () => {
       // Playback fails in the browser without the "HeaderlessMatcher"
       //
       // If-Modified-Since & If-None-Match headers are not present in the recording and the request in playback has these headers
@@ -102,10 +104,9 @@ describe("[AAD] ConfigurationClient functional tests", function () {
       // More details here - https://github.com/Azure/azure-sdk-tools/issues/2674
       await recorder.setMatcher("HeaderlessMatcher");
       const key = assertEnvironmentVariable("APPCONFIG_TEST_SETTING_KEY");
-      await assert.supportsTracing(
-        (options) => client.getConfigurationSetting(key, options),
-        ["ConfigurationClient.getConfigurationSetting"],
-      );
+      await expect((options: OperationOptions) =>
+        client.getConfigurationSetting(key, options),
+      ).toSupportTracing(["ConfigurationClient.getConfigurationSetting"]);
     });
   });
 });

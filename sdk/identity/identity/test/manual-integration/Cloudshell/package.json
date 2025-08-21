@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "@azure/identity": "^4.0.1",
-    "@azure/keyvault-secrets": "^4.0.2",
-    "cloudshelltest": "file:"
+    "@azure/keyvault-secrets": "^4.0.2"
   }
 }

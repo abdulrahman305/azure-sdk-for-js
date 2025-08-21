@@ -7,12 +7,12 @@
  */
 
 import { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
-import { setContinuationToken } from "../pagingHelper";
-import { CallConnection } from "../operationsInterfaces";
+import { setContinuationToken } from "../pagingHelper.js";
+import { CallConnection } from "../operationsInterfaces/index.js";
 import * as coreClient from "@azure/core-client";
-import * as Mappers from "../models/mappers";
-import * as Parameters from "../models/parameters";
-import { CallAutomationApiClient } from "../callAutomationApiClient";
+import * as Mappers from "../models/mappers.js";
+import * as Parameters from "../models/parameters.js";
+import { CallAutomationApiClient } from "../callAutomationApiClient.js";
 import {
   CallParticipantInternal,
   CallConnectionGetParticipantsNextOptionalParams,
@@ -34,16 +34,13 @@ import {
   MuteParticipantsRequest,
   CallConnectionMuteOptionalParams,
   CallConnectionMuteResponse,
-  UnmuteParticipantsRequest,
-  CallConnectionUnmuteOptionalParams,
-  CallConnectionUnmuteResponse,
   CancelAddParticipantRequest,
   CallConnectionCancelAddParticipantOptionalParams,
   CallConnectionCancelAddParticipantResponse,
   CallConnectionGetParticipantOptionalParams,
   CallConnectionGetParticipantResponse,
   CallConnectionGetParticipantsNextResponse,
-} from "../models";
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Class containing CallConnection operations. */
@@ -257,23 +254,6 @@ export class CallConnectionImpl implements CallConnection {
   }
 
   /**
-   * Unmute participants from the call using identifier.
-   * @param callConnectionId The call connection id.
-   * @param unmuteParticipantsRequest The participants to be unmuted from the call.
-   * @param options The options parameters.
-   */
-  unmute(
-    callConnectionId: string,
-    unmuteParticipantsRequest: UnmuteParticipantsRequest,
-    options?: CallConnectionUnmuteOptionalParams,
-  ): Promise<CallConnectionUnmuteResponse> {
-    return this.client.sendOperationRequest(
-      { callConnectionId, unmuteParticipantsRequest, options },
-      unmuteOperationSpec,
-    );
-  }
-
-  /**
    * Cancel add participant operation.
    * @param callConnectionId The call connection Id
    * @param cancelAddParticipantRequest Cancellation request.
@@ -472,29 +452,6 @@ const muteOperationSpec: coreClient.OperationSpec = {
     },
   },
   requestBody: Parameters.muteParticipantsRequest,
-  queryParameters: [Parameters.apiVersion],
-  urlParameters: [Parameters.endpoint, Parameters.callConnectionId],
-  headerParameters: [
-    Parameters.contentType,
-    Parameters.accept,
-    Parameters.repeatabilityRequestID,
-    Parameters.repeatabilityFirstSent,
-  ],
-  mediaType: "json",
-  serializer,
-};
-const unmuteOperationSpec: coreClient.OperationSpec = {
-  path: "/calling/callConnections/{callConnectionId}/participants:unmute",
-  httpMethod: "POST",
-  responses: {
-    200: {
-      bodyMapper: Mappers.UnmuteParticipantsResponse,
-    },
-    default: {
-      bodyMapper: Mappers.CommunicationErrorResponse,
-    },
-  },
-  requestBody: Parameters.unmuteParticipantsRequest,
   queryParameters: [Parameters.apiVersion],
   urlParameters: [Parameters.endpoint, Parameters.callConnectionId],
   headerParameters: [

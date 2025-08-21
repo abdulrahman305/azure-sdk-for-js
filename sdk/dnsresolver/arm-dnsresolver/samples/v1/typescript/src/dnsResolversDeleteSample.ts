@@ -6,21 +6,17 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import { DnsResolverManagementClient } from "@azure/arm-dnsresolver";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Deletes a DNS resolver. WARNING: This operation cannot be undone.
  *
  * @summary Deletes a DNS resolver. WARNING: This operation cannot be undone.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/DnsResolver_Delete.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/DnsResolver_Delete.json
  */
-async function deleteDnsResolver() {
+async function deleteDnsResolver(): Promise<void> {
   const subscriptionId =
     process.env["DNSRESOLVER_SUBSCRIPTION_ID"] ||
     "abdd4249-9f34-4cc6-8e42-c2e32110603e";
@@ -31,13 +27,13 @@ async function deleteDnsResolver() {
   const client = new DnsResolverManagementClient(credential, subscriptionId);
   const result = await client.dnsResolvers.beginDeleteAndWait(
     resourceGroupName,
-    dnsResolverName
+    dnsResolverName,
   );
   console.log(result);
 }
 
-async function main() {
-  deleteDnsResolver();
+async function main(): Promise<void> {
+  await deleteDnsResolver();
 }
 
 main().catch(console.error);

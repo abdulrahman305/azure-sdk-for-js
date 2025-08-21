@@ -5,6 +5,7 @@ import fs from "fs-extra";
 import path from "node:path";
 import { createPrinter } from "./printer";
 import { SampleConfiguration } from "./samples/configuration";
+import { pathToFileURL } from "node:url";
 
 const { debug } = createPrinter("resolve-project");
 
@@ -43,6 +44,7 @@ declare global {
         [k: string]: string[];
       };
     };
+    tshy?: Record<string, object>;
     type?: string;
     module?: string;
     bin?: Record<string, string>;
@@ -58,6 +60,7 @@ declare global {
     homepage: string;
     sideEffects: boolean;
     private: boolean;
+    engines?: { node?: string };
 
     dependencies: Record<string, string>;
     devDependencies: Record<string, string>;
@@ -118,7 +121,9 @@ export interface ProjectInfo {
 async function isAzureSDKPackage(fileName: string): Promise<boolean> {
   const f = await import(fileName);
 
-  if (/^@azure(-[a-z]+)?\//.test(f.name)) {
+  if (f.name.includes("@azure/monorepo")) {
+    return false;
+  } else if (/^@azure(-[a-z]+)?\//.test(f.name)) {
     return true;
   } else if (f.name.startsWith("@typespec")) {
     return true;
@@ -130,13 +135,13 @@ async function isAzureSDKPackage(fileName: string): Promise<boolean> {
 async function findAzSDKPackageJson(directory: string): Promise<[string, PackageJson]> {
   const files = await fs.readdir(directory);
 
-  if (files.includes("rush.json")) {
+  if (files.includes("pnpm-workspace.yaml")) {
     throw new Error("Reached monorepo root, but no matching Azure SDK package was found.");
   }
 
   for (const file of files) {
     if (file === "package.json") {
-      const fullPath = path.join(directory, file);
+      const fullPath = pathToFileURL(path.join(directory, file)).href;
       const packageObject = (await import(fullPath)).default;
       if (await isAzureSDKPackage(fullPath)) {
         return [directory, packageObject];
@@ -196,12 +201,12 @@ export async function resolveProject(
  * @returns an absolute path to the root of the monorepo
  */
 export async function resolveRoot(start: string = process.cwd()): Promise<string> {
-  if (await fs.pathExists(path.join(start, "rush.json"))) {
+  if (await fs.pathExists(path.join(start, "pnpm-workspace.yaml"))) {
     return start;
   } else {
     const nextPath = path.resolve(start, "..");
     if (nextPath === start) {
-      throw new Error("Reached filesystem root, but no rush.json was found.");
+      throw new Error("Reached filesystem root, but no pnpm-workspace.yaml was found.");
     } else {
       return resolveRoot(nextPath);
     }
@@ -211,4 +216,20 @@ export async function resolveRoot(start: string = process.cwd()): Promise<string
 export async function isModuleProject() {
   const projectInfo = await resolveProject(process.cwd());
   return projectInfo.packageJson.type === "module";
+}
+
+/**
+ * @param info - the project to bind to
+ * @returns - a "require"-like function that always resolves relative to the input project
+ */
+export function bindRequireFunction(info: ProjectInfo): (id: string) => unknown {
+  return (moduleSpecifier) => {
+    try {
+      return require(
+        path.join(info.path, "node_modules", moduleSpecifier.split("/").join(path.sep)),
+      );
+    } catch {
+      return require(moduleSpecifier);
+    }
+  };
 }

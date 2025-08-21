@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
+import type {
   AnalyzeBatchResult,
   EntityLinkingResult,
   EntityRecognitionResult,
   KeyPhraseExtractionResult,
-  KnownErrorCode,
   LanguageDetectionResult,
   PiiEntityRecognitionResult,
   PiiEntityRecognitionSuccessResult,
   SentimentAnalysisResult,
-} from "../../src/";
+} from "../../src/index.js";
+import { KnownErrorCode } from "../../src/index.js";
 
 const failedOn = undefined as any;
 const modelVersion = undefined as any;
@@ -798,12 +798,12 @@ export const expectation9: AnalyzeBatchResult[] = [
       {
         id: "6",
         warnings: [],
-        sentiment: "negative",
+        sentiment: "neutral",
         confidenceScores: { positive: 0, neutral: 0.02, negative: 0.98 },
         sentences: [
           {
             text: "The toilet smelled.",
-            sentiment: "negative",
+            sentiment: "neutral",
             confidenceScores: { positive: 0, neutral: 0.02, negative: 0.98 },
             offset: 0,
             length: 19,

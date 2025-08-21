@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Retrieves the metrics determined by the given filter for the given collection and region, split by partition.
  *
  * @summary Retrieves the metrics determined by the given filter for the given collection and region, split by partition.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBCollectionPartitionRegionGetMetrics.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBCollectionPartitionRegionGetMetrics.json
  */
 async function cosmosDbDatabaseAccountRegionGetMetrics() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -30,7 +28,7 @@ async function cosmosDbDatabaseAccountRegionGetMetrics() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.collectionPartitionRegion.listMetrics(
+  for await (const item of client.collectionPartitionRegion.listMetrics(
     resourceGroupName,
     accountName,
     region,
@@ -44,7 +42,7 @@ async function cosmosDbDatabaseAccountRegionGetMetrics() {
 }
 
 async function main() {
-  cosmosDbDatabaseAccountRegionGetMetrics();
+  await cosmosDbDatabaseAccountRegionGetMetrics();
 }
 
 main().catch(console.error);

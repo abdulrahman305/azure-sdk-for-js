@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the list of diagnostics for a Container App Job.
  *
  * @summary Get the list of diagnostics for a Container App Job.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Job_ListDetectors.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Job_ListDetectors.json
  */
 async function getTheListOfAvailableDiagnosticDataForAContainerAppJob() {
   const subscriptionId =
@@ -27,14 +27,14 @@ async function getTheListOfAvailableDiagnosticDataForAContainerAppJob() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.jobs.listDetectors(resourceGroupName, jobName)) {
+  for await (const item of client.jobs.listDetectors(resourceGroupName, jobName)) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  getTheListOfAvailableDiagnosticDataForAContainerAppJob();
+  await getTheListOfAvailableDiagnosticDataForAContainerAppJob();
 }
 
 main().catch(console.error);

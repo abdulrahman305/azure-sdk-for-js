@@ -1,5 +1,488 @@
 # Release History
     
+## 1.2.0 (2025-06-09)
+    
+### Features Added
+
+  - Added Interface AnalyticsOutputSettings
+  - Added Interface SecretArchiveSettings
+  - Added Interface VulnerabilityScanningSettings
+  - Added Interface VulnerabilityScanningSettingsPatch
+  - Added Type Alias VulnerabilityScanningSettingsContainerScan
+  - Interface AgentPool has a new optional parameter etag
+  - Interface AgentPoolsCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface AgentPoolsCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface AgentPoolsDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface AgentPoolsDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface AgentPoolsUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface AgentPoolsUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface BareMetalMachine has a new optional parameter etag
+  - Interface BareMetalMachineKeySet has a new optional parameter etag
+  - Interface BareMetalMachineKeySetsCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface BareMetalMachineKeySetsCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface BareMetalMachineKeySetsDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface BareMetalMachineKeySetsDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface BareMetalMachineKeySetsUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface BareMetalMachineKeySetsUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface BareMetalMachinesCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface BareMetalMachinesCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface BareMetalMachinesDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface BareMetalMachinesDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface BareMetalMachinesUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface BareMetalMachinesUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface BmcKeySet has a new optional parameter etag
+  - Interface BmcKeySetsCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface BmcKeySetsCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface BmcKeySetsDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface BmcKeySetsDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface BmcKeySetsUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface BmcKeySetsUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface CloudServicesNetwork has a new optional parameter etag
+  - Interface CloudServicesNetworksCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface CloudServicesNetworksCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface CloudServicesNetworksDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface CloudServicesNetworksDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface CloudServicesNetworksUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface CloudServicesNetworksUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface Cluster has a new optional parameter analyticsOutputSettings
+  - Interface Cluster has a new optional parameter etag
+  - Interface Cluster has a new optional parameter secretArchiveSettings
+  - Interface Cluster has a new optional parameter vulnerabilityScanningSettings
+  - Interface ClusterManager has a new optional parameter etag
+  - Interface ClusterManagersCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface ClusterManagersCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface ClusterManagersDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface ClusterManagersDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface ClusterManagersUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface ClusterManagersUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface ClusterMetricsConfiguration has a new optional parameter etag
+  - Interface ClusterPatchParameters has a new optional parameter analyticsOutputSettings
+  - Interface ClusterPatchParameters has a new optional parameter secretArchiveSettings
+  - Interface ClusterPatchParameters has a new optional parameter vulnerabilityScanningSettings
+  - Interface ClustersCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface ClustersCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface ClustersDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface ClustersDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface ClustersUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface ClustersUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface Console_2 has a new optional parameter etag
+  - Interface ConsolesCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface ConsolesCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface ConsolesDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface ConsolesDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface ConsolesUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface ConsolesUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface KubernetesCluster has a new optional parameter etag
+  - Interface KubernetesClusterFeature has a new optional parameter etag
+  - Interface KubernetesClusterFeaturesCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface KubernetesClusterFeaturesCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface KubernetesClusterFeaturesDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface KubernetesClusterFeaturesDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface KubernetesClusterFeaturesUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface KubernetesClusterFeaturesUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface KubernetesClustersCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface KubernetesClustersCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface KubernetesClustersDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface KubernetesClustersDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface KubernetesClustersUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface KubernetesClustersUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface L2Network has a new optional parameter etag
+  - Interface L2NetworksCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface L2NetworksCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface L2NetworksDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface L2NetworksDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface L2NetworksUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface L2NetworksUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface L3Network has a new optional parameter etag
+  - Interface L3NetworksCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface L3NetworksCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface L3NetworksDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface L3NetworksDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface L3NetworksUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface L3NetworksUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface MetricsConfigurationsCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface MetricsConfigurationsCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface MetricsConfigurationsDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface MetricsConfigurationsDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface MetricsConfigurationsUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface MetricsConfigurationsUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface Rack has a new optional parameter etag
+  - Interface RacksCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface RacksCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface RacksDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface RacksDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface RacksUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface RacksUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface StorageAppliance has a new optional parameter etag
+  - Interface StorageAppliancesCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface StorageAppliancesCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface StorageAppliancesDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface StorageAppliancesDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface StorageAppliancesUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface StorageAppliancesUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface TrunkedNetwork has a new optional parameter etag
+  - Interface TrunkedNetworksCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface TrunkedNetworksCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface TrunkedNetworksDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface TrunkedNetworksDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface TrunkedNetworksUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface TrunkedNetworksUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface VirtualMachine has a new optional parameter consoleExtendedLocation
+  - Interface VirtualMachine has a new optional parameter etag
+  - Interface VirtualMachinesCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface VirtualMachinesCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface VirtualMachinesDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface VirtualMachinesDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface VirtualMachinesUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface VirtualMachinesUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface Volume has a new optional parameter etag
+  - Interface VolumesCreateOrUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface VolumesCreateOrUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Interface VolumesDeleteOptionalParams has a new optional parameter ifMatch
+  - Interface VolumesDeleteOptionalParams has a new optional parameter ifNoneMatch
+  - Interface VolumesUpdateOptionalParams has a new optional parameter ifMatch
+  - Interface VolumesUpdateOptionalParams has a new optional parameter ifNoneMatch
+  - Added Enum KnownVulnerabilityScanningSettingsContainerScan
+  - Enum KnownOsDiskCreateOption has a new value Persistent
+  - Enum KnownStorageApplianceDetailedStatus has a new value Degraded
+  - Enum KnownVirtualMachineDeviceModelType has a new value T3
+    
+    
+## 1.2.0-beta.1 (2025-04-18)
+Compared with version 1.1.0
+    
+### Features Added
+
+  - Added Interface AnalyticsOutputSettings
+  - Added Interface SecretArchiveSettings
+  - Added Interface VulnerabilityScanningSettings
+  - Added Interface VulnerabilityScanningSettingsPatch
+  - Added Type Alias VulnerabilityScanningSettingsContainerScan
+  - Interface Cluster has a new optional parameter analyticsOutputSettings
+  - Interface Cluster has a new optional parameter secretArchiveSettings
+  - Interface Cluster has a new optional parameter vulnerabilityScanningSettings
+  - Interface ClusterPatchParameters has a new optional parameter analyticsOutputSettings
+  - Interface ClusterPatchParameters has a new optional parameter secretArchiveSettings
+  - Interface ClusterPatchParameters has a new optional parameter vulnerabilityScanningSettings
+  - Interface VirtualMachine has a new optional parameter consoleExtendedLocation
+  - Added Enum KnownVulnerabilityScanningSettingsContainerScan
+  - Enum KnownOsDiskCreateOption has a new value Persistent
+  - Enum KnownStorageApplianceDetailedStatus has a new value Degraded
+  - Enum KnownVirtualMachineDeviceModelType has a new value T3
+    
+    
+## 1.1.0 (2025-02-20)
+    
+### Features Added
+
+  - Added operation group KubernetesClusterFeatures
+  - Added operation Clusters.beginContinueUpdateVersion
+  - Added operation Clusters.beginContinueUpdateVersionAndWait
+  - Added operation Clusters.beginScanRuntime
+  - Added operation Clusters.beginScanRuntimeAndWait
+  - Added Interface AdministratorConfigurationPatch
+  - Added Interface ClusterContinueUpdateVersionParameters
+  - Added Interface ClusterScanRuntimeParameters
+  - Added Interface ClustersContinueUpdateVersionHeaders
+  - Added Interface ClustersContinueUpdateVersionOptionalParams
+  - Added Interface ClusterSecretArchive
+  - Added Interface ClustersScanRuntimeHeaders
+  - Added Interface ClustersScanRuntimeOptionalParams
+  - Added Interface ClusterUpdateStrategy
+  - Added Interface CommandOutputSettings
+  - Added Interface IdentitySelector
+  - Added Interface KubernetesClusterFeature
+  - Added Interface KubernetesClusterFeatureList
+  - Added Interface KubernetesClusterFeaturePatchParameters
+  - Added Interface KubernetesClusterFeaturesCreateOrUpdateHeaders
+  - Added Interface KubernetesClusterFeaturesCreateOrUpdateOptionalParams
+  - Added Interface KubernetesClusterFeaturesDeleteHeaders
+  - Added Interface KubernetesClusterFeaturesDeleteOptionalParams
+  - Added Interface KubernetesClusterFeaturesGetOptionalParams
+  - Added Interface KubernetesClusterFeaturesListByKubernetesClusterNextOptionalParams
+  - Added Interface KubernetesClusterFeaturesListByKubernetesClusterOptionalParams
+  - Added Interface KubernetesClusterFeaturesUpdateHeaders
+  - Added Interface KubernetesClusterFeaturesUpdateOptionalParams
+  - Added Interface L2ServiceLoadBalancerConfiguration
+  - Added Interface ManagedServiceIdentity
+  - Added Interface NodePoolAdministratorConfigurationPatch
+  - Added Interface RuntimeProtectionConfiguration
+  - Added Interface RuntimeProtectionStatus
+  - Added Interface SecretArchiveReference
+  - Added Interface SecretRotationStatus
+  - Added Interface StringKeyValuePair
+  - Added Interface UserAssignedIdentity
+  - Added Type Alias AgentPoolsDeleteResponse
+  - Added Type Alias BareMetalMachineKeySetsDeleteResponse
+  - Added Type Alias BareMetalMachinesDeleteResponse
+  - Added Type Alias BmcKeySetsDeleteResponse
+  - Added Type Alias CloudServicesNetworksDeleteResponse
+  - Added Type Alias ClusterContinueUpdateVersionMachineGroupTargetingMode
+  - Added Type Alias ClusterManagersDeleteResponse
+  - Added Type Alias ClusterScanRuntimeParametersScanActivity
+  - Added Type Alias ClustersContinueUpdateVersionResponse
+  - Added Type Alias ClustersDeleteResponse
+  - Added Type Alias ClusterSecretArchiveEnabled
+  - Added Type Alias ClustersScanRuntimeResponse
+  - Added Type Alias ClusterUpdateStrategyType
+  - Added Type Alias ConsolesDeleteResponse
+  - Added Type Alias KubernetesClusterFeatureAvailabilityLifecycle
+  - Added Type Alias KubernetesClusterFeatureDetailedStatus
+  - Added Type Alias KubernetesClusterFeatureProvisioningState
+  - Added Type Alias KubernetesClusterFeatureRequired
+  - Added Type Alias KubernetesClusterFeaturesCreateOrUpdateResponse
+  - Added Type Alias KubernetesClusterFeaturesDeleteResponse
+  - Added Type Alias KubernetesClusterFeaturesGetResponse
+  - Added Type Alias KubernetesClusterFeaturesListByKubernetesClusterNextResponse
+  - Added Type Alias KubernetesClusterFeaturesListByKubernetesClusterResponse
+  - Added Type Alias KubernetesClusterFeaturesUpdateResponse
+  - Added Type Alias KubernetesClustersDeleteResponse
+  - Added Type Alias L2NetworksDeleteResponse
+  - Added Type Alias L3NetworksDeleteResponse
+  - Added Type Alias ManagedServiceIdentitySelectorType
+  - Added Type Alias ManagedServiceIdentityType
+  - Added Type Alias MetricsConfigurationsDeleteResponse
+  - Added Type Alias RacksDeleteResponse
+  - Added Type Alias RuntimeProtectionEnforcementLevel
+  - Added Type Alias StorageAppliancesDeleteResponse
+  - Added Type Alias TrunkedNetworksDeleteResponse
+  - Added Type Alias VirtualMachinesDeleteResponse
+  - Added Type Alias VolumesDeleteResponse
+  - Interface AgentPoolPatchParameters has a new optional parameter administratorConfiguration
+  - Interface AgentPoolsUpdateHeaders has a new optional parameter location
+  - Interface AgentPoolUpgradeSettings has a new optional parameter drainTimeout
+  - Interface AgentPoolUpgradeSettings has a new optional parameter maxUnavailable
+  - Interface BareMetalMachine has a new optional parameter machineClusterVersion
+  - Interface BareMetalMachine has a new optional parameter machineRoles
+  - Interface BareMetalMachine has a new optional parameter runtimeProtectionStatus
+  - Interface BareMetalMachine has a new optional parameter secretRotationStatus
+  - Interface BareMetalMachineKeySetsUpdateHeaders has a new optional parameter location
+  - Interface BareMetalMachinesUpdateHeaders has a new optional parameter location
+  - Interface BmcKeySetsUpdateHeaders has a new optional parameter location
+  - Interface CloudServicesNetworksUpdateHeaders has a new optional parameter location
+  - Interface Cluster has a new optional parameter commandOutputSettings
+  - Interface Cluster has a new optional parameter identity
+  - Interface Cluster has a new optional parameter runtimeProtectionConfiguration
+  - Interface Cluster has a new optional parameter secretArchive
+  - Interface Cluster has a new optional parameter updateStrategy
+  - Interface ClusterManager has a new optional parameter identity
+  - Interface ClusterManagerPatchParameters has a new optional parameter identity
+  - Interface ClusterPatchParameters has a new optional parameter commandOutputSettings
+  - Interface ClusterPatchParameters has a new optional parameter identity
+  - Interface ClusterPatchParameters has a new optional parameter runtimeProtectionConfiguration
+  - Interface ClusterPatchParameters has a new optional parameter secretArchive
+  - Interface ClusterPatchParameters has a new optional parameter updateStrategy
+  - Interface ClustersUpdateHeaders has a new optional parameter location
+  - Interface ConsolesUpdateHeaders has a new optional parameter location
+  - Interface ControlPlaneNodePatchConfiguration has a new optional parameter administratorConfiguration
+  - Interface KeySetUser has a new optional parameter userPrincipalName
+  - Interface KubernetesClusterPatchParameters has a new optional parameter administratorConfiguration
+  - Interface KubernetesClustersUpdateHeaders has a new optional parameter location
+  - Interface MetricsConfigurationsUpdateHeaders has a new optional parameter location
+  - Interface NetworkConfiguration has a new optional parameter l2ServiceLoadBalancerConfiguration
+  - Interface OperationStatusResult has a new optional parameter exitCode
+  - Interface OperationStatusResult has a new optional parameter outputHead
+  - Interface OperationStatusResult has a new optional parameter resultRef
+  - Interface OperationStatusResult has a new optional parameter resultUrl
+  - Interface RacksUpdateHeaders has a new optional parameter location
+  - Interface StorageAppliance has a new optional parameter manufacturer
+  - Interface StorageAppliance has a new optional parameter model
+  - Interface StorageAppliance has a new optional parameter secretRotationStatus
+  - Interface StorageAppliance has a new optional parameter version
+  - Interface StorageAppliancesUpdateHeaders has a new optional parameter location
+  - Interface VirtualMachinesUpdateHeaders has a new optional parameter location
+  - Added Enum KnownClusterContinueUpdateVersionMachineGroupTargetingMode
+  - Added Enum KnownClusterScanRuntimeParametersScanActivity
+  - Added Enum KnownClusterSecretArchiveEnabled
+  - Added Enum KnownClusterUpdateStrategyType
+  - Added Enum KnownKubernetesClusterFeatureAvailabilityLifecycle
+  - Added Enum KnownKubernetesClusterFeatureDetailedStatus
+  - Added Enum KnownKubernetesClusterFeatureProvisioningState
+  - Added Enum KnownKubernetesClusterFeatureRequired
+  - Added Enum KnownManagedServiceIdentitySelectorType
+  - Added Enum KnownManagedServiceIdentityType
+  - Added Enum KnownRuntimeProtectionEnforcementLevel
+  - Enum KnownClusterConnectionStatus has a new value Disconnected
+  - Enum KnownClusterDetailedStatus has a new value UpdatePaused
+  - Enum KnownRackSkuProvisioningState has a new value Canceled
+  - Enum KnownRackSkuProvisioningState has a new value Failed
+    
+    
+## 2.0.0-beta.1 (2024-11-18)
+Compared with version 1.0.0
+    
+### Features Added
+
+  - Added operation group KubernetesClusterFeatures
+  - Added operation Clusters.beginContinueUpdateVersion
+  - Added operation Clusters.beginContinueUpdateVersionAndWait
+  - Added operation Clusters.beginScanRuntime
+  - Added operation Clusters.beginScanRuntimeAndWait
+  - Added Interface AdministratorConfigurationPatch
+  - Added Interface ClusterContinueUpdateVersionParameters
+  - Added Interface ClusterScanRuntimeParameters
+  - Added Interface ClustersContinueUpdateVersionHeaders
+  - Added Interface ClustersContinueUpdateVersionOptionalParams
+  - Added Interface ClusterSecretArchive
+  - Added Interface ClustersScanRuntimeHeaders
+  - Added Interface ClustersScanRuntimeOptionalParams
+  - Added Interface ClusterUpdateStrategy
+  - Added Interface CommandOutputSettings
+  - Added Interface IdentitySelector
+  - Added Interface KubernetesClusterFeature
+  - Added Interface KubernetesClusterFeatureList
+  - Added Interface KubernetesClusterFeaturePatchParameters
+  - Added Interface KubernetesClusterFeaturesCreateOrUpdateHeaders
+  - Added Interface KubernetesClusterFeaturesCreateOrUpdateOptionalParams
+  - Added Interface KubernetesClusterFeaturesDeleteHeaders
+  - Added Interface KubernetesClusterFeaturesDeleteOptionalParams
+  - Added Interface KubernetesClusterFeaturesGetOptionalParams
+  - Added Interface KubernetesClusterFeaturesListByKubernetesClusterNextOptionalParams
+  - Added Interface KubernetesClusterFeaturesListByKubernetesClusterOptionalParams
+  - Added Interface KubernetesClusterFeaturesUpdateHeaders
+  - Added Interface KubernetesClusterFeaturesUpdateOptionalParams
+  - Added Interface L2ServiceLoadBalancerConfiguration
+  - Added Interface ManagedServiceIdentity
+  - Added Interface NodePoolAdministratorConfigurationPatch
+  - Added Interface RuntimeProtectionConfiguration
+  - Added Interface RuntimeProtectionStatus
+  - Added Interface SecretArchiveReference
+  - Added Interface SecretRotationStatus
+  - Added Interface StringKeyValuePair
+  - Added Interface UserAssignedIdentity
+  - Added Type Alias AgentPoolsDeleteResponse
+  - Added Type Alias BareMetalMachineKeySetsDeleteResponse
+  - Added Type Alias BareMetalMachinesDeleteResponse
+  - Added Type Alias BmcKeySetsDeleteResponse
+  - Added Type Alias CloudServicesNetworksDeleteResponse
+  - Added Type Alias ClusterContinueUpdateVersionMachineGroupTargetingMode
+  - Added Type Alias ClusterManagersDeleteResponse
+  - Added Type Alias ClusterScanRuntimeParametersScanActivity
+  - Added Type Alias ClustersContinueUpdateVersionResponse
+  - Added Type Alias ClustersDeleteResponse
+  - Added Type Alias ClusterSecretArchiveEnabled
+  - Added Type Alias ClustersScanRuntimeResponse
+  - Added Type Alias ClusterUpdateStrategyType
+  - Added Type Alias ConsolesDeleteResponse
+  - Added Type Alias KubernetesClusterFeatureAvailabilityLifecycle
+  - Added Type Alias KubernetesClusterFeatureDetailedStatus
+  - Added Type Alias KubernetesClusterFeatureProvisioningState
+  - Added Type Alias KubernetesClusterFeatureRequired
+  - Added Type Alias KubernetesClusterFeaturesCreateOrUpdateResponse
+  - Added Type Alias KubernetesClusterFeaturesDeleteResponse
+  - Added Type Alias KubernetesClusterFeaturesGetResponse
+  - Added Type Alias KubernetesClusterFeaturesListByKubernetesClusterNextResponse
+  - Added Type Alias KubernetesClusterFeaturesListByKubernetesClusterResponse
+  - Added Type Alias KubernetesClusterFeaturesUpdateResponse
+  - Added Type Alias KubernetesClustersDeleteResponse
+  - Added Type Alias L2NetworksDeleteResponse
+  - Added Type Alias L3NetworksDeleteResponse
+  - Added Type Alias ManagedServiceIdentitySelectorType
+  - Added Type Alias ManagedServiceIdentityType
+  - Added Type Alias MetricsConfigurationsDeleteResponse
+  - Added Type Alias RacksDeleteResponse
+  - Added Type Alias RuntimeProtectionEnforcementLevel
+  - Added Type Alias StorageAppliancesDeleteResponse
+  - Added Type Alias TrunkedNetworksDeleteResponse
+  - Added Type Alias VirtualMachinesDeleteResponse
+  - Added Type Alias VolumesDeleteResponse
+  - Interface AgentPoolPatchParameters has a new optional parameter administratorConfiguration
+  - Interface AgentPoolsUpdateHeaders has a new optional parameter location
+  - Interface AgentPoolUpgradeSettings has a new optional parameter drainTimeout
+  - Interface AgentPoolUpgradeSettings has a new optional parameter maxUnavailable
+  - Interface BareMetalMachine has a new optional parameter machineClusterVersion
+  - Interface BareMetalMachine has a new optional parameter machineRoles
+  - Interface BareMetalMachine has a new optional parameter runtimeProtectionStatus
+  - Interface BareMetalMachine has a new optional parameter secretRotationStatus
+  - Interface BareMetalMachineKeySetsUpdateHeaders has a new optional parameter location
+  - Interface BareMetalMachinesUpdateHeaders has a new optional parameter location
+  - Interface BmcKeySetsUpdateHeaders has a new optional parameter location
+  - Interface CloudServicesNetworksUpdateHeaders has a new optional parameter location
+  - Interface Cluster has a new optional parameter commandOutputSettings
+  - Interface Cluster has a new optional parameter identity
+  - Interface Cluster has a new optional parameter runtimeProtectionConfiguration
+  - Interface Cluster has a new optional parameter secretArchive
+  - Interface Cluster has a new optional parameter updateStrategy
+  - Interface ClusterManager has a new optional parameter identity
+  - Interface ClusterManagerPatchParameters has a new optional parameter identity
+  - Interface ClusterPatchParameters has a new optional parameter commandOutputSettings
+  - Interface ClusterPatchParameters has a new optional parameter identity
+  - Interface ClusterPatchParameters has a new optional parameter runtimeProtectionConfiguration
+  - Interface ClusterPatchParameters has a new optional parameter secretArchive
+  - Interface ClusterPatchParameters has a new optional parameter updateStrategy
+  - Interface ClustersUpdateHeaders has a new optional parameter location
+  - Interface ConsolesUpdateHeaders has a new optional parameter location
+  - Interface ControlPlaneNodePatchConfiguration has a new optional parameter administratorConfiguration
+  - Interface KeySetUser has a new optional parameter userPrincipalName
+  - Interface KubernetesClusterPatchParameters has a new optional parameter administratorConfiguration
+  - Interface KubernetesClustersUpdateHeaders has a new optional parameter location
+  - Interface MetricsConfigurationsUpdateHeaders has a new optional parameter location
+  - Interface NetworkConfiguration has a new optional parameter l2ServiceLoadBalancerConfiguration
+  - Interface OperationStatusResult has a new optional parameter exitCode
+  - Interface OperationStatusResult has a new optional parameter outputHead
+  - Interface OperationStatusResult has a new optional parameter resultRef
+  - Interface OperationStatusResult has a new optional parameter resultUrl
+  - Interface RacksUpdateHeaders has a new optional parameter location
+  - Interface StorageAppliance has a new optional parameter manufacturer
+  - Interface StorageAppliance has a new optional parameter model
+  - Interface StorageAppliance has a new optional parameter secretRotationStatus
+  - Interface StorageAppliance has a new optional parameter version
+  - Interface StorageAppliancesUpdateHeaders has a new optional parameter location
+  - Interface VirtualMachinesUpdateHeaders has a new optional parameter location
+  - Added Enum KnownClusterContinueUpdateVersionMachineGroupTargetingMode
+  - Added Enum KnownClusterScanRuntimeParametersScanActivity
+  - Added Enum KnownClusterSecretArchiveEnabled
+  - Added Enum KnownClusterUpdateStrategyType
+  - Added Enum KnownKubernetesClusterFeatureAvailabilityLifecycle
+  - Added Enum KnownKubernetesClusterFeatureDetailedStatus
+  - Added Enum KnownKubernetesClusterFeatureProvisioningState
+  - Added Enum KnownKubernetesClusterFeatureRequired
+  - Added Enum KnownManagedServiceIdentitySelectorType
+  - Added Enum KnownManagedServiceIdentityType
+  - Added Enum KnownRuntimeProtectionEnforcementLevel
+  - Enum KnownClusterConnectionStatus has a new value Disconnected
+  - Enum KnownClusterDetailedStatus has a new value UpdatePaused
+  - Enum KnownRackSkuProvisioningState has a new value Canceled
+  - Enum KnownRackSkuProvisioningState has a new value Failed
+    
+### Breaking Changes
+
+  - the return type of AgentPools.beginDelete operation has been changed from void into AgentPoolsDeleteResponse
+  - the return type of AgentPools.beginDeleteAndWait operation has been changed from void into AgentPoolsDeleteResponse
+  - the return type of BareMetalMachineKeySets.beginDelete operation has been changed from void into BareMetalMachineKeySetsDeleteResponse
+  - the return type of BareMetalMachineKeySets.beginDeleteAndWait operation has been changed from void into BareMetalMachineKeySetsDeleteResponse
+  - the return type of BareMetalMachines.beginDelete operation has been changed from void into BareMetalMachinesDeleteResponse
+  - the return type of BareMetalMachines.beginDeleteAndWait operation has been changed from void into BareMetalMachinesDeleteResponse
+  - the return type of BmcKeySets.beginDelete operation has been changed from void into BmcKeySetsDeleteResponse
+  - the return type of BmcKeySets.beginDeleteAndWait operation has been changed from void into BmcKeySetsDeleteResponse
+  - the return type of CloudServicesNetworks.beginDelete operation has been changed from void into CloudServicesNetworksDeleteResponse
+  - the return type of CloudServicesNetworks.beginDeleteAndWait operation has been changed from void into CloudServicesNetworksDeleteResponse
+  - the return type of ClusterManagers.beginDelete operation has been changed from void into ClusterManagersDeleteResponse
+  - the return type of ClusterManagers.beginDeleteAndWait operation has been changed from void into ClusterManagersDeleteResponse
+  - the return type of Clusters.beginDelete operation has been changed from void into ClustersDeleteResponse
+  - the return type of Clusters.beginDeleteAndWait operation has been changed from void into ClustersDeleteResponse
+  - the return type of Consoles.beginDelete operation has been changed from void into ConsolesDeleteResponse
+  - the return type of Consoles.beginDeleteAndWait operation has been changed from void into ConsolesDeleteResponse
+  - the return type of KubernetesClusters.beginDelete operation has been changed from void into KubernetesClustersDeleteResponse
+  - the return type of KubernetesClusters.beginDeleteAndWait operation has been changed from void into KubernetesClustersDeleteResponse
+  - the return type of L2Networks.beginDelete operation has been changed from void into L2NetworksDeleteResponse
+  - the return type of L2Networks.beginDeleteAndWait operation has been changed from void into L2NetworksDeleteResponse
+  - the return type of L3Networks.beginDelete operation has been changed from void into L3NetworksDeleteResponse
+  - the return type of L3Networks.beginDeleteAndWait operation has been changed from void into L3NetworksDeleteResponse
+  - the return type of MetricsConfigurations.beginDelete operation has been changed from void into MetricsConfigurationsDeleteResponse
+  - the return type of MetricsConfigurations.beginDeleteAndWait operation has been changed from void into MetricsConfigurationsDeleteResponse
+  - the return type of Racks.beginDelete operation has been changed from void into RacksDeleteResponse
+  - the return type of Racks.beginDeleteAndWait operation has been changed from void into RacksDeleteResponse
+  - the return type of StorageAppliances.beginDelete operation has been changed from void into StorageAppliancesDeleteResponse
+  - the return type of StorageAppliances.beginDeleteAndWait operation has been changed from void into StorageAppliancesDeleteResponse
+  - the return type of TrunkedNetworks.beginDelete operation has been changed from void into TrunkedNetworksDeleteResponse
+  - the return type of TrunkedNetworks.beginDeleteAndWait operation has been changed from void into TrunkedNetworksDeleteResponse
+  - the return type of VirtualMachines.beginDelete operation has been changed from void into VirtualMachinesDeleteResponse
+  - the return type of VirtualMachines.beginDeleteAndWait operation has been changed from void into VirtualMachinesDeleteResponse
+  - the return type of Volumes.beginDelete operation has been changed from void into VolumesDeleteResponse
+  - the return type of Volumes.beginDeleteAndWait operation has been changed from void into VolumesDeleteResponse
+
+
 ## 1.0.0 (2023-08-22)
 
-The package of @azure/arm-networkcloud is using our next generation design principles. To learn more, please refer to our documentation [Quick Start](https://aka.ms/azsdk/js/mgmt/quickstart ).
+The package of @azure/arm-networkcloud is using our next generation design principles. To learn more, please refer to our documentation [Quick Start](https://aka.ms/azsdk/js/mgmt/quickstart).

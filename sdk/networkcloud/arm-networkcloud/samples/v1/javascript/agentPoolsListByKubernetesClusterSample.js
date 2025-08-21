@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get a list of agent pools for the provided Kubernetes cluster.
  *
  * @summary Get a list of agent pools for the provided Kubernetes cluster.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/AgentPools_ListByKubernetesCluster.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/AgentPools_ListByKubernetesCluster.json
  */
 async function listAgentPoolsOfTheKubernetesCluster() {
   const subscriptionId =
@@ -26,9 +24,9 @@ async function listAgentPoolsOfTheKubernetesCluster() {
   const credential = new DefaultAzureCredential();
   const client = new NetworkCloud(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.agentPools.listByKubernetesCluster(
+  for await (const item of client.agentPools.listByKubernetesCluster(
     resourceGroupName,
-    kubernetesClusterName
+    kubernetesClusterName,
   )) {
     resArray.push(item);
   }
@@ -36,7 +34,7 @@ async function listAgentPoolsOfTheKubernetesCluster() {
 }
 
 async function main() {
-  listAgentPoolsOfTheKubernetesCluster();
+  await listAgentPoolsOfTheKubernetesCluster();
 }
 
 main().catch(console.error);

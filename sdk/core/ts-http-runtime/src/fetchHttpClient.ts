@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { AbortError } from "./abort-controller/AbortError.js";
-import {
+import type {
   HttpClient,
   HttpHeaders as PipelineHeaders,
   PipelineRequest,
@@ -11,7 +11,7 @@ import {
 } from "./interfaces.js";
 import { RestError } from "./restError.js";
 import { createHttpHeaders } from "./httpHeaders.js";
-import { isNodeReadableStream, isReadableStream } from "./util/typeGuards.js";
+import { isNodeReadableStream, isWebReadableStream } from "./util/typeGuards.js";
 
 /**
  * Checks if the body is a Blob or Blob-like
@@ -84,7 +84,10 @@ async function makeRequest(request: PipelineRequest): Promise<PipelineResponse> 
      * of request options.
      * It will not work as you expect.
      */
-    const response = await fetch(request.url, requestInit);
+    const response = await fetch(request.url, {
+      ...requestInit,
+      ...request.requestOverrides,
+    });
     // If we're uploading a blob, we need to fire the progress event manually
     if (isBlob(request.body) && request.onUploadProgress) {
       request.onUploadProgress({ loadedBytes: request.body.size });
@@ -111,7 +114,7 @@ async function buildPipelineResponse(
     status: httpResponse.status,
   };
 
-  const bodyStream = isReadableStream(httpResponse.body)
+  const bodyStream = isWebReadableStream(httpResponse.body)
     ? buildBodyStream(httpResponse.body, {
         onProgress: request.onDownloadProgress,
         onEnd: abortControllerCleanup,
@@ -155,7 +158,7 @@ function setupAbortSignal(request: PipelineRequest): {
   let abortListener: ((event: any) => void) | undefined;
   if (request.abortSignal) {
     if (request.abortSignal.aborted) {
-      throw new AbortError("The operation was aborted.");
+      throw new AbortError("The operation was aborted. Request has already been canceled.");
     }
 
     abortListener = (event: Event) => {
@@ -217,21 +220,26 @@ function buildPipelineHeaders(httpResponse: Response): PipelineHeaders {
   return responseHeaders;
 }
 
-function buildRequestBody(request: PipelineRequest):
-  | {
-      streaming: boolean;
-      body: ReadableStream<Uint8Array>;
-    }
-  | {
-      streaming: boolean;
-      body: string | Blob | ArrayBuffer | ArrayBufferView | FormData | null | undefined;
-    } {
+interface BuildRequestBodyResponse {
+  body:
+    | string
+    | Blob
+    | ReadableStream<Uint8Array>
+    | ArrayBuffer
+    | ArrayBufferView
+    | FormData
+    | null
+    | undefined;
+  streaming: boolean;
+}
+
+function buildRequestBody(request: PipelineRequest): BuildRequestBodyResponse {
   const body = typeof request.body === "function" ? request.body() : request.body;
   if (isNodeReadableStream(body)) {
     throw new Error("Node streams are not supported in browser environment.");
   }
 
-  return isReadableStream(body)
+  return isWebReadableStream(body)
     ? { streaming: true, body: buildBodyStream(body, { onProgress: request.onUploadProgress }) }
     : { streaming: false, body };
 }

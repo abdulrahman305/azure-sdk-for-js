@@ -1059,6 +1059,29 @@ export const EventSubscriptionIdentity: coreClient.CompositeMapper = {
           name: "String",
         },
       },
+      federatedIdentityCredentialInfo: {
+        serializedName: "federatedIdentityCredentialInfo",
+        type: {
+          name: "Composite",
+          className: "FederatedIdentityCredentialInfo",
+        },
+      },
+    },
+  },
+};
+
+export const FederatedIdentityCredentialInfo: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "FederatedIdentityCredentialInfo",
+    modelProperties: {
+      federatedClientId: {
+        serializedName: "federatedClientId",
+        required: true,
+        type: {
+          name: "Uuid",
+        },
+      },
     },
   },
 };
@@ -1258,6 +1281,13 @@ export const SubscriptionUpdateParameters: coreClient.CompositeMapper = {
         serializedName: "properties.expirationTimeUtc",
         type: {
           name: "DateTime",
+        },
+      },
+      tags: {
+        serializedName: "properties.tags",
+        type: {
+          name: "Dictionary",
+          value: { type: { name: "String" } },
         },
       },
     },
@@ -1772,6 +1802,13 @@ export const ClientAuthenticationSettings: coreClient.CompositeMapper = {
           className: "CustomJwtAuthenticationSettings",
         },
       },
+      webhookAuthentication: {
+        serializedName: "webhookAuthentication",
+        type: {
+          name: "Composite",
+          className: "WebhookAuthenticationSettings",
+        },
+      },
     },
   },
 };
@@ -1795,6 +1832,18 @@ export const CustomJwtAuthenticationSettings: coreClient.CompositeMapper = {
             type: {
               name: "Composite",
               className: "IssuerCertificateInfo",
+            },
+          },
+        },
+      },
+      encodedIssuerCertificates: {
+        serializedName: "encodedIssuerCertificates",
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "EncodedIssuerCertificateInfo",
             },
           },
         },
@@ -1831,6 +1880,95 @@ export const CustomJwtAuthenticationManagedIdentity: coreClient.CompositeMapper 
     type: {
       name: "Composite",
       className: "CustomJwtAuthenticationManagedIdentity",
+      modelProperties: {
+        type: {
+          serializedName: "type",
+          required: true,
+          type: {
+            name: "String",
+          },
+        },
+        userAssignedIdentity: {
+          serializedName: "userAssignedIdentity",
+          type: {
+            name: "String",
+          },
+        },
+      },
+    },
+  };
+
+export const EncodedIssuerCertificateInfo: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "EncodedIssuerCertificateInfo",
+    modelProperties: {
+      kid: {
+        serializedName: "kid",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      encodedCertificate: {
+        serializedName: "encodedCertificate",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+    },
+  },
+};
+
+export const WebhookAuthenticationSettings: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "WebhookAuthenticationSettings",
+    modelProperties: {
+      identity: {
+        serializedName: "identity",
+        type: {
+          name: "Composite",
+          className: "CustomWebhookAuthenticationManagedIdentity",
+        },
+      },
+      endpointUrl: {
+        serializedName: "endpointUrl",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      endpointBaseUrl: {
+        serializedName: "endpointBaseUrl",
+        type: {
+          name: "String",
+        },
+      },
+      azureActiveDirectoryApplicationIdOrUri: {
+        serializedName: "azureActiveDirectoryApplicationIdOrUri",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      azureActiveDirectoryTenantId: {
+        serializedName: "azureActiveDirectoryTenantId",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+    },
+  },
+};
+
+export const CustomWebhookAuthenticationManagedIdentity: coreClient.CompositeMapper =
+  {
+    type: {
+      name: "Composite",
+      className: "CustomWebhookAuthenticationManagedIdentity",
       modelProperties: {
         type: {
           serializedName: "type",
@@ -3832,6 +3970,13 @@ export const Subscription: coreClient.CompositeMapper = {
         serializedName: "properties.expirationTimeUtc",
         type: {
           name: "DateTime",
+        },
+      },
+      tags: {
+        serializedName: "properties.tags",
+        type: {
+          name: "Dictionary",
+          value: { type: { name: "String" } },
         },
       },
     },

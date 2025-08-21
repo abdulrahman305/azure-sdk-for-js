@@ -1,12 +1,19 @@
 {
-  "extends": "../../../tsconfig",
-  "compilerOptions": {
-    "outDir": "./dist-esm",
-    "declarationDir": "./types",
-    "paths": {
-      "@azure/schema-registry-json": ["./src/index"]
+  "references": [
+    {
+      "path": "./tsconfig.src.json"
     },
-    "lib": ["dom"]
-  },
-  "include": ["src/**/*.ts", "test/**/*.ts", "samples-dev/**/*.ts"]
+    {
+      "path": "./tsconfig.samples.json"
+    },
+    {
+      "path": "./tsconfig.test.json"
+    },
+    {
+      "path": "./tsconfig.snippets.json"
+    }
+  ],
+  "compilerOptions": {
+    "esModuleInterop": true
+  }
 }

@@ -5,12 +5,11 @@ import {
   isBrowser,
   isBun,
   isDeno,
-  isNode,
   isNodeLike,
   isNodeRuntime,
   isReactNative,
   isWebWorker,
-} from "../../src/index.js";
+} from "../../src/util/checkEnvironment.js";
 import { describe, it, assert } from "vitest";
 
 describe("checkEnvironment (browser)", function () {
@@ -29,12 +28,6 @@ describe("checkEnvironment (browser)", function () {
   describe("isDeno (browser)", function () {
     it("should return false", async function () {
       assert.isFalse(isDeno);
-    });
-  });
-
-  describe("isNode(browser)", function () {
-    it("should return true", async function () {
-      assert.isFalse(isNode);
     });
   });
 

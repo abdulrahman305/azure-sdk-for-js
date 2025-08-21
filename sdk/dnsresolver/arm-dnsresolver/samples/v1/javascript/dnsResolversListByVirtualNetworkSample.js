@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Lists DNS resolver resource IDs linked to a virtual network.
  *
  * @summary Lists DNS resolver resource IDs linked to a virtual network.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/DnsResolver_ListByVirtualNetwork.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/DnsResolver_ListByVirtualNetwork.json
  */
 async function listDnsResolversByVirtualNetwork() {
   const subscriptionId =
@@ -26,9 +24,9 @@ async function listDnsResolversByVirtualNetwork() {
   const credential = new DefaultAzureCredential();
   const client = new DnsResolverManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.dnsResolvers.listByVirtualNetwork(
+  for await (const item of client.dnsResolvers.listByVirtualNetwork(
     resourceGroupName,
-    virtualNetworkName
+    virtualNetworkName,
   )) {
     resArray.push(item);
   }
@@ -36,7 +34,7 @@ async function listDnsResolversByVirtualNetwork() {
 }
 
 async function main() {
-  listDnsResolversByVirtualNetwork();
+  await listDnsResolversByVirtualNetwork();
 }
 
 main().catch(console.error);

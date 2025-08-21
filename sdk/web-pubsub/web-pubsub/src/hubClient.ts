@@ -1,28 +1,34 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { CommonClientOptions, FullOperationResponse, OperationOptions } from "@azure/core-client";
-import { RestError, RequestBodyType } from "@azure/core-rest-pipeline";
-import { GeneratedClient } from "./generated/generatedClient";
-import {
+import type {
+  CommonClientOptions,
+  FullOperationResponse,
+  OperationOptions,
+} from "@azure/core-client";
+import type { RequestBodyType } from "@azure/core-rest-pipeline";
+import { RestError } from "@azure/core-rest-pipeline";
+import { GeneratedClient } from "./generated/generatedClient.js";
+import type {
   WebPubSubGroup,
-  WebPubSubGroupImpl,
   GroupAddConnectionOptions,
   GroupRemoveConnectionOptions,
-} from "./groupClient";
-import { AzureKeyCredential, TokenCredential, isTokenCredential } from "@azure/core-auth";
-import { webPubSubKeyCredentialPolicy } from "./webPubSubCredentialPolicy";
-import { tracingClient } from "./tracing";
-import { logger } from "./logger";
-import { parseConnectionString } from "./parseConnectionString";
+} from "./groupClient.js";
+import { WebPubSubGroupImpl } from "./groupClient.js";
+import type { AzureKeyCredential, TokenCredential } from "@azure/core-auth";
+import { isTokenCredential } from "@azure/core-auth";
+import { webPubSubKeyCredentialPolicy } from "./webPubSubCredentialPolicy.js";
+import { tracingClient } from "./tracing.js";
+import { logger } from "./logger.js";
+import { parseConnectionString } from "./parseConnectionString.js";
 import jwt from "jsonwebtoken";
-import { getPayloadForMessage } from "./utils";
-import {
+import { getPayloadForMessage } from "./utils.js";
+import type {
   GeneratedClientOptionalParams,
   AddToGroupsRequest,
   RemoveFromGroupsRequest,
-} from "./generated";
-import { webPubSubReverseProxyPolicy } from "./reverseProxyPolicy";
+} from "./generated/index.js";
+import { webPubSubReverseProxyPolicy } from "./reverseProxyPolicy.js";
 
 /**
  * Options for closing a connection to a hub.
@@ -238,7 +244,7 @@ export interface HubHasPermissionOptions extends OperationOptions {
 /**
  * The type of client endpoint that is being requested.
  */
-export type WebPubSubClientProtocol = "default" | "mqtt";
+export type WebPubSubClientProtocol = "default" | "mqtt" | "socketio";
 
 /**
  * Options for generating a token to connect a client to the Azure Web Pubsub service.
@@ -312,7 +318,7 @@ export class WebPubSubServiceClient {
   /**
    * The Web PubSub API version being used by this client
    */
-  public readonly apiVersion: string = "2024-01-01";
+  public readonly apiVersion: string = "2024-12-01";
 
   /**
    * The Web PubSub endpoint this client is connected to
@@ -323,10 +329,10 @@ export class WebPubSubServiceClient {
    * Creates an instance of a WebPubSubServiceClient for sending messages and managing groups, connections, and users.
    *
    * Example usage:
-   * ```ts
+   * ```ts snippet:ReadmeSampleCreateClient_ConnectionString
    * import { WebPubSubServiceClient } from "@azure/web-pubsub";
-   * const connectionString = process.env['WEB_PUBSUB_CONNECTION_STRING'];
-   * const client = new WebPubSubServiceClient(connectionString, 'chat');
+   *
+   * const serviceClient = new WebPubSubServiceClient("<ConnectionString>", "<hubName>");
    * ```
    *
    * @param connectionString - The connection string
@@ -339,11 +345,11 @@ export class WebPubSubServiceClient {
    * Creates an instance of a WebPubSubServiceClient for sending messages and managing groups, connections, and users.
    *
    * Example usage:
-   * ```ts
-   * import { WebPubSubServiceClient, AzureKeyCredential } from "@azure/web-pubsub";
-   * const cred = new AzureKeyCredential("<your web pubsub api key>");
-   * const endpoint = "https://xxxx.webpubsubdev.azure.com"
-   * const client = new WebPubSubServiceClient(endpoint, cred, 'chat');
+   * ```ts snippet:ReadmeSampleCreateClient_KeyCredential
+   * import { AzureKeyCredential, WebPubSubServiceClient } from "@azure/web-pubsub";
+   *
+   * const key = new AzureKeyCredential("<Key>");
+   * const serviceClient = new WebPubSubServiceClient("<Endpoint>", key, "<hubName>");
    * ```
    *
    * @param endpoint - The endpoint to connect to
@@ -958,18 +964,22 @@ export class WebPubSubServiceClient {
         const endpoint = this.endpoint.endsWith("/") ? this.endpoint : this.endpoint + "/";
         const clientEndpoint = endpoint.replace(/(http)(s?:\/\/)/gi, "ws$2");
         const clientProtocol = updatedOptions.clientProtocol;
-        const clientPath =
-          clientProtocol && clientProtocol === "mqtt"
-            ? `clients/mqtt/hubs/${this.hubName}`
-            : `client/hubs/${this.hubName}`;
+        let clientPath = `client/hubs/${this.hubName}`;
+        switch (clientProtocol) {
+          case "mqtt":
+            clientPath = `clients/mqtt/hubs/${this.hubName}`;
+            break;
+          case "socketio":
+            clientPath = `clients/socketio/hubs/${this.hubName}`;
+        }
         const baseUrl = clientEndpoint + clientPath;
 
         let token: string;
         if (isTokenCredential(this.credential)) {
-          const response = await this.client.webPubSub.generateClientToken(
-            this.hubName,
-            updatedOptions,
-          );
+          const response = await this.client.webPubSub.generateClientToken(this.hubName, {
+            ...updatedOptions,
+            clientType: clientProtocol,
+          });
           token = response.token!;
         } else {
           const key = this.credential.key;

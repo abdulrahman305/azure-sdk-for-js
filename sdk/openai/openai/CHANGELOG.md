@@ -1,14 +1,41 @@
 # Release History
 
-## 2.0.0-beta.3 (Unreleased)
+## 2.1.0-beta.1 (2025-04-02)
 
 ### Features Added
 
+- Adds support for `ungrounded_material` in `ContentFilterResultsForChoiceOutput`.
+- Adds support for `user_security_context` in `ChatCompletionCreateParamsNonStreaming` and `ChatCompletionCreateParamsStreaming`.
+
+## 2.0.0 (2024-11-18)
+
+This release marks the first stable library version for `@azure/openai` and it exposes Azure-exclusive features supported in the latest Azure OpenAI Service stable `api-version` label of `2024-10-21`.
+
+The following features are supported in this release:
+
+- Azure OpenAI On Your Data which enables you to run advanced AI models, without needing to train or fine-tune models, on your own enterprise data located in an Azure Search index or in an vector store in Azure Cosmos DB.
+- Azure OpenAI content filtering which detects and prevents the output of harmful content.
+
 ### Breaking Changes
 
-### Bugs Fixed
+- Models related to features still in preview have been removed.
 
-### Other Changes
+## 2.0.0-beta.3 (2024-11-05)
+
+This release adds types for Azure features supported in Azure OpenAI Service API version 2024-08-01-preview.
+
+### Features Added
+
+- Adds support for connecting to MongoDB in Azure On Your Data.
+- Adds support for citation information in Azure On Your Data responses.
+- Adds support for content filtering in image generation.
+
+### Breaking Changes
+
+- Removes the Azure ML connection in Azure On Your Data.
+- Removes the enhancements feature from chat completions.
+- Removes the now deprecated `finish_details` field in chat completion responses. Use `finish_reason` instead.
+- Removes the `role_information` field from the On Your Data request models.
 
 ## 2.0.0-beta.2 (2024-09-09)
 
@@ -39,17 +66,18 @@
 - Adds a new property `logprobs` in `ChatChoice` to support log probabilities for this chat choice
 - Adds new properties `logprobs` and `topLogprobs` in `ChatCompletionsOptions` class to support log probabilities for chat completions
 - Adds `dimensions` in `GetEmbeddingsOptions`.
-when using Azure OpenAI, specifies the input type to use for embedding search.
+  when using Azure OpenAI, specifies the input type to use for embedding search.
 - Updates the default service API version to `2024-03-01-preview`
 - Returns content filter results and prompt filter results for image generations through `contentFilterResults` and `promptFilterResults` properties
 
 ### Breaking Changes
 
 - `AzureChatExtensionConfiguration`, `OnYourDataAuthenticationOptions`, `OnYourDataVectorizationSource`, `OnYourDataVectorizationSourceType`, `ChatCompletionsNamedToolSelection`, `ChatCompletionsToolDefinition`, `ChatCompletionsToolCall`, `ChatMessageContentItem`, `ChatRequestMessage`, `ChatFinishDetails` are renamed with `Union` postfix.
-- `AzureCognitiveSearchQueryType`, `ChatMessageImageDetailLevel`, `ElasticsearchQueryType`, `FunctionCallPreset`, `ImageGenerationQuality`, `ImageGenerationResponseFormat`, `ImageSize`, `ImageGenerationStyle`, `OnYourDataAuthenticationType`, `OnYourDataVectorizationSourceType`  union types no longer have fixed values.
+- `AzureCognitiveSearchQueryType`, `ChatMessageImageDetailLevel`, `ElasticsearchQueryType`, `FunctionCallPreset`, `ImageGenerationQuality`, `ImageGenerationResponseFormat`, `ImageSize`, `ImageGenerationStyle`, `OnYourDataAuthenticationType`, `OnYourDataVectorizationSourceType` union types no longer have fixed values.
 - `prompFilterResults` property in `ChatCompletions`, `prompFilterResults` property in `Choice`, `toolCalls` in `ChatResponseMessage` are now optional
 
 Changes to "bring your own data" features:
+
 - Introduces a new type: `AzureChatExtensionDataSourceResponseCitation`
 - For `AzureChatExtensionsMessageContext`, replaced `messages` property with `citations` and added `intent` as a string
 - Rename `AzureCognitiveSearch` to `AzureSearch`
@@ -86,10 +114,10 @@ Changes to "bring your own data" features:
 - `listChatCompletions` and `listCompletions` are renamed to `streamChatCompletions` and `streamCompletions` respectively and their return types are updated to be a `ReadableStream`. For example, `streamChatCompletions` can be used as follows:
 
 ```js
-  const events = await client.streamChatCompletions(deploymentId, messages);
-  for await (const event of events) {
-    // use event ...
-  }
+const events = await client.streamChatCompletions(deploymentId, messages);
+for await (const event of events) {
+  // use event ...
+}
 ```
 
 ## 1.0.0-beta.8 (2023-12-07)
@@ -110,18 +138,18 @@ features and changes to the client library.
 `ChatMessage` changes:
 
 - The singular `ChatMessage` type has been replaced by `ChatRequestMessage` and `ChatResponseMessage`, the former of
-    which is a union of special message structures such as `ChatRequestSystemMessage` and
-    `ChatRequestUserMessage`.
+  which is a union of special message structures such as `ChatRequestSystemMessage` and
+  `ChatRequestUserMessage`.
 
 Dall-e-3:
 
 - Azure OpenAI now uses `dall-e-3` model deployments for its image generation API and such a valid deployment must
-    be provided to the `GetImageGenerations` method.
+  be provided to the `GetImageGenerations` method.
 
 On Your Data:
 
 - The `AzureExtensionChatConfiguration` type has been updated to inline the parameters of the extension into the
-    configuration object itself.
+  configuration object itself.
 
 ## 1.0.0-beta.7 (2023-10-25)
 
@@ -157,12 +185,12 @@ On Your Data:
   - A list of AzureExtensionChatConfiguration may be populated on `ChatCompletionsOptions` via its `azureExtensionOption.extensions` property. These configurations include a type together with a JSON Schema representation of its parameters. The type is used to determine which extension to use when generating chat completions. See the `bringYourOwnData.js` sample for an example of how to use this feature.
 - Functions for chat completions are now supported: see [OpenAI's blog post on the topic](https://openai.com/blog/function-calling-and-other-api-updates) for much more detail.
   - A list of `FunctionDefinition` objects may be populated on `ChatCompletionsOptions` via its `functions` property. These definitions include a name and description together with a serialized JSON Schema representation of its parameters.
-  - **NOTE**: Chat Functions requires a minimum of the `-0613` model versions for `gpt-4` and `gpt-3.5-turbo`/`gpt-35-turbo`. Please ensure you're using these later model versions, as Functions are not supported with older model revisions. For Azure OpenAI, you can update a deployment's model version or create a new model deployment with an updated version via the Azure AI Studio interface, also accessible through Azure Portal.
+  - **NOTE**: Chat Functions requires a minimum of the `-0613` model versions for `gpt-4` and `gpt-3.5-turbo`/`gpt-35-turbo`. Please ensure you're using these later model versions, as Functions are not supported with older model revisions. For Azure OpenAI, you can update a deployment's model version or create a new model deployment with an updated version via the Azure AI Foundry interface, also accessible through Azure Portal.
 - (Azure OpenAI specific) Completions and Chat Completions responses now include embedded content filter annotations for prompts and responses
 
 ### Breaking Changes
 
-- Remove `beginAzureBatchImageGeneration` and `getAzureBatchImageGenerationOperationStatus` methods. 
+- Remove `beginAzureBatchImageGeneration` and `getAzureBatchImageGenerationOperationStatus` methods.
 - `getImages` has been updated to return the image URLs/payloads directly, rather than requiring the user to call `getAzureBatchImageGenerationOperationStatus` to retrieve them.
 
 ## 1.0.0-beta.4 (2023-08-09)

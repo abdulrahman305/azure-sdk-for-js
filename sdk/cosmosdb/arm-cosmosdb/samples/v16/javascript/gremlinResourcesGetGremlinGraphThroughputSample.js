@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Gets the Gremlin graph throughput under an existing Azure Cosmos DB database account with the provided name.
  *
  * @summary Gets the Gremlin graph throughput under an existing Azure Cosmos DB database account with the provided name.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBGremlinGraphThroughputGet.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBGremlinGraphThroughputGet.json
  */
 async function cosmosDbGremlinGraphThroughputGet() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -36,7 +34,7 @@ async function cosmosDbGremlinGraphThroughputGet() {
 }
 
 async function main() {
-  cosmosDbGremlinGraphThroughputGet();
+  await cosmosDbGremlinGraphThroughputGet();
 }
 
 main().catch(console.error);

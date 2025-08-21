@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Retrieves continuous backup information for a container resource.
  *
  * @summary Retrieves continuous backup information for a container resource.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBSqlContainerBackupInformation.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBSqlContainerBackupInformation.json
  */
 async function cosmosDbSqlContainerBackupInformation() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -40,7 +38,7 @@ async function cosmosDbSqlContainerBackupInformation() {
 }
 
 async function main() {
-  cosmosDbSqlContainerBackupInformation();
+  await cosmosDbSqlContainerBackupInformation();
 }
 
 main().catch(console.error);

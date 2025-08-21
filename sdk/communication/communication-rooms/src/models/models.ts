@@ -1,7 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { CommunicationIdentifier, CommunicationIdentifierKind } from "@azure/communication-common";
+import type {
+  CommunicationIdentifier,
+  CommunicationIdentifierKind,
+} from "@azure/communication-common";
 
 /** The meeting room. */
 export interface CommunicationRoom {
@@ -18,7 +21,7 @@ export interface CommunicationRoom {
 }
 
 /** The participant's role in the room */
-export type ParticipantRole = "Presenter" | "Attendee" | "Consumer";
+export type ParticipantRole = "Presenter" | "Attendee" | "Consumer" | "Collaborator";
 
 /** A participant of the room. */
 export interface RoomParticipant {

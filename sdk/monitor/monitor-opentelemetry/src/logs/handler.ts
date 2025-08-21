@@ -2,15 +2,15 @@
 // Licensed under the MIT License.
 
 import { AzureMonitorLogExporter } from "@azure/monitor-opentelemetry-exporter";
-import { Instrumentation } from "@opentelemetry/instrumentation";
+import type { Instrumentation } from "@opentelemetry/instrumentation";
 import { BunyanInstrumentation } from "@opentelemetry/instrumentation-bunyan";
 import { WinstonInstrumentation } from "@opentelemetry/instrumentation-winston";
-import { BatchLogRecordProcessor } from "@opentelemetry/sdk-logs";
-import { InternalConfig } from "../shared/config";
-import { MetricHandler } from "../metrics/handler";
-import { AzureLogRecordProcessor } from "./logRecordProcessor";
-import { AzureBatchLogRecordProcessor } from "./batchLogRecordProcessor";
-import { logLevelToSeverityNumber } from "../utils/logUtils";
+import type { BatchLogRecordProcessor } from "@opentelemetry/sdk-logs";
+import type { InternalConfig } from "../shared/config.js";
+import type { MetricHandler } from "../metrics/handler.js";
+import { AzureLogRecordProcessor } from "./logRecordProcessor.js";
+import { AzureBatchLogRecordProcessor } from "./batchLogRecordProcessor.js";
+import { logLevelToSeverityNumber } from "../utils/logUtils.js";
 
 /**
  * Azure Monitor OpenTelemetry Log Handler

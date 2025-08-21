@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.3 (Unreleased)
+## 1.0.0-beta.8 (Unreleased)
 
 ### Features Added
 
@@ -10,9 +10,70 @@
 
 ### Other Changes
 
+## 1.0.0-beta.7 (2025-01-17)
+
+### Features Added
+ 
+- Warning message when MPT access token is close to expiry
+- Handling custom attachments in tests
+ 
+### Bugs Fixed
+ 
+- Attaching code snippet in error messages
+ 
+### Other Changes
+ 
+- Improved error messaging for reporting and scalable failures
+
+## 1.0.0-beta.6 (2024-11-29)
+
+### Features Added
+
+- Added support for multiple global setup and teardown files introduced in playwright v1.49.
+
+### Bugs Fixed
+
+- Missing type generation for some functions and interfaces.
+
+## 1.0.0-beta.5 (2024-11-18)
+
+This release fixes a bug related to artifact upload and performance enhancements.
+
+### Bugs Fixed
+
+- Fixed failures when uploading artifacts due to race conditions.
+
+### Other Changes
+
+- Removed runName support in cloud hosted browser uri
+- Added X-MS-Package-Version header to API that requests cloud hosted browser for language and package version decoding.
+
+## 1.0.0-beta.4 (2024-10-21)
+
+This release fixes some bugs, adds a feature to customize run name and improves error messaging.
+
+### Features Added
+
+- Added a runName field which allows customers to customize the display name when using the reporting feature.
+
+### Bugs Fixed
+
+- Fixed a bug where users were getting multiple entries for a test run in the dashboard for some cases.
+- Fixed a bug where some optional fields in Playwright config were being treated as mandatory in service package.
+- Fixed a bug where an error message was printing twice.
+
+## 1.0.0-beta.3 (2024-09-16)
+
+This release provides better error messaging and error handling by improving logging.
+
+### Bugs Fixed
+
+- Optimized test result publishing by reusing the Sas uri till it's expiry.
+- Fixed unexpected process termination by improving error handling of API used to publish test results.
+
 ## 1.0.0-beta.2 (2024-09-12)
 
-This release updates the Microsoft Playwright Testing library documentation and improves error messages. 
+This release updates the Microsoft Playwright Testing library documentation and improves error messages.
 
 ### Bugs Fixed
 

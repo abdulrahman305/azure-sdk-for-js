@@ -28,13 +28,22 @@ extends:
     Artifacts:
       - name: azure-identity
         safeName: azureidentity
+        triggeringPaths:
+        - /sdk/test-utils/
+        - /.config/
+        - /.devcontainer/
+        - /.github/
+        - /.scripts/
+        - /common/
+        - /eng/
       - name: azure-identity-cache-persistence
         safeName: azureidentitycachepersistence
-        # TODO: Remove when REX validation tool is integrated: https://github.com/Azure/azure-sdk-for-js/issues/26770
-        skipPublishDocMs: true
+        triggeringPaths:
+        - /sdk/identity/
       - name: azure-identity-broker
         safeName: azureidentitybroker
       - name: azure-identity-vscode
         safeName: azureidentityvscode
-        # TODO: Remove when REX validation tool is integrated: https://github.com/Azure/azure-sdk-for-js/issues/26770
         skipPublishDocMs: true
+        triggeringPaths:
+        - /sdk/identity/

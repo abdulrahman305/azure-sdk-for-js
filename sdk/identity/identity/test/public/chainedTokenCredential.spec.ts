@@ -1,16 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import type { AccessToken, AggregateAuthenticationError, TokenCredential } from "@azure/identity";
 import {
-  AccessToken,
-  AggregateAuthenticationError,
   AuthenticationRequiredError,
   ChainedTokenCredential,
   CredentialUnavailableError,
-  TokenCredential,
-} from "../../src";
-import { assert } from "chai";
-import { getError } from "../authTestUtils";
+} from "@azure/identity";
+import { getError } from "../authTestUtils.js";
+import { describe, it, assert } from "vitest";
 
 function mockCredential(returnPromise: Promise<AccessToken | null>): TokenCredential {
   return {
@@ -30,8 +28,12 @@ describe("ChainedTokenCredential", function () {
           }),
         ),
       ),
-      mockCredential(Promise.resolve({ token: "firstToken", expiresOnTimestamp: 0 })),
-      mockCredential(Promise.resolve({ token: "secondToken", expiresOnTimestamp: 0 })),
+      mockCredential(
+        Promise.resolve({ token: "firstToken", expiresOnTimestamp: 0, tokenType: "Bearer" }),
+      ),
+      mockCredential(
+        Promise.resolve({ token: "secondToken", expiresOnTimestamp: 0, tokenType: "Bearer" }),
+      ),
     );
     const accessToken = await chainedTokenCredential.getToken("scope");
     assert.notStrictEqual(accessToken, null);

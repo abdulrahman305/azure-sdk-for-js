@@ -6,21 +6,17 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import { CosmosDBManagementClient } from "@azure/arm-cosmosdb";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to List all managed Cassandra clusters in this resource group.
  *
  * @summary List all managed Cassandra clusters in this resource group.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBManagedCassandraClusterListByResourceGroup.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBManagedCassandraClusterListByResourceGroup.json
  */
-async function cosmosDbManagedCassandraClusterListByResourceGroup() {
+async function cosmosDbManagedCassandraClusterListByResourceGroup(): Promise<void> {
   const subscriptionId =
     process.env["COSMOSDB_SUBSCRIPTION_ID"] ||
     "00000000-0000-0000-0000-000000000000";
@@ -29,7 +25,7 @@ async function cosmosDbManagedCassandraClusterListByResourceGroup() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.cassandraClusters.listByResourceGroup(
+  for await (const item of client.cassandraClusters.listByResourceGroup(
     resourceGroupName,
   )) {
     resArray.push(item);
@@ -37,8 +33,8 @@ async function cosmosDbManagedCassandraClusterListByResourceGroup() {
   console.log(resArray);
 }
 
-async function main() {
-  cosmosDbManagedCassandraClusterListByResourceGroup();
+async function main(): Promise<void> {
+  await cosmosDbManagedCassandraClusterListByResourceGroup();
 }
 
 main().catch(console.error);

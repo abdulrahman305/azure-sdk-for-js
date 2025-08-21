@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Restart the provided bare metal machine.
  *
  * @summary Restart the provided bare metal machine.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/BareMetalMachines_Restart.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/BareMetalMachines_Restart.json
  */
 async function restartBareMetalMachine() {
   const subscriptionId =
@@ -27,13 +25,13 @@ async function restartBareMetalMachine() {
   const client = new NetworkCloud(credential, subscriptionId);
   const result = await client.bareMetalMachines.beginRestartAndWait(
     resourceGroupName,
-    bareMetalMachineName
+    bareMetalMachineName,
   );
   console.log(result);
 }
 
 async function main() {
-  restartBareMetalMachine();
+  await restartBareMetalMachine();
 }
 
 main().catch(console.error);

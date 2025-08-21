@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createComputeManagementClient, {
-  VirtualMachineScaleSetExtensionsListParameters,
-  paginate,
-} from "@azure-rest/arm-compute";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Gets a list of all extensions in a VM scale set.
  *
  * @summary Gets a list of all extensions in a VM scale set.
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-08-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSetExtensions_List_MaximumSet_Gen.json
  */
-async function virtualMachineScaleSetExtensionsListMaximumSetGen() {
+
+import type { VirtualMachineScaleSetExtensionsListParameters } from "@azure-rest/arm-compute";
+import createComputeManagementClient, { paginate } from "@azure-rest/arm-compute";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function virtualMachineScaleSetExtensionsListMaximumSetGen(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";
@@ -50,7 +45,7 @@ virtualMachineScaleSetExtensionsListMaximumSetGen().catch(console.error);
  * @summary Gets a list of all extensions in a VM scale set.
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-08-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSetExtensions_List_MinimumSet_Gen.json
  */
-async function virtualMachineScaleSetExtensionsListMinimumSetGen() {
+async function virtualMachineScaleSetExtensionsListMinimumSetGen(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";

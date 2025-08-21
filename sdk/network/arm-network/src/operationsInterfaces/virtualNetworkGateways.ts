@@ -39,6 +39,10 @@ import {
   VirtualNetworkGatewaysGetLearnedRoutesResponse,
   VirtualNetworkGatewaysGetAdvertisedRoutesOptionalParams,
   VirtualNetworkGatewaysGetAdvertisedRoutesResponse,
+  VirtualNetworkGatewaysGetResiliencyInformationOptionalParams,
+  VirtualNetworkGatewaysGetResiliencyInformationResponse,
+  VirtualNetworkGatewaysGetRoutesInformationOptionalParams,
+  VirtualNetworkGatewaysGetRoutesInformationResponse,
   VpnClientIPsecParameters,
   VirtualNetworkGatewaysSetVpnclientIpsecParametersOptionalParams,
   VirtualNetworkGatewaysSetVpnclientIpsecParametersResponse,
@@ -52,11 +56,29 @@ import {
   VpnPacketCaptureStopParameters,
   VirtualNetworkGatewaysStopPacketCaptureOptionalParams,
   VirtualNetworkGatewaysStopPacketCaptureResponse,
+  VirtualNetworkGatewaysGetFailoverAllTestDetailsOptionalParams,
+  VirtualNetworkGatewaysGetFailoverAllTestDetailsResponse,
+  VirtualNetworkGatewaysGetFailoverSingleTestDetailsOptionalParams,
+  VirtualNetworkGatewaysGetFailoverSingleTestDetailsResponse,
+  VirtualNetworkGatewaysStartExpressRouteSiteFailoverSimulationOptionalParams,
+  VirtualNetworkGatewaysStartExpressRouteSiteFailoverSimulationResponse,
+  ExpressRouteFailoverStopApiParameters,
+  VirtualNetworkGatewaysStopExpressRouteSiteFailoverSimulationOptionalParams,
+  VirtualNetworkGatewaysStopExpressRouteSiteFailoverSimulationResponse,
   VirtualNetworkGatewaysGetVpnclientConnectionHealthOptionalParams,
   VirtualNetworkGatewaysGetVpnclientConnectionHealthResponse,
   P2SVpnConnectionRequest,
   VirtualNetworkGatewaysDisconnectVirtualNetworkGatewayVpnConnectionsOptionalParams,
-} from "../models";
+  VirtualNetworkGatewayMigrationParameters,
+  VirtualNetworkGatewaysInvokePrepareMigrationOptionalParams,
+  VirtualNetworkGatewaysInvokePrepareMigrationResponse,
+  VirtualNetworkGatewaysInvokeExecuteMigrationOptionalParams,
+  VirtualNetworkGatewaysInvokeExecuteMigrationResponse,
+  VirtualNetworkGatewaysInvokeCommitMigrationOptionalParams,
+  VirtualNetworkGatewaysInvokeCommitMigrationResponse,
+  VirtualNetworkGatewaysInvokeAbortMigrationOptionalParams,
+  VirtualNetworkGatewaysInvokeAbortMigrationResponse,
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Interface representing a VirtualNetworkGateways. */
@@ -425,6 +447,64 @@ export interface VirtualNetworkGateways {
     options?: VirtualNetworkGatewaysGetAdvertisedRoutesOptionalParams,
   ): Promise<VirtualNetworkGatewaysGetAdvertisedRoutesResponse>;
   /**
+   * This operation retrieves the resiliency information for an Express Route Gateway, including the
+   * gateway's current resiliency score and recommendations to further improve the score
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param options The options parameters.
+   */
+  beginGetResiliencyInformation(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    options?: VirtualNetworkGatewaysGetResiliencyInformationOptionalParams,
+  ): Promise<
+    SimplePollerLike<
+      OperationState<VirtualNetworkGatewaysGetResiliencyInformationResponse>,
+      VirtualNetworkGatewaysGetResiliencyInformationResponse
+    >
+  >;
+  /**
+   * This operation retrieves the resiliency information for an Express Route Gateway, including the
+   * gateway's current resiliency score and recommendations to further improve the score
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param options The options parameters.
+   */
+  beginGetResiliencyInformationAndWait(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    options?: VirtualNetworkGatewaysGetResiliencyInformationOptionalParams,
+  ): Promise<VirtualNetworkGatewaysGetResiliencyInformationResponse>;
+  /**
+   * This operation retrieves the route set information for an Express Route Gateway based on their
+   * resiliency
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param options The options parameters.
+   */
+  beginGetRoutesInformation(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    options?: VirtualNetworkGatewaysGetRoutesInformationOptionalParams,
+  ): Promise<
+    SimplePollerLike<
+      OperationState<VirtualNetworkGatewaysGetRoutesInformationResponse>,
+      VirtualNetworkGatewaysGetRoutesInformationResponse
+    >
+  >;
+  /**
+   * This operation retrieves the route set information for an Express Route Gateway based on their
+   * resiliency
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param options The options parameters.
+   */
+  beginGetRoutesInformationAndWait(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    options?: VirtualNetworkGatewaysGetRoutesInformationOptionalParams,
+  ): Promise<VirtualNetworkGatewaysGetRoutesInformationResponse>;
+  /**
    * The Set VpnclientIpsecParameters operation sets the vpnclient ipsec policy for P2S client of virtual
    * network gateway in the specified resource group through Network resource provider.
    * @param resourceGroupName The name of the resource group.
@@ -565,6 +645,144 @@ export interface VirtualNetworkGateways {
     options?: VirtualNetworkGatewaysStopPacketCaptureOptionalParams,
   ): Promise<VirtualNetworkGatewaysStopPacketCaptureResponse>;
   /**
+   * This operation retrieves the details of all the failover tests performed on the gateway for
+   * different peering locations
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param typeParam The type of failover test
+   * @param fetchLatest Fetch only the latest tests for each peering location
+   * @param options The options parameters.
+   */
+  beginGetFailoverAllTestDetails(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    typeParam: string,
+    fetchLatest: boolean,
+    options?: VirtualNetworkGatewaysGetFailoverAllTestDetailsOptionalParams,
+  ): Promise<
+    SimplePollerLike<
+      OperationState<VirtualNetworkGatewaysGetFailoverAllTestDetailsResponse>,
+      VirtualNetworkGatewaysGetFailoverAllTestDetailsResponse
+    >
+  >;
+  /**
+   * This operation retrieves the details of all the failover tests performed on the gateway for
+   * different peering locations
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param typeParam The type of failover test
+   * @param fetchLatest Fetch only the latest tests for each peering location
+   * @param options The options parameters.
+   */
+  beginGetFailoverAllTestDetailsAndWait(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    typeParam: string,
+    fetchLatest: boolean,
+    options?: VirtualNetworkGatewaysGetFailoverAllTestDetailsOptionalParams,
+  ): Promise<VirtualNetworkGatewaysGetFailoverAllTestDetailsResponse>;
+  /**
+   * This operation retrieves the details of a particular failover test performed on the gateway based on
+   * the test Guid
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param peeringLocation Peering location of the test
+   * @param failoverTestId The unique Guid value which identifies the test
+   * @param options The options parameters.
+   */
+  beginGetFailoverSingleTestDetails(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    peeringLocation: string,
+    failoverTestId: string,
+    options?: VirtualNetworkGatewaysGetFailoverSingleTestDetailsOptionalParams,
+  ): Promise<
+    SimplePollerLike<
+      OperationState<VirtualNetworkGatewaysGetFailoverSingleTestDetailsResponse>,
+      VirtualNetworkGatewaysGetFailoverSingleTestDetailsResponse
+    >
+  >;
+  /**
+   * This operation retrieves the details of a particular failover test performed on the gateway based on
+   * the test Guid
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param peeringLocation Peering location of the test
+   * @param failoverTestId The unique Guid value which identifies the test
+   * @param options The options parameters.
+   */
+  beginGetFailoverSingleTestDetailsAndWait(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    peeringLocation: string,
+    failoverTestId: string,
+    options?: VirtualNetworkGatewaysGetFailoverSingleTestDetailsOptionalParams,
+  ): Promise<VirtualNetworkGatewaysGetFailoverSingleTestDetailsResponse>;
+  /**
+   * This operation starts failover simulation on the gateway for the specified peering location
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param peeringLocation Peering location of the test
+   * @param options The options parameters.
+   */
+  beginStartExpressRouteSiteFailoverSimulation(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    peeringLocation: string,
+    options?: VirtualNetworkGatewaysStartExpressRouteSiteFailoverSimulationOptionalParams,
+  ): Promise<
+    SimplePollerLike<
+      OperationState<VirtualNetworkGatewaysStartExpressRouteSiteFailoverSimulationResponse>,
+      VirtualNetworkGatewaysStartExpressRouteSiteFailoverSimulationResponse
+    >
+  >;
+  /**
+   * This operation starts failover simulation on the gateway for the specified peering location
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param peeringLocation Peering location of the test
+   * @param options The options parameters.
+   */
+  beginStartExpressRouteSiteFailoverSimulationAndWait(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    peeringLocation: string,
+    options?: VirtualNetworkGatewaysStartExpressRouteSiteFailoverSimulationOptionalParams,
+  ): Promise<VirtualNetworkGatewaysStartExpressRouteSiteFailoverSimulationResponse>;
+  /**
+   * This operation stops failover simulation on the gateway for the specified peering location
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param stopParameters Virtual network gateway stop simulation parameters supplied to stop failover
+   *                       simulation on gateway.
+   * @param options The options parameters.
+   */
+  beginStopExpressRouteSiteFailoverSimulation(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    stopParameters: ExpressRouteFailoverStopApiParameters,
+    options?: VirtualNetworkGatewaysStopExpressRouteSiteFailoverSimulationOptionalParams,
+  ): Promise<
+    SimplePollerLike<
+      OperationState<VirtualNetworkGatewaysStopExpressRouteSiteFailoverSimulationResponse>,
+      VirtualNetworkGatewaysStopExpressRouteSiteFailoverSimulationResponse
+    >
+  >;
+  /**
+   * This operation stops failover simulation on the gateway for the specified peering location
+   * @param resourceGroupName The name of the resource group.
+   * @param virtualNetworkGatewayName The name of the virtual network gateway.
+   * @param stopParameters Virtual network gateway stop simulation parameters supplied to stop failover
+   *                       simulation on gateway.
+   * @param options The options parameters.
+   */
+  beginStopExpressRouteSiteFailoverSimulationAndWait(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    stopParameters: ExpressRouteFailoverStopApiParameters,
+    options?: VirtualNetworkGatewaysStopExpressRouteSiteFailoverSimulationOptionalParams,
+  ): Promise<VirtualNetworkGatewaysStopExpressRouteSiteFailoverSimulationResponse>;
+  /**
    * Get VPN client connection health detail per P2S client connection of the virtual network gateway in
    * the specified resource group.
    * @param resourceGroupName The name of the resource group.
@@ -619,4 +837,118 @@ export interface VirtualNetworkGateways {
     request: P2SVpnConnectionRequest,
     options?: VirtualNetworkGatewaysDisconnectVirtualNetworkGatewayVpnConnectionsOptionalParams,
   ): Promise<void>;
+  /**
+   * Trigger prepare migration for the virtual network gateway.
+   * @param resourceGroupName The resource group name of the virtual network gateway.
+   * @param virtualNetworkGatewayName The name of the gateway.
+   * @param migrationParams Parameters supplied to the Begin Prepare migration on basic vpn gateway
+   *                        through Network resource provider.
+   * @param options The options parameters.
+   */
+  beginInvokePrepareMigration(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    migrationParams: VirtualNetworkGatewayMigrationParameters,
+    options?: VirtualNetworkGatewaysInvokePrepareMigrationOptionalParams,
+  ): Promise<
+    SimplePollerLike<
+      OperationState<VirtualNetworkGatewaysInvokePrepareMigrationResponse>,
+      VirtualNetworkGatewaysInvokePrepareMigrationResponse
+    >
+  >;
+  /**
+   * Trigger prepare migration for the virtual network gateway.
+   * @param resourceGroupName The resource group name of the virtual network gateway.
+   * @param virtualNetworkGatewayName The name of the gateway.
+   * @param migrationParams Parameters supplied to the Begin Prepare migration on basic vpn gateway
+   *                        through Network resource provider.
+   * @param options The options parameters.
+   */
+  beginInvokePrepareMigrationAndWait(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    migrationParams: VirtualNetworkGatewayMigrationParameters,
+    options?: VirtualNetworkGatewaysInvokePrepareMigrationOptionalParams,
+  ): Promise<VirtualNetworkGatewaysInvokePrepareMigrationResponse>;
+  /**
+   * Trigger execute migration for the virtual network gateway.
+   * @param resourceGroupName The resource group name of the virtual network gateway.
+   * @param virtualNetworkGatewayName The name of the gateway.
+   * @param options The options parameters.
+   */
+  beginInvokeExecuteMigration(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    options?: VirtualNetworkGatewaysInvokeExecuteMigrationOptionalParams,
+  ): Promise<
+    SimplePollerLike<
+      OperationState<VirtualNetworkGatewaysInvokeExecuteMigrationResponse>,
+      VirtualNetworkGatewaysInvokeExecuteMigrationResponse
+    >
+  >;
+  /**
+   * Trigger execute migration for the virtual network gateway.
+   * @param resourceGroupName The resource group name of the virtual network gateway.
+   * @param virtualNetworkGatewayName The name of the gateway.
+   * @param options The options parameters.
+   */
+  beginInvokeExecuteMigrationAndWait(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    options?: VirtualNetworkGatewaysInvokeExecuteMigrationOptionalParams,
+  ): Promise<VirtualNetworkGatewaysInvokeExecuteMigrationResponse>;
+  /**
+   * Trigger commit migration for the virtual network gateway.
+   * @param resourceGroupName The resource group name of the virtual network gateway.
+   * @param virtualNetworkGatewayName The name of the gateway.
+   * @param options The options parameters.
+   */
+  beginInvokeCommitMigration(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    options?: VirtualNetworkGatewaysInvokeCommitMigrationOptionalParams,
+  ): Promise<
+    SimplePollerLike<
+      OperationState<VirtualNetworkGatewaysInvokeCommitMigrationResponse>,
+      VirtualNetworkGatewaysInvokeCommitMigrationResponse
+    >
+  >;
+  /**
+   * Trigger commit migration for the virtual network gateway.
+   * @param resourceGroupName The resource group name of the virtual network gateway.
+   * @param virtualNetworkGatewayName The name of the gateway.
+   * @param options The options parameters.
+   */
+  beginInvokeCommitMigrationAndWait(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    options?: VirtualNetworkGatewaysInvokeCommitMigrationOptionalParams,
+  ): Promise<VirtualNetworkGatewaysInvokeCommitMigrationResponse>;
+  /**
+   * Trigger abort migration for the virtual network gateway.
+   * @param resourceGroupName The resource group name of the virtual network gateway.
+   * @param virtualNetworkGatewayName The name of the gateway.
+   * @param options The options parameters.
+   */
+  beginInvokeAbortMigration(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    options?: VirtualNetworkGatewaysInvokeAbortMigrationOptionalParams,
+  ): Promise<
+    SimplePollerLike<
+      OperationState<VirtualNetworkGatewaysInvokeAbortMigrationResponse>,
+      VirtualNetworkGatewaysInvokeAbortMigrationResponse
+    >
+  >;
+  /**
+   * Trigger abort migration for the virtual network gateway.
+   * @param resourceGroupName The resource group name of the virtual network gateway.
+   * @param virtualNetworkGatewayName The name of the gateway.
+   * @param options The options parameters.
+   */
+  beginInvokeAbortMigrationAndWait(
+    resourceGroupName: string,
+    virtualNetworkGatewayName: string,
+    options?: VirtualNetworkGatewaysInvokeAbortMigrationOptionalParams,
+  ): Promise<VirtualNetworkGatewaysInvokeAbortMigrationResponse>;
 }

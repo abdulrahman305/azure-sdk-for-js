@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Azure Metrics Advisor client library samples for TypeScript",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "build": "tsc",
@@ -30,12 +30,11 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/metricsadvisor/ai-metrics-advisor",
   "dependencies": {
-    "@azure-samples/ai-metrics-advisor-ts": "file:",
     "@azure/ai-metrics-advisor": "latest",
     "dotenv": "latest"
   },
   "devDependencies": {
-    "rimraf": "latest",
-    "typescript": "~5.5.3"
+    "typescript": "~5.8.2",
+    "rimraf": "latest"
   }
 }

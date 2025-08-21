@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the Container App SourceControls in a given resource group.
  *
  * @summary Get the Container App SourceControls in a given resource group.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/SourceControls_ListByContainer.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/SourceControls_ListByContainer.json
  */
 async function listAppSourceControls() {
   const subscriptionId =
@@ -26,7 +26,7 @@ async function listAppSourceControls() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.containerAppsSourceControls.listByContainerApp(
+  for await (const item of client.containerAppsSourceControls.listByContainerApp(
     resourceGroupName,
     containerAppName,
   )) {
@@ -36,7 +36,7 @@ async function listAppSourceControls() {
 }
 
 async function main() {
-  listAppSourceControls();
+  await listAppSourceControls();
 }
 
 main().catch(console.error);

@@ -9,8 +9,8 @@
 import {
   QuerySpecification,
   QueryQueryTwinsOptionalParams,
-  QueryQueryTwinsResponse
-} from "../models";
+  QueryQueryTwinsResponse,
+} from "../models/index.js";
 
 /** Interface representing a Query. */
 export interface Query {
@@ -30,6 +30,6 @@ export interface Query {
    */
   queryTwins(
     querySpecification: QuerySpecification,
-    options?: QueryQueryTwinsOptionalParams
+    options?: QueryQueryTwinsOptionalParams,
   ): Promise<QueryQueryTwinsResponse>;
 }

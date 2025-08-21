@@ -5,9 +5,9 @@
  * Defines the utility methods.
  */
 
+require("dotenv/config");
 const { KnownAnalyzerNames } = require("@azure/search-documents");
-const { env } = require("process");
-
+const { env } = require("node:process");
 const WAIT_TIME = 4000;
 
 const documentKeyRetriever = (document) => {
@@ -23,7 +23,6 @@ function delay(timeInMs) {
   return new Promise((resolve) => setTimeout(resolve, timeInMs));
 }
 
-// eslint-disable-next-line @azure/azure-sdk/ts-use-interface-parameters
 async function createIndex(client, name) {
   const hotelIndex = {
     name,
@@ -250,10 +249,11 @@ async function createIndex(client, name) {
       algorithms: [{ name: "vector-search-algorithm", kind: "hnsw" }],
       vectorizers: [
         {
-          name: "vector-search-vectorizer",
+          vectorizerName: "vector-search-vectorizer",
           kind: "azureOpenAI",
-          azureOpenAIParameters: {
-            resourceUri: env.AZURE_OPENAI_ENDPOINT,
+          parameters: {
+            modelName: env.AZURE_OPENAI_DEPLOYMENT_NAME,
+            resourceUrl: env.AZURE_OPENAI_ENDPOINT,
             deploymentId: env.AZURE_OPENAI_DEPLOYMENT_NAME,
           },
         },
@@ -262,7 +262,7 @@ async function createIndex(client, name) {
         {
           name: "vector-search-profile",
           algorithmConfigurationName: "vector-search-algorithm",
-          vectorizer: "vector-search-vectorizer",
+          vectorizerName: "vector-search-vectorizer",
         },
       ],
     },

@@ -1,16 +1,17 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { PipelineRequest, PipelineResponse, SendRequest } from "../interfaces.js";
-import { PipelinePolicy } from "../pipeline.js";
+import type { PipelineRequest, PipelineResponse, SendRequest } from "../interfaces.js";
+import type { PipelinePolicy } from "../pipeline.js";
 import { delay } from "../util/helpers.js";
-import { RetryStrategy } from "../retryStrategies/retryStrategy.js";
-import { RestError } from "../restError.js";
+import type { RetryStrategy } from "../retryStrategies/retryStrategy.js";
+import type { RestError } from "../restError.js";
 import { AbortError } from "../abort-controller/AbortError.js";
-import { TypeSpecRuntimeLogger, createClientLogger } from "../logger/logger.js";
+import type { TypeSpecRuntimeLogger } from "../logger/logger.js";
+import { createClientLogger } from "../logger/logger.js";
 import { DEFAULT_RETRY_POLICY_COUNT } from "../constants.js";
 
-const retryPolicyLogger = createClientLogger("core-rest-pipeline retryPolicy");
+const retryPolicyLogger = createClientLogger("ts-http-runtime retryPolicy");
 
 /**
  * The programmatic identifier of the retryPolicy.
@@ -46,7 +47,6 @@ export function retryPolicy(
       let responseError: RestError | undefined;
       let retryCount = -1;
 
-      // eslint-disable-next-line no-constant-condition
       retryRequest: while (true) {
         retryCount += 1;
         response = undefined;
@@ -92,7 +92,7 @@ export function retryPolicy(
         logger.info(`Retry ${retryCount}: Processing ${strategies.length} retry strategies.`);
 
         strategiesLoop: for (const strategy of strategies) {
-          const strategyLogger = strategy.logger || retryPolicyLogger;
+          const strategyLogger = strategy.logger || logger;
           strategyLogger.info(`Retry ${retryCount}: Processing retry strategy ${strategy.name}.`);
 
           const modifiers = strategy.retry({

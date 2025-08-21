@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Lists outbound endpoints for a DNS resolver.
  *
  * @summary Lists outbound endpoints for a DNS resolver.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/OutboundEndpoint_List.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/OutboundEndpoint_List.json
  */
 async function listOutboundEndpointsByDnsResolver() {
   const subscriptionId =
@@ -26,14 +24,14 @@ async function listOutboundEndpointsByDnsResolver() {
   const credential = new DefaultAzureCredential();
   const client = new DnsResolverManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.outboundEndpoints.list(resourceGroupName, dnsResolverName)) {
+  for await (const item of client.outboundEndpoints.list(resourceGroupName, dnsResolverName)) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  listOutboundEndpointsByDnsResolver();
+  await listOutboundEndpointsByDnsResolver();
 }
 
 main().catch(console.error);

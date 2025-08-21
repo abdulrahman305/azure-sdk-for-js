@@ -399,7 +399,7 @@ export interface DomainUpdateParameters {
   inboundIpRules?: InboundIpRule[];
   /** Minimum TLS version of the publisher allowed to publish to this domain */
   minimumTlsVersionAllowed?: TlsVersion;
-  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only AAD token will be used to authenticate if user is allowed to publish to the domain. */
+  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only Microsoft Entra ID token will be used to authenticate if user is allowed to publish to the domain. */
   disableLocalAuth?: boolean;
   /**
    * This Boolean is used to specify the creation mechanism for 'all' the Event Grid Domain Topics associated with this Event Grid Domain resource.
@@ -534,6 +534,14 @@ export interface EventSubscriptionIdentity {
   type?: EventSubscriptionIdentityType;
   /** The user identity associated with the resource. */
   userAssignedIdentity?: string;
+  /** The details of the Federated Identity Credential (FIC) used with the resource delivery. */
+  federatedIdentityCredentialInfo?: FederatedIdentityCredentialInfo;
+}
+
+/** The details of the Federated Identity Credential (FIC) used with the resource. */
+export interface FederatedIdentityCredentialInfo {
+  /** The Multi-Tenant Microsoft Entra ID Application where the Federated Identity Credential (FIC) is associated with. */
+  federatedClientId: string;
 }
 
 /** Information about the dead letter destination for an event subscription. To configure a deadletter destination, do not directly instantiate an object of this class. Instead, instantiate an object of a derived class. Currently, StorageBlobDeadLetterDestination is the only class that derives from this class. */
@@ -619,7 +627,7 @@ export interface FiltersConfiguration {
 
 /**
  * This is the base type that represents a filter. To configure a filter, do not directly instantiate an object of this class. Instead, instantiate
- * an object of a derived class such as BoolEqualsFilter, NumberInFilter, StringEqualsFilter etc depending on the type of the key based on
+ * an object of a derived class such as BoolEqualsFilter, NumberInFilter etc depending on the type of the key based on
  * which you want to filter.
  */
 export interface Filter {
@@ -658,6 +666,8 @@ export interface SubscriptionUpdateParameters {
   filtersConfiguration?: FiltersConfiguration;
   /** Expiration time of the event subscription. */
   expirationTimeUtc?: Date;
+  /** Tags relating to Event Subscription resource. */
+  tags?: { [propertyName: string]: string };
 }
 
 /** Result of the List event subscriptions operation. */
@@ -874,14 +884,18 @@ export interface ClientAuthenticationSettings {
   alternativeAuthenticationNameSources?: AlternativeAuthenticationNameSource[];
   /** Custom JWT authentication settings for namespace resource. */
   customJwtAuthentication?: CustomJwtAuthenticationSettings;
+  /** Authentication settings for a webhook endpoint within a Namespace resource. */
+  webhookAuthentication?: WebhookAuthenticationSettings;
 }
 
 /** Custom JWT authentication settings for namespace resource. */
 export interface CustomJwtAuthenticationSettings {
   /** Expected JWT token issuer. */
   tokenIssuer?: string;
-  /** Information about the certificate that is used for token validation. We currently support maximum 2 certificates. */
+  /** Information about the certificates that are used for token validation. We currently support maximum 2 certificates. */
   issuerCertificates?: IssuerCertificateInfo[];
+  /** Information about the encoded public certificates that are used for custom authentication. */
+  encodedIssuerCertificates?: EncodedIssuerCertificateInfo[];
 }
 
 /** Information about the certificate that is used for token validation. */
@@ -896,6 +910,36 @@ export interface IssuerCertificateInfo {
 export interface CustomJwtAuthenticationManagedIdentity {
   /** The type of managed identity used. Can be either 'SystemAssigned' or 'UserAssigned'. */
   type: CustomJwtAuthenticationManagedIdentityType;
+  /** The user identity associated with the resource. */
+  userAssignedIdentity?: string;
+}
+
+/** Information about the public certificate that is used for custom authentication. */
+export interface EncodedIssuerCertificateInfo {
+  /** Identifier for the certificate. */
+  kid: string;
+  /** Certificate in pem format. */
+  encodedCertificate: string;
+}
+
+/** Authentication settings for a webhook endpoint within a Namespace resource. */
+export interface WebhookAuthenticationSettings {
+  /** The identity configuration required for authenticating a custom webhook. */
+  identity: CustomWebhookAuthenticationManagedIdentity;
+  /** The URL endpoint where the Event Grid service sends authenticated webhook requests using the specified managed identity. */
+  endpointUrl: string;
+  /** The base URL endpoint where the Event Grid service sends authenticated webhook requests using the specified managed identity. */
+  endpointBaseUrl?: string;
+  /** Microsoft Entra ID Application ID or URI to get the access token that will be included as the bearer token in delivery requests. */
+  azureActiveDirectoryApplicationIdOrUri: string;
+  /** Microsoft Entra ID Tenant ID to get the access token that will be included as the bearer token in delivery requests. */
+  azureActiveDirectoryTenantId: string;
+}
+
+/** The identity configuration required for authenticating a custom webhook. */
+export interface CustomWebhookAuthenticationManagedIdentity {
+  /** The type of managed identity used. Can be either 'SystemAssigned' or 'UserAssigned'. */
+  type: CustomWebhookAuthenticationManagedIdentityType;
   /** The user identity associated with the resource. */
   userAssignedIdentity?: string;
 }
@@ -1125,7 +1169,7 @@ export interface PartnerNamespaceUpdateParameters {
   inboundIpRules?: InboundIpRule[];
   /** Minimum TLS version of the publisher allowed to publish to this domain */
   minimumTlsVersionAllowed?: TlsVersion;
-  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only AAD token will be used to authenticate if user is allowed to publish to the partner namespace. */
+  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only Microsoft Entra ID token will be used to authenticate if user is allowed to publish to the partner namespace. */
   disableLocalAuth?: boolean;
 }
 
@@ -1346,7 +1390,7 @@ export interface TopicUpdateParameters {
   inboundIpRules?: InboundIpRule[];
   /** Minimum TLS version of the publisher allowed to publish to this domain */
   minimumTlsVersionAllowed?: TlsVersion;
-  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only AAD token will be used to authenticate if user is allowed to publish to the topic. */
+  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only Microsoft Entra ID token will be used to authenticate if user is allowed to publish to the topic. */
   disableLocalAuth?: boolean;
   /** The data residency boundary for the topic. */
   dataResidencyBoundary?: DataResidencyBoundary;
@@ -1450,7 +1494,7 @@ export interface JsonFieldWithDefault {
 /** The CA Certificate resource. */
 export interface CaCertificate extends Resource {
   /**
-   * The system metadata relating to the CaCertificate resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1478,7 +1522,7 @@ export interface CaCertificate extends Resource {
 /** Channel info. */
 export interface Channel extends Resource {
   /**
-   * The system metadata relating to Channel resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1504,7 +1548,7 @@ export interface Channel extends Resource {
 /** The Client group resource. */
 export interface ClientGroup extends Resource {
   /**
-   * The system metadata relating to the ClientGroup resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1525,7 +1569,7 @@ export interface ClientGroup extends Resource {
 /** The Client resource. */
 export interface Client extends Resource {
   /**
-   * The system metadata relating to the Client resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1572,7 +1616,7 @@ export interface TrackedResource extends Resource {
 /** Domain Topic. */
 export interface DomainTopic extends Resource {
   /**
-   * The system metadata relating to Domain Topic resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1586,7 +1630,7 @@ export interface DomainTopic extends Resource {
 /** Event Subscription. */
 export interface Subscription extends Resource {
   /**
-   * The system metadata relating to Event Subscription resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1603,12 +1647,14 @@ export interface Subscription extends Resource {
   filtersConfiguration?: FiltersConfiguration;
   /** Expiration time of the event subscription. */
   expirationTimeUtc?: Date;
+  /** Tags relating to Event Subscription resource. */
+  tags?: { [propertyName: string]: string };
 }
 
 /** Event Subscription. */
 export interface EventSubscription extends Resource {
   /**
-   * The system metadata relating to Event Subscription resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1657,7 +1703,7 @@ export interface EventSubscription extends Resource {
 /** Namespace topic details. */
 export interface NamespaceTopic extends Resource {
   /**
-   * The system metadata relating to namespace topic resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1680,7 +1726,7 @@ export interface NamespaceTopic extends Resource {
 /** Partner configuration information */
 export interface PartnerConfiguration extends Resource {
   /**
-   * The system metadata relating to partner configuration resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1711,7 +1757,7 @@ export interface NetworkSecurityPerimeterConfiguration extends Resource {
 /** The Permission binding resource. */
 export interface PermissionBinding extends Resource {
   /**
-   * The system metadata relating to the PermissionBinding resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1742,7 +1788,7 @@ export interface EventType extends Resource {
   displayName?: string;
   /** Description of the event type. */
   description?: string;
-  /** Url of the schema for this event type. */
+  /** URL of the schema for this event type. */
   schemaUrl?: string;
   /** IsInDefaultSet flag of the event type. */
   isInDefaultSet?: boolean;
@@ -1751,7 +1797,7 @@ export interface EventType extends Resource {
 /** Event grid Extension Topic. This is used for getting Event Grid related metrics for Azure resources. */
 export interface ExtensionTopic extends Resource {
   /**
-   * The system metadata relating to Extension Topic resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1764,7 +1810,7 @@ export interface ExtensionTopic extends Resource {
 /** The Topic space resource. */
 export interface TopicSpace extends Resource {
   /**
-   * The system metadata relating to the TopicSpace resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1812,7 +1858,7 @@ export interface TopicTypeInfo extends Resource {
 /** Verified partner information */
 export interface VerifiedPartner extends Resource {
   /**
-   * The system metadata relating to Verified Partner resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -1920,9 +1966,9 @@ export interface WebHookEventSubscriptionDestination
   maxEventsPerBatch?: number;
   /** Preferred batch size in Kilobytes. */
   preferredBatchSizeInKilobytes?: number;
-  /** The Azure Active Directory Tenant ID to get the access token that will be included as the bearer token in delivery requests. */
+  /** The Microsoft Entra ID Tenant ID to get the access token that will be included as the bearer token in delivery requests. */
   azureActiveDirectoryTenantId?: string;
-  /** The Azure Active Directory Application ID or URI to get the access token that will be included as the bearer token in delivery requests. */
+  /** The Microsoft Entra ID Application ID or URI to get the access token that will be included as the bearer token in delivery requests. */
   azureActiveDirectoryApplicationIdOrUri?: string;
   /** Delivery attribute details. */
   deliveryAttributeMappings?: DeliveryAttributeMappingUnion[];
@@ -2346,14 +2392,14 @@ export interface StaticStringRoutingEnrichment extends StaticRoutingEnrichment {
   value?: string;
 }
 
-/** Azure Active Directory Partner Client Authentication */
+/** Microsoft Entra ID Partner Client Authentication */
 export interface AzureADPartnerClientAuthentication
   extends PartnerClientAuthentication {
   /** Polymorphic discriminator, which specifies the different types this object can be */
   clientAuthenticationType: "AzureAD";
-  /** The Azure Active Directory Tenant ID to get the access token that will be included as the bearer token in delivery requests. */
+  /** The Microsoft Entra ID Tenant ID to get the access token that will be included as the bearer token in delivery requests. */
   azureActiveDirectoryTenantId?: string;
-  /** The Azure Active Directory Application ID or URI to get the access token that will be included as the bearer token in delivery requests. */
+  /** The Microsoft Entra ID Application ID or URI to get the access token that will be included as the bearer token in delivery requests. */
   azureActiveDirectoryApplicationIdOrUri?: string;
 }
 
@@ -2364,7 +2410,7 @@ export interface Domain extends TrackedResource {
   /** Identity information for the Event Grid Domain resource. */
   identity?: IdentityInfo;
   /**
-   * The system metadata relating to the Event Grid Domain resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -2406,7 +2452,7 @@ export interface Domain extends TrackedResource {
   publicNetworkAccess?: PublicNetworkAccess;
   /** This can be used to restrict traffic from specific IPs instead of all IPs. Note: These are considered only if PublicNetworkAccess is enabled. */
   inboundIpRules?: InboundIpRule[];
-  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only AAD token will be used to authenticate if user is allowed to publish to the domain. */
+  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only Microsoft Entra ID token will be used to authenticate if user is allowed to publish to the domain. */
   disableLocalAuth?: boolean;
   /**
    * This Boolean is used to specify the creation mechanism for 'all' the Event Grid Domain Topics associated with this Event Grid Domain resource.
@@ -2439,7 +2485,7 @@ export interface Namespace extends TrackedResource {
   /** Identity information for the Namespace resource. */
   identity?: IdentityInfo;
   /**
-   * The system metadata relating to the namespace resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -2476,7 +2522,7 @@ export interface Namespace extends TrackedResource {
 /** Event Grid Partner Destination. */
 export interface PartnerDestination extends TrackedResource {
   /**
-   * The system metadata relating to Partner Destination resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -2505,7 +2551,7 @@ export interface PartnerDestination extends TrackedResource {
 /** EventGrid Partner Namespace. */
 export interface PartnerNamespace extends TrackedResource {
   /**
-   * The system metadata relating to Partner Namespace resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -2538,7 +2584,7 @@ export interface PartnerNamespace extends TrackedResource {
   publicNetworkAccess?: PublicNetworkAccess;
   /** This can be used to restrict traffic from specific IPs instead of all IPs. Note: These are considered only if PublicNetworkAccess is enabled. */
   inboundIpRules?: InboundIpRule[];
-  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only AAD token will be used to authenticate if user is allowed to publish to the partner namespace. */
+  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only Microsoft Entra ID token will be used to authenticate if user is allowed to publish to the partner namespace. */
   disableLocalAuth?: boolean;
   /**
    * This determines if events published to this partner namespace should use the source attribute in the event payload
@@ -2550,7 +2596,7 @@ export interface PartnerNamespace extends TrackedResource {
 /** Information about a partner registration. */
 export interface PartnerRegistration extends TrackedResource {
   /**
-   * The system metadata relating to Partner Registration resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -2569,7 +2615,7 @@ export interface PartnerRegistration extends TrackedResource {
 /** Event Grid Partner Topic. */
 export interface PartnerTopic extends TrackedResource {
   /**
-   * The system metadata relating to Partner Topic resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -2605,7 +2651,7 @@ export interface PartnerTopic extends TrackedResource {
 /** EventGrid System Topic. */
 export interface SystemTopic extends TrackedResource {
   /**
-   * The system metadata relating to System Topic resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -2638,7 +2684,7 @@ export interface Topic extends TrackedResource {
   /** Extended location of the resource. */
   extendedLocation?: ExtendedLocation;
   /**
-   * The system metadata relating to Topic resource.
+   * The system metadata relating to the Event Grid resource.
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly systemData?: SystemData;
@@ -2680,7 +2726,7 @@ export interface Topic extends TrackedResource {
   publicNetworkAccess?: PublicNetworkAccess;
   /** This can be used to restrict traffic from specific IPs instead of all IPs. Note: These are considered only if PublicNetworkAccess is enabled. */
   inboundIpRules?: InboundIpRule[];
-  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only AAD token will be used to authenticate if user is allowed to publish to the topic. */
+  /** This boolean is used to enable or disable local auth. Default value is false. When the property is set to true, only Microsoft Entra ID token will be used to authenticate if user is allowed to publish to the topic. */
   disableLocalAuth?: boolean;
   /** Data Residency Boundary of the resource. */
   dataResidencyBoundary?: DataResidencyBoundary;
@@ -3922,6 +3968,24 @@ export enum KnownCustomJwtAuthenticationManagedIdentityType {
  * **UserAssigned**
  */
 export type CustomJwtAuthenticationManagedIdentityType = string;
+
+/** Known values of {@link CustomWebhookAuthenticationManagedIdentityType} that the service accepts. */
+export enum KnownCustomWebhookAuthenticationManagedIdentityType {
+  /** SystemAssigned */
+  SystemAssigned = "SystemAssigned",
+  /** UserAssigned */
+  UserAssigned = "UserAssigned",
+}
+
+/**
+ * Defines values for CustomWebhookAuthenticationManagedIdentityType. \
+ * {@link KnownCustomWebhookAuthenticationManagedIdentityType} can be used interchangeably with CustomWebhookAuthenticationManagedIdentityType,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **SystemAssigned** \
+ * **UserAssigned**
+ */
+export type CustomWebhookAuthenticationManagedIdentityType = string;
 
 /** Known values of {@link RoutingIdentityType} that the service accepts. */
 export enum KnownRoutingIdentityType {

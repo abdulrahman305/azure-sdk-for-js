@@ -4,14 +4,15 @@
 import { describe, it, assert, vi, afterEach } from "vitest";
 import { getCachedDefaultHttpsClient } from "../../src/client/clientHelpers.js";
 import { getClient } from "../../src/client/getClient.js";
-import {
+import type {
   HttpClient,
   PipelineRequest,
   PipelineResponse,
   SendRequest,
 } from "../../src/interfaces.js";
-import { PipelinePolicy } from "../../src/pipeline.js";
+import { createEmptyPipeline, type PipelinePolicy } from "../../src/pipeline.js";
 import { createHttpHeaders } from "../../src/httpHeaders.js";
+import { isNodeLike } from "../../src/util/checkEnvironment.js";
 
 describe("getClient", () => {
   afterEach(() => {
@@ -135,7 +136,7 @@ describe("getClient", () => {
       const validationPolicy: PipelinePolicy = {
         name: "validationPolicy",
         sendRequest: (req, next) => {
-          assert.include(req.url, `colors=blue%2Cred%2Cgreen&api-version=${apiVersion}`);
+          assert.include(req.url, `colors=blue,red,green&api-version=${apiVersion}`);
           return next(req);
         },
       };
@@ -254,10 +255,74 @@ describe("getClient", () => {
         called = true;
       },
     });
-    await res.asNodeStream();
+
+    if (isNodeLike) {
+      await res.asNodeStream();
+    } else {
+      await res.asBrowserStream();
+    }
     assert.isTrue(called);
-    called = false;
-    await res.asBrowserStream();
-    assert.isTrue(called);
+  });
+
+  it("should support query parameter with explode set to true", async () => {
+    const defaultHttpClient = getCachedDefaultHttpsClient();
+    vi.spyOn(defaultHttpClient, "sendRequest").mockImplementation(async (req) => {
+      return {
+        headers: createHttpHeaders(),
+        status: 200,
+        request: req,
+      } as PipelineResponse;
+    });
+
+    const client = getClient("https://example.org");
+    const validationPolicy: PipelinePolicy = {
+      name: "validationPolicy",
+      sendRequest: (req, next) => {
+        assert.include(req.url, `colors=blue&colors=red&colors=green`);
+        return next(req);
+      },
+    };
+
+    client.pipeline.addPolicy(validationPolicy, { afterPhase: "Serialize" });
+    await client.pathUnchecked("/foo").get({
+      queryParameters: {
+        colors: {
+          value: ["blue", "red", "green"],
+          explode: true,
+        },
+      },
+    });
+  });
+
+  it("should support path parameter with allowReserved set to true", async () => {
+    const defaultHttpClient = getCachedDefaultHttpsClient();
+    vi.spyOn(defaultHttpClient, "sendRequest").mockImplementation(async (req) => {
+      return {
+        headers: createHttpHeaders(),
+        status: 200,
+        request: req,
+      } as PipelineResponse;
+    });
+
+    const client = getClient("https://example.org");
+    const validationPolicy: PipelinePolicy = {
+      name: "validationPolicy",
+      sendRequest: (req, next) => {
+        assert.equal(req.url, `https://example.org/test/test!@#$%^/blah`);
+        return next(req);
+      },
+    };
+
+    client.pipeline.addPolicy(validationPolicy, { afterPhase: "Serialize" });
+    await client
+      .pathUnchecked("/{foo}/blah", { value: "test/test!@#$%^", allowReserved: true })
+      .get();
+  });
+
+  it("setting pipeline property should override the default pipeline", async () => {
+    const pipeline = createEmptyPipeline();
+    const client = getClient("https://example.org", { pipeline });
+    assert.equal(client.pipeline, pipeline);
+    assert.isEmpty(client.pipeline.getOrderedPolicies());
   });
 });

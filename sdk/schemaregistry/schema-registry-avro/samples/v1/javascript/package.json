@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Azure Schema Registry client library samples for JavaScript",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "repository": {
     "type": "git",
@@ -23,11 +23,10 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/schemaregistry/schema-registry-avro",
   "dependencies": {
-    "@azure-samples/schema-registry-avro-js": "file:",
-    "@azure/event-hubs": "^5.8.0",
-    "@azure/identity": "^4.2.1",
-    "@azure/schema-registry": "^1.0.1",
     "@azure/schema-registry-avro": "latest",
-    "dotenv": "latest"
+    "dotenv": "latest",
+    "@azure/identity": "^4.4.1",
+    "@azure/schema-registry": "^1.2.0",
+    "@azure/event-hubs": "^5.8.0"
   }
 }

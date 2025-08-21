@@ -6,20 +6,17 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-import { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
-import { setContinuationToken } from "../pagingHelper";
-import { LoadBalancers } from "../operationsInterfaces";
+import type { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
+import { setContinuationToken } from "../pagingHelper.js";
+import type { LoadBalancers } from "../operationsInterfaces/index.js";
 import * as coreClient from "@azure/core-client";
-import * as Mappers from "../models/mappers";
-import * as Parameters from "../models/parameters";
-import { ContainerServiceClient } from "../containerServiceClient";
-import {
-  SimplePollerLike,
-  OperationState,
-  createHttpPoller,
-} from "@azure/core-lro";
-import { createLroSpec } from "../lroImpl";
-import {
+import * as Mappers from "../models/mappers.js";
+import * as Parameters from "../models/parameters.js";
+import type { ContainerServiceClient } from "../containerServiceClient.js";
+import type { SimplePollerLike, OperationState } from "@azure/core-lro";
+import { createHttpPoller } from "@azure/core-lro";
+import { createLroSpec } from "../lroImpl.js";
+import type {
   LoadBalancer,
   LoadBalancersListByManagedClusterNextOptionalParams,
   LoadBalancersListByManagedClusterOptionalParams,
@@ -31,7 +28,7 @@ import {
   LoadBalancersDeleteOptionalParams,
   LoadBalancersDeleteResponse,
   LoadBalancersListByManagedClusterNextResponse,
-} from "../models";
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Class containing LoadBalancers operations. */
@@ -57,11 +54,7 @@ export class LoadBalancersImpl implements LoadBalancers {
     resourceName: string,
     options?: LoadBalancersListByManagedClusterOptionalParams,
   ): PagedAsyncIterableIterator<LoadBalancer> {
-    const iter = this.listByManagedClusterPagingAll(
-      resourceGroupName,
-      resourceName,
-      options,
-    );
+    const iter = this.listByManagedClusterPagingAll(resourceGroupName, resourceName, options);
     return {
       next() {
         return iter.next();
@@ -92,12 +85,8 @@ export class LoadBalancersImpl implements LoadBalancers {
     let result: LoadBalancersListByManagedClusterResponse;
     let continuationToken = settings?.continuationToken;
     if (!continuationToken) {
-      result = await this._listByManagedCluster(
-        resourceGroupName,
-        resourceName,
-        options,
-      );
-      let page = result.value || [];
+      result = await this._listByManagedCluster(resourceGroupName, resourceName, options);
+      const page = result.value || [];
       continuationToken = result.nextLink;
       setContinuationToken(page, continuationToken);
       yield page;
@@ -110,7 +99,7 @@ export class LoadBalancersImpl implements LoadBalancers {
         options,
       );
       continuationToken = result.nextLink;
-      let page = result.value || [];
+      const page = result.value || [];
       setContinuationToken(page, continuationToken);
       yield page;
     }
@@ -171,16 +160,24 @@ export class LoadBalancersImpl implements LoadBalancers {
    * @param resourceGroupName The name of the resource group. The name is case insensitive.
    * @param resourceName The name of the managed cluster resource.
    * @param loadBalancerName The name of the load balancer.
+   * @param parameters The load balancer to create or update.
    * @param options The options parameters.
    */
   createOrUpdate(
     resourceGroupName: string,
     resourceName: string,
     loadBalancerName: string,
+    parameters: LoadBalancer,
     options?: LoadBalancersCreateOrUpdateOptionalParams,
   ): Promise<LoadBalancersCreateOrUpdateResponse> {
     return this.client.sendOperationRequest(
-      { resourceGroupName, resourceName, loadBalancerName, options },
+      {
+        resourceGroupName,
+        resourceName,
+        loadBalancerName,
+        parameters,
+        options,
+      },
       createOrUpdateOperationSpec,
     );
   }
@@ -198,10 +195,7 @@ export class LoadBalancersImpl implements LoadBalancers {
     loadBalancerName: string,
     options?: LoadBalancersDeleteOptionalParams,
   ): Promise<
-    SimplePollerLike<
-      OperationState<LoadBalancersDeleteResponse>,
-      LoadBalancersDeleteResponse
-    >
+    SimplePollerLike<OperationState<LoadBalancersDeleteResponse>, LoadBalancersDeleteResponse>
   > {
     const directSendOperation = async (
       args: coreClient.OperationArguments,
@@ -213,8 +207,7 @@ export class LoadBalancersImpl implements LoadBalancers {
       args: coreClient.OperationArguments,
       spec: coreClient.OperationSpec,
     ) => {
-      let currentRawResponse: coreClient.FullOperationResponse | undefined =
-        undefined;
+      let currentRawResponse: coreClient.FullOperationResponse | undefined = undefined;
       const providedCallback = args.options?.onResponse;
       const callback: coreClient.RawResponseCallback = (
         rawResponse: coreClient.FullOperationResponse,
@@ -358,17 +351,7 @@ const createOrUpdateOperationSpec: coreClient.OperationSpec = {
       bodyMapper: Mappers.CloudError,
     },
   },
-  requestBody: {
-    parameterPath: {
-      name: ["options", "name"],
-      primaryAgentPoolName: ["options", "primaryAgentPoolName"],
-      allowServicePlacement: ["options", "allowServicePlacement"],
-      serviceLabelSelector: ["options", "serviceLabelSelector"],
-      serviceNamespaceSelector: ["options", "serviceNamespaceSelector"],
-      nodeSelector: ["options", "nodeSelector"],
-    },
-    mapper: { ...Mappers.LoadBalancer, required: true },
-  },
+  requestBody: Parameters.parameters13,
   queryParameters: [Parameters.apiVersion],
   urlParameters: [
     Parameters.$host,

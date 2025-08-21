@@ -6,24 +6,20 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import {
   VirtualNetworkLink,
-  DnsResolverManagementClient
+  DnsResolverManagementClient,
 } from "@azure/arm-dnsresolver";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Creates or updates a virtual network link to a DNS forwarding ruleset.
  *
  * @summary Creates or updates a virtual network link to a DNS forwarding ruleset.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/VirtualNetworkLink_Put.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/VirtualNetworkLink_Put.json
  */
-async function upsertVirtualNetworkLinkToADnsForwardingRuleset() {
+async function upsertVirtualNetworkLinkToADnsForwardingRuleset(): Promise<void> {
   const subscriptionId =
     process.env["DNSRESOLVER_SUBSCRIPTION_ID"] ||
     "abdd4249-9f34-4cc6-8e42-c2e32110603e";
@@ -34,9 +30,8 @@ async function upsertVirtualNetworkLinkToADnsForwardingRuleset() {
   const parameters: VirtualNetworkLink = {
     metadata: { additionalProp1: "value1" },
     virtualNetwork: {
-      id:
-        "/subscriptions/0403cfa9-9659-4f33-9f30-1f191c51d111/resourceGroups/sampleVnetResourceGroupName/providers/Microsoft.Network/virtualNetworks/sampleVirtualNetwork"
-    }
+      id: "/subscriptions/0403cfa9-9659-4f33-9f30-1f191c51d111/resourceGroups/sampleVnetResourceGroupName/providers/Microsoft.Network/virtualNetworks/sampleVirtualNetwork",
+    },
   };
   const credential = new DefaultAzureCredential();
   const client = new DnsResolverManagementClient(credential, subscriptionId);
@@ -44,13 +39,13 @@ async function upsertVirtualNetworkLinkToADnsForwardingRuleset() {
     resourceGroupName,
     dnsForwardingRulesetName,
     virtualNetworkLinkName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
-async function main() {
-  upsertVirtualNetworkLinkToADnsForwardingRuleset();
+async function main(): Promise<void> {
+  await upsertVirtualNetworkLinkToADnsForwardingRuleset();
 }
 
 main().catch(console.error);

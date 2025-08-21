@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the properties of the provided rack SKU.
  *
  * @summary Get the properties of the provided rack SKU.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/RackSkus_Get.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/RackSkus_Get.json
  */
 async function getRackSkuResource() {
   const subscriptionId =
@@ -29,7 +27,7 @@ async function getRackSkuResource() {
 }
 
 async function main() {
-  getRackSkuResource();
+  await getRackSkuResource();
 }
 
 main().catch(console.error);

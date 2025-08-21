@@ -42,23 +42,12 @@ parameters:
     type: object
     default:
       Public:
-        SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-        ServiceConnection: azure-sdk-tests
-        SubscriptionConfigurationFilePaths: 
-          - eng/common/TestResources/sub-config/AzurePublicMsft.json
-      Preview:
-        SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
-        ServiceConnection: azure-sdk-tests-preview
-      Canary:
-        SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-        Location: centraluseuap
-        MatrixFilters:
-          - OSVmImage=.*Ubuntu.*
-          - DependencyVersion=^$
-      UsGov:
-        SubscriptionConfiguration: $(sub-config-gov-test-resources)
-      China:
-        SubscriptionConfiguration: $(sub-config-cn-test-resources)
+      # Canary regions are currently not supported in TME so disabling for now
+      # Canary:
+      #   Location: centraluseuap
+      #   MatrixFilters:
+      #     - OSVmImage=.*Ubuntu.*
+      #     - DependencyVersion=^$
   - name: MatrixConfigs
     type: object
     default:
@@ -78,6 +67,9 @@ parameters:
   - name: UseFederatedAuth
     type: boolean
     default: true
+  - name: PersistOidcToken
+    type: boolean
+    default: false
 
 
 extends:
@@ -98,6 +90,7 @@ extends:
           SupportedClouds: ${{ parameters.SupportedClouds }}
           UnsupportedClouds: ${{ parameters.UnsupportedClouds }}
           UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+          PersistOidcToken: ${{ parameters.PersistOidcToken }}
           PreSteps:
             - ${{ parameters.PreSteps }}
           PostSteps:

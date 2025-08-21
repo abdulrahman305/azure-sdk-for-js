@@ -1,31 +1,38 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
+import type {
   AvailabilityData,
   TelemetryItem as Envelope,
-  KnownContextTagKeys,
-  KnownSeverityLevel,
   MessageData,
   MonitorDomain,
   PageViewData,
   TelemetryEventData,
   TelemetryExceptionData,
   TelemetryExceptionDetails,
-} from "../generated";
-import { createTagsFromResource, hrTimeToDate, serializeAttribute } from "./common";
-import { ReadableLogRecord } from "@opentelemetry/sdk-logs";
+} from "../generated/index.js";
+import { KnownContextTagKeys, KnownSeverityLevel } from "../generated/index.js";
 import {
-  SEMATTRS_EXCEPTION_MESSAGE,
-  SEMATTRS_EXCEPTION_STACKTRACE,
-  SEMATTRS_EXCEPTION_TYPE,
+  createTagsFromResource,
+  hrTimeToDate,
+  isSyntheticSource,
+  serializeAttribute,
+} from "./common.js";
+import type { ReadableLogRecord } from "@opentelemetry/sdk-logs";
+import {
+  ATTR_EXCEPTION_MESSAGE,
+  ATTR_EXCEPTION_STACKTRACE,
+  ATTR_EXCEPTION_TYPE,
 } from "@opentelemetry/semantic-conventions";
-import { MaxPropertyLengths, Measurements, Properties, Tags } from "../types";
+import type { Measurements, Properties, Tags } from "../types.js";
+import { httpSemanticValues, legacySemanticValues, MaxPropertyLengths } from "../types.js";
+import type { Attributes } from "@opentelemetry/api";
 import { diag } from "@opentelemetry/api";
 import {
   ApplicationInsightsAvailabilityBaseType,
   ApplicationInsightsAvailabilityName,
   ApplicationInsightsBaseType,
+  ApplicationInsightsCustomEventName,
   ApplicationInsightsEventBaseType,
   ApplicationInsightsEventName,
   ApplicationInsightsExceptionBaseType,
@@ -34,7 +41,8 @@ import {
   ApplicationInsightsMessageName,
   ApplicationInsightsPageViewBaseType,
   ApplicationInsightsPageViewName,
-} from "./constants/applicationinsights";
+} from "./constants/applicationinsights.js";
+import { getLocationIp } from "./spanUtils.js";
 
 /**
  * Log to Azure envelope parsing.
@@ -51,36 +59,47 @@ export function logToEnvelope(log: ReadableLogRecord, ikey: string): Envelope | 
   let baseType: string;
   let baseData: MonitorDomain;
 
-  if (!log.attributes[ApplicationInsightsBaseType]) {
-    // Get Exception attributes if available
-    const exceptionType = log.attributes[SEMATTRS_EXCEPTION_TYPE];
-    if (exceptionType) {
-      const exceptionMessage = log.attributes[SEMATTRS_EXCEPTION_MESSAGE];
-      const exceptionStacktrace = log.attributes[SEMATTRS_EXCEPTION_STACKTRACE];
-      name = ApplicationInsightsExceptionName;
-      baseType = ApplicationInsightsExceptionBaseType;
-      const exceptionDetails: TelemetryExceptionDetails = {
-        typeName: String(exceptionType),
-        message: String(exceptionMessage),
-        hasFullStack: exceptionStacktrace ? true : false,
-        stack: String(exceptionStacktrace),
-      };
-      const exceptionData: TelemetryExceptionData = {
-        exceptions: [exceptionDetails],
-        severityLevel: String(getSeverity(log.severityNumber)),
-        version: 2,
-      };
-      baseData = exceptionData;
-    } else {
-      name = ApplicationInsightsMessageName;
-      baseType = ApplicationInsightsMessageBaseType;
-      const messageData: MessageData = {
-        message: String(log.body),
-        severityLevel: String(getSeverity(log.severityNumber)),
-        version: 2,
-      };
-      baseData = messageData;
-    }
+  const exceptionStacktrace = log.attributes[ATTR_EXCEPTION_STACKTRACE];
+  const exceptionType = log.attributes[ATTR_EXCEPTION_TYPE];
+  const isExceptionType: boolean = !!(exceptionType && exceptionStacktrace) || false;
+  const isMessageType: boolean =
+    !log.attributes[ApplicationInsightsBaseType] &&
+    !log.attributes[ApplicationInsightsCustomEventName] &&
+    !exceptionType;
+  if (isExceptionType) {
+    const exceptionMessage = log.attributes[ATTR_EXCEPTION_MESSAGE];
+    name = ApplicationInsightsExceptionName;
+    baseType = ApplicationInsightsExceptionBaseType;
+    const exceptionDetails: TelemetryExceptionDetails = {
+      typeName: String(exceptionType),
+      message: String(exceptionMessage),
+      hasFullStack: exceptionStacktrace ? true : false,
+      stack: String(exceptionStacktrace),
+    };
+    const exceptionData: TelemetryExceptionData = {
+      exceptions: [exceptionDetails],
+      severityLevel: String(getSeverity(log.severityNumber)),
+      version: 2,
+    };
+    baseData = exceptionData;
+  } else if (log.attributes[ApplicationInsightsCustomEventName]) {
+    name = ApplicationInsightsEventName;
+    baseType = ApplicationInsightsEventBaseType;
+    const eventData: TelemetryEventData = {
+      name: String(log.attributes[ApplicationInsightsCustomEventName]),
+      version: 2,
+    };
+    baseData = eventData;
+    measurements = getLegacyApplicationInsightsMeasurements(log);
+  } else if (isMessageType) {
+    name = ApplicationInsightsMessageName;
+    baseType = ApplicationInsightsMessageBaseType;
+    const messageData: MessageData = {
+      message: String(log.body),
+      severityLevel: String(getSeverity(log.severityNumber)),
+      version: 2,
+    };
+    baseData = messageData;
   } else {
     // If Legacy Application Insights Log
     baseType = String(log.attributes[ApplicationInsightsBaseType]);
@@ -127,6 +146,15 @@ function createTagsFromLog(log: ReadableLogRecord): Tags {
   if (log.spanContext?.spanId) {
     tags[KnownContextTagKeys.AiOperationParentId] = log.spanContext.spanId;
   }
+  if (log.attributes[KnownContextTagKeys.AiOperationName]) {
+    tags[KnownContextTagKeys.AiOperationName] = log.attributes[
+      KnownContextTagKeys.AiOperationName
+    ] as string;
+  }
+  if (isSyntheticSource(log.attributes as Attributes)) {
+    tags[KnownContextTagKeys.AiOperationSyntheticSource] = "True";
+  }
+  getLocationIp(tags, log.attributes as Attributes);
   return tags;
 }
 
@@ -139,9 +167,10 @@ function createPropertiesFromLog(log: ReadableLogRecord): [Properties, Measureme
       if (
         !(
           key.startsWith("_MS.") ||
-          key === SEMATTRS_EXCEPTION_TYPE ||
-          key === SEMATTRS_EXCEPTION_MESSAGE ||
-          key === SEMATTRS_EXCEPTION_STACKTRACE
+          key.startsWith("microsoft") ||
+          legacySemanticValues.includes(key) ||
+          httpSemanticValues.includes(key as any) ||
+          key === (KnownContextTagKeys.AiOperationName as string)
         )
       ) {
         properties[key] = serializeAttribute(log.attributes[key]);

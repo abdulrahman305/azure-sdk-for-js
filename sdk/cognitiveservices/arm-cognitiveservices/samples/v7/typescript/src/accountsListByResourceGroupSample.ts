@@ -6,42 +6,38 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import { CognitiveServicesManagementClient } from "@azure/arm-cognitiveservices";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Returns all the resources of a particular type belonging to a resource group
  *
  * @summary Returns all the resources of a particular type belonging to a resource group
- * x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/ListAccountsByResourceGroup.json
+ * x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-06-01/examples/ListAccountsByResourceGroup.json
  */
-async function listAccountsByResourceGroup() {
+async function listAccountsByResourceGroup(): Promise<void> {
   const subscriptionId =
     process.env["COGNITIVESERVICES_SUBSCRIPTION_ID"] ||
-    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
+    "00000000-1111-2222-3333-444444444444";
   const resourceGroupName =
     process.env["COGNITIVESERVICES_RESOURCE_GROUP"] || "myResourceGroup";
   const credential = new DefaultAzureCredential();
   const client = new CognitiveServicesManagementClient(
     credential,
-    subscriptionId
+    subscriptionId,
   );
   const resArray = new Array();
-  for await (let item of client.accounts.listByResourceGroup(
-    resourceGroupName
+  for await (const item of client.accounts.listByResourceGroup(
+    resourceGroupName,
   )) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
-async function main() {
-  listAccountsByResourceGroup();
+async function main(): Promise<void> {
+  await listAccountsByResourceGroup();
 }
 
 main().catch(console.error);

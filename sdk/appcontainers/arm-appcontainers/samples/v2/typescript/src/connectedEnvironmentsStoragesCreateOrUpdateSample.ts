@@ -13,17 +13,15 @@ import {
   ContainerAppsAPIClient,
 } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Create or update storage for a connectedEnvironment.
  *
  * @summary Create or update storage for a connectedEnvironment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironmentsStorages_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironmentsStorages_CreateOrUpdate.json
  */
-async function createOrUpdateEnvironmentsStorage() {
+async function createOrUpdateEnvironmentsStorage(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "8efdecc5-919e-44eb-b179-915dca89ebf9";
@@ -52,8 +50,8 @@ async function createOrUpdateEnvironmentsStorage() {
   console.log(result);
 }
 
-async function main() {
-  createOrUpdateEnvironmentsStorage();
+async function main(): Promise<void> {
+  await createOrUpdateEnvironmentsStorage();
 }
 
 main().catch(console.error);

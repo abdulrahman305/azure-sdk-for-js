@@ -3,15 +3,16 @@
 
 /* eslint-disable no-underscore-dangle*/
 
-import * as fs from "fs";
-import * as path from "path";
-import {
+import fs from "node:fs";
+import path from "node:path";
+import type {
   BrowserSdkLoaderOptions,
   AzureMonitorOpenTelemetryOptions,
   InstrumentationOptions,
-} from "../types";
-import { AzureMonitorExporterOptions } from "@azure/monitor-opentelemetry-exporter";
-import { Logger } from "./logging";
+} from "../types.js";
+import type { AzureMonitorExporterOptions } from "@azure/monitor-opentelemetry-exporter";
+import { Logger } from "./logging/index.js";
+import { dirName } from "./module.js";
 
 const ENV_CONFIGURATION_FILE = "APPLICATIONINSIGHTS_CONFIGURATION_FILE";
 const ENV_CONTENT = "APPLICATIONINSIGHTS_CONFIGURATION_CONTENT";
@@ -23,6 +24,8 @@ const ENV_CONTENT = "APPLICATIONINSIGHTS_CONFIGURATION_CONTENT";
 export class JsonConfig implements AzureMonitorOpenTelemetryOptions {
   /** The rate of telemetry items tracked that should be transmitted (Default 1.0) */
   public samplingRatio?: number;
+  /** The maximum number of spans to sample per second. */
+  public tracesPerSecond?: number;
   /** Azure Monitor Exporter Configuration */
   public azureMonitorExporterOptions?: AzureMonitorExporterOptions;
   /**
@@ -35,6 +38,8 @@ export class JsonConfig implements AzureMonitorOpenTelemetryOptions {
   public enableStandardMetrics?: boolean;
   /** Enable log sampling based on trace (Default true) */
   public enableTraceBasedSamplingForLogs?: boolean;
+  /** Enable Performance Counter feature */
+  public enablePerformanceCounters?: boolean;
 
   public browserSdkLoaderOptions?: BrowserSdkLoaderOptions;
 
@@ -64,7 +69,7 @@ export class JsonConfig implements AzureMonitorOpenTelemetryOptions {
     // JSON file
     else {
       const configFileName = "applicationinsights.json";
-      const rootPath = path.join(__dirname, "../../../"); // Root of folder (__dirname = ../dist-esm/src)
+      const rootPath = path.join(dirName(), "../../../"); // Root of folder (__dirname = ../dist-esm/src)
       this._tempDir = path.join(rootPath, configFileName); // default
       const configFile = process.env[ENV_CONFIGURATION_FILE];
       if (configFile) {
@@ -84,6 +89,7 @@ export class JsonConfig implements AzureMonitorOpenTelemetryOptions {
       const jsonConfig: AzureMonitorOpenTelemetryOptions = JSON.parse(jsonString);
       this.azureMonitorExporterOptions = jsonConfig.azureMonitorExporterOptions;
       this.samplingRatio = jsonConfig.samplingRatio;
+      this.tracesPerSecond = jsonConfig.tracesPerSecond;
       this.instrumentationOptions = jsonConfig.instrumentationOptions;
       this.browserSdkLoaderOptions = jsonConfig.browserSdkLoaderOptions;
       this.enableLiveMetrics = jsonConfig.enableLiveMetrics;

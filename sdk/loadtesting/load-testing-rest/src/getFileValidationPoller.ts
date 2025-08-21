@@ -1,13 +1,17 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AbortError, AbortSignalLike } from "@azure/abort-controller";
-import { CancelOnProgress, OperationState, SimplePollerLike } from "@azure/core-lro";
-import { FileUploadAndValidatePoller, PolledOperationOptions } from "./models";
-import { AzureLoadTestingClient } from "./clientDefinitions";
-import { TestGetFile200Response, TestUploadFile201Response } from "./responses";
-import { isUnexpected } from "./isUnexpected";
-import { sleep } from "./util/LROUtil";
+import type { AbortSignalLike } from "@azure/abort-controller";
+import { AbortError } from "@azure/abort-controller";
+import type { CancelOnProgress, OperationState, SimplePollerLike } from "@azure/core-lro";
+import type { FileUploadAndValidatePoller, PolledOperationOptions } from "./models.js";
+import type { AzureLoadTestingClient } from "./clientDefinitions.js";
+import type {
+  LoadTestAdministrationGetTestFile200Response,
+  LoadTestAdministrationUploadTestFile201Response,
+} from "./responses.js";
+import { isUnexpected } from "./isUnexpected.js";
+import { sleep } from "./util/LROUtil.js";
 
 /**
  * Uploads a file and creates a poller to poll for validation.
@@ -17,7 +21,7 @@ import { sleep } from "./util/LROUtil";
  */
 export async function getFileValidationPoller(
   client: AzureLoadTestingClient,
-  fileUploadResult: TestUploadFile201Response,
+  fileUploadResult: LoadTestAdministrationUploadTestFile201Response,
   polledOperationOptions: PolledOperationOptions = {},
 ): Promise<FileUploadAndValidatePoller> {
   // get filename and testid from initial response
@@ -27,21 +31,24 @@ export async function getFileValidationPoller(
     requestUrl.indexOf("tests/") + 6,
     requestUrl.lastIndexOf("/files"),
   );
-  type Handler = (state: OperationState<TestGetFile200Response>) => void;
+  type Handler = (state: OperationState<LoadTestAdministrationGetTestFile200Response>) => void;
 
-  const state: OperationState<TestGetFile200Response> = {
+  const state: OperationState<LoadTestAdministrationGetTestFile200Response> = {
     status: "notStarted",
   };
 
   const progressCallbacks = new Map<symbol, Handler>();
   const processProgressCallbacks = async (): Promise<void> =>
     progressCallbacks.forEach((h) => h(state));
-  let resultPromise: Promise<TestGetFile200Response> | undefined;
+  let resultPromise: Promise<LoadTestAdministrationGetTestFile200Response> | undefined;
   let cancelJob: (() => void) | undefined;
   const abortController = new AbortController();
   const currentPollIntervalInMs = polledOperationOptions.updateIntervalInMs ?? 2000;
 
-  const poller: SimplePollerLike<OperationState<TestGetFile200Response>, TestGetFile200Response> = {
+  const poller: SimplePollerLike<
+    OperationState<LoadTestAdministrationGetTestFile200Response>,
+    LoadTestAdministrationGetTestFile200Response
+  > = {
     async poll(options?: { abortSignal?: AbortSignalLike }): Promise<void> {
       if (options?.abortSignal?.aborted) {
         throw new AbortError("The polling was aborted.");
@@ -59,11 +66,7 @@ export async function getFileValidationPoller(
 
         switch (fileValidationResponse.body.validationStatus) {
           case "NOT_VALIDATED": {
-            if (fileValidationResponse.body.fileType === "JMX_FILE") {
-              state.status = "running";
-            } else {
-              state.status = "succeeded";
-            }
+            state.status = "succeeded";
             break;
           }
           case "VALIDATION_INITIATED": {
@@ -89,7 +92,7 @@ export async function getFileValidationPoller(
 
     pollUntilDone(pollOptions?: {
       abortSignal?: AbortSignalLike;
-    }): Promise<TestGetFile200Response> {
+    }): Promise<LoadTestAdministrationGetTestFile200Response> {
       return (resultPromise ??= (async () => {
         const { abortSignal: inputAbortSignal } = pollOptions || {};
         // In the future we can use AbortSignal.any() instead
@@ -120,7 +123,7 @@ export async function getFileValidationPoller(
           case "succeeded":
           case "failed":
           case "canceled": {
-            return poller.getResult() as TestGetFile200Response;
+            return poller.getResult() as LoadTestAdministrationGetTestFile200Response;
           }
           case "notStarted":
           case "running": {
@@ -134,7 +137,7 @@ export async function getFileValidationPoller(
     },
 
     onProgress(
-      callback: (state: OperationState<TestGetFile200Response>) => void,
+      callback: (state: OperationState<LoadTestAdministrationGetTestFile200Response>) => void,
     ): CancelOnProgress {
       const s = Symbol();
       progressCallbacks.set(s, callback);
@@ -155,11 +158,11 @@ export async function getFileValidationPoller(
       return resultPromise === undefined;
     },
 
-    getOperationState(): OperationState<TestGetFile200Response> {
+    getOperationState(): OperationState<LoadTestAdministrationGetTestFile200Response> {
       return state;
     },
 
-    getResult(): TestGetFile200Response | undefined {
+    getResult(): LoadTestAdministrationGetTestFile200Response | undefined {
       return state.result;
     },
 

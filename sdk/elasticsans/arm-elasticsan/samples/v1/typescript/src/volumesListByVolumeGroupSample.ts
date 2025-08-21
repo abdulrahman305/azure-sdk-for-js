@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ElasticSanManagement } from "@azure/arm-elasticsan";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to List Volumes in a VolumeGroup.
  *
  * @summary List Volumes in a VolumeGroup.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/Volumes_ListByVolumeGroup_MaximumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/Volumes_ListByVolumeGroup_MaximumSet_Gen.json
  */
-async function volumesListByVolumeGroupMaximumSetGen() {
+async function volumesListByVolumeGroupMaximumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -33,7 +31,7 @@ async function volumesListByVolumeGroupMaximumSetGen() {
   for await (let item of client.volumes.listByVolumeGroup(
     resourceGroupName,
     elasticSanName,
-    volumeGroupName
+    volumeGroupName,
   )) {
     resArray.push(item);
   }
@@ -44,9 +42,9 @@ async function volumesListByVolumeGroupMaximumSetGen() {
  * This sample demonstrates how to List Volumes in a VolumeGroup.
  *
  * @summary List Volumes in a VolumeGroup.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/Volumes_ListByVolumeGroup_MinimumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/Volumes_ListByVolumeGroup_MinimumSet_Gen.json
  */
-async function volumesListByVolumeGroupMinimumSetGen() {
+async function volumesListByVolumeGroupMinimumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -59,14 +57,14 @@ async function volumesListByVolumeGroupMinimumSetGen() {
   for await (let item of client.volumes.listByVolumeGroup(
     resourceGroupName,
     elasticSanName,
-    volumeGroupName
+    volumeGroupName,
   )) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
-async function main() {
+async function main(): Promise<void> {
   volumesListByVolumeGroupMaximumSetGen();
   volumesListByVolumeGroupMinimumSetGen();
 }

@@ -2,22 +2,16 @@
 // Licensed under the MIT License.
 
 import { describe, it, assert, vi } from "vitest";
-import {
+import type {
   CompositeMapper,
   FullOperationResponse,
   OperationRequest,
   OperationSpec,
   SerializerOptions,
-  createSerializer,
-  deserializationPolicy,
 } from "../src/index.js";
-import {
-  PipelineResponse,
-  RawHttpHeaders,
-  SendRequest,
-  createHttpHeaders,
-  createPipelineRequest,
-} from "@azure/core-rest-pipeline";
+import { createSerializer, deserializationPolicy } from "../src/index.js";
+import type { PipelineResponse, RawHttpHeaders, SendRequest } from "@azure/core-rest-pipeline";
+import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { getOperationRequestInfo } from "../src/operationHelpers.js";
 import { parseXML } from "@azure/core-xml";
 
@@ -684,6 +678,59 @@ describe("deserializationPolicy", function () {
         assert.strictEqual(
           e.response.parsedBody.message,
           "The specified container already exists.",
+        );
+      }
+    });
+
+    it(`heuristic for error body without default body mapper`, async function () {
+      const bodyMapper: CompositeMapper = {
+        type: {
+          name: "Composite",
+          className: "Subscription",
+          modelProperties: {
+            id: {
+              serializedName: "id",
+              readOnly: true,
+              type: {
+                name: "String",
+              },
+            },
+          },
+        },
+      };
+
+      const serializer = createSerializer(undefined, true);
+
+      const operationSpec: OperationSpec = {
+        path: "/subscriptions/{subscriptionId}",
+        httpMethod: "GET",
+        responses: {
+          200: {
+            bodyMapper,
+          },
+        },
+        serializer,
+      };
+
+      try {
+        await getDeserializedResponse({
+          operationSpec,
+          headers: {},
+          bodyAsText: `{"error":{"code":"SubscriptionNotFound","message":"The subscription 'ae0a5678-da86-4bd9-a3a2-9a7558415de5' could not be found."}}`,
+          status: 404,
+        });
+        assert.fail();
+      } catch (e: any) {
+        assert.exists(e);
+        assert.strictEqual(e.code, "SubscriptionNotFound");
+        assert.strictEqual(
+          e.message,
+          "The subscription 'ae0a5678-da86-4bd9-a3a2-9a7558415de5' could not be found.",
+        );
+        assert.strictEqual(e.response.parsedBody.error.code, "SubscriptionNotFound");
+        assert.strictEqual(
+          e.response.parsedBody.error.message,
+          "The subscription 'ae0a5678-da86-4bd9-a3a2-9a7558415de5' could not be found.",
         );
       }
     });

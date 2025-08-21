@@ -1,72 +1,63 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { isNode } from "@azure/core-util";
-import { PageSettings } from "@azure/core-paging";
+import { isNodeLike } from "@azure/core-util";
+import type { PageSettings } from "@azure/core-paging";
 import { DefaultAzureCredential } from "@azure/identity";
-import chai from "chai";
-import chaiAsPromised from "chai-as-promised";
-import chaiExclude from "chai-exclude";
-import { parseServiceBusConnectionString } from "../../src";
-import { CreateQueueOptions } from "../../src";
-import { RuleProperties } from "../../src";
-import { CreateSubscriptionOptions, SubscriptionProperties } from "../../src";
-import { CreateTopicOptions } from "../../src";
-import { ServiceBusAdministrationClient, WithResponse } from "../../src";
-import { EntityStatus, EntityAvailabilityStatus } from "../../src";
-import { EnvVarNames, getEnvVars, getEnvVarValue } from "./utils/envVarUtils";
-import { recreateQueue, recreateSubscription, recreateTopic } from "./utils/managementUtils";
-import { EntityNames, TestClientType } from "./utils/testUtils";
-import { TestConstants } from "./fakeTestSecrets";
+import { parseServiceBusConnectionString } from "../../src/index.js";
+import type { CreateQueueOptions } from "../../src/index.js";
+import type { RuleProperties } from "../../src/index.js";
+import type { CreateSubscriptionOptions, SubscriptionProperties } from "../../src/index.js";
+import type { CreateTopicOptions } from "../../src/index.js";
+import type { WithResponse } from "../../src/index.js";
+import { ServiceBusAdministrationClient } from "../../src/index.js";
+import type { EntityStatus, EntityAvailabilityStatus } from "../../src/index.js";
+import { recreateQueue, recreateSubscription, recreateTopic } from "./utils/managementUtils.js";
+import { EntityNames, TestClientType } from "./utils/testUtils.js";
+import { TestConstants } from "./fakeTestSecrets.js";
 import { AzureNamedKeyCredential } from "@azure/core-auth";
-import {
-  createServiceBusClientForTests,
-  getFullyQualifiedNamespace,
-  ServiceBusClientForTests,
-} from "./utils/testutils2";
-import { versionsToTest } from "@azure-tools/test-utils";
+import type { ServiceBusClientForTests } from "./utils/testutils2.js";
+import { createServiceBusClientForTests } from "./utils/testutils2.js";
 import { createTestCredential } from "@azure-tools/test-credential";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, it } from "vitest";
+import { should } from "./utils/chai.js";
+import {
+  getConnectionString,
+  getFullyQualifiedNamespace,
+  getFullyQualifiedNamespacePremium,
+} from "../utils/injectables.js";
 
-chai.use(chaiAsPromised);
-chai.use(chaiExclude);
-const should = chai.should();
-const assert: typeof chai.assert = chai.assert;
+const connectionString = getConnectionString();
 
-const env = getEnvVars();
+describe.runIf(connectionString).each(["2021-05", "2017-04"])("Version [%s]", (serviceVersion) => {
+  const endpointWithProtocol = parseServiceBusConnectionString(connectionString!).endpoint;
 
-const endpointWithProtocol = parseServiceBusConnectionString(
-  env[EnvVarNames.SERVICEBUS_CONNECTION_STRING],
-).endpoint;
+  enum EntityType {
+    QUEUE = "Queue",
+    TOPIC = "Topic",
+    SUBSCRIPTION = "Subscription",
+    RULE = "Rule",
+  }
 
-enum EntityType {
-  QUEUE = "Queue",
-  TOPIC = "Topic",
-  SUBSCRIPTION = "Subscription",
-  RULE = "Rule",
-}
+  const managementQueue1 = EntityNames.MANAGEMENT_QUEUE_1;
+  const managementTopic1 = EntityNames.MANAGEMENT_TOPIC_1;
+  const managementSubscription1 = EntityNames.MANAGEMENT_SUBSCRIPTION_1;
+  const managementRule1 = EntityNames.MANAGEMENT_RULE_1;
 
-const managementQueue1 = EntityNames.MANAGEMENT_QUEUE_1;
-const managementTopic1 = EntityNames.MANAGEMENT_TOPIC_1;
-const managementSubscription1 = EntityNames.MANAGEMENT_SUBSCRIPTION_1;
-const managementRule1 = EntityNames.MANAGEMENT_RULE_1;
+  const managementQueue2 = EntityNames.MANAGEMENT_QUEUE_2;
+  const managementTopic2 = EntityNames.MANAGEMENT_TOPIC_2;
+  const managementSubscription2 = EntityNames.MANAGEMENT_SUBSCRIPTION_2;
+  const managementRule2 = EntityNames.MANAGEMENT_RULE_2;
 
-const managementQueue2 = EntityNames.MANAGEMENT_QUEUE_2;
-const managementTopic2 = EntityNames.MANAGEMENT_TOPIC_2;
-const managementSubscription2 = EntityNames.MANAGEMENT_SUBSCRIPTION_2;
-const managementRule2 = EntityNames.MANAGEMENT_RULE_2;
+  const newManagementEntity1 = EntityNames.MANAGEMENT_NEW_ENTITY_1;
+  const newManagementEntity2 = EntityNames.MANAGEMENT_NEW_ENTITY_2;
+  type AccessRights = ("Manage" | "Send" | "Listen")[];
+  const randomDate = new Date();
 
-const newManagementEntity1 = EntityNames.MANAGEMENT_NEW_ENTITY_1;
-const newManagementEntity2 = EntityNames.MANAGEMENT_NEW_ENTITY_2;
-type AccessRights = ("Manage" | "Send" | "Listen")[];
-const randomDate = new Date();
+  let serviceBusAtomManagementClient: ServiceBusAdministrationClient;
 
-const serviceApiVersions = ["2021-05", "2017-04"];
-let serviceBusAtomManagementClient: ServiceBusAdministrationClient;
-
-// TEST_MODE must be set to "live" to run both the versions
-versionsToTest(serviceApiVersions, {}, (serviceVersion) => {
-  describe(`ATOM APIs - version ${serviceVersion}`, () => {
-    before(() => {
+  describe(`ATOM APIs`, () => {
+    beforeAll(() => {
       serviceBusAtomManagementClient = new ServiceBusAdministrationClient(
         getFullyQualifiedNamespace(),
         createTestCredential(),
@@ -75,7 +66,7 @@ versionsToTest(serviceApiVersions, {}, (serviceVersion) => {
     });
 
     describe("Atom management - Authentication", function (): void {
-      if (isNode) {
+      if (isNodeLike) {
         it("Token credential - DefaultAzureCredential from `@azure/identity`", async () => {
           const host = getFullyQualifiedNamespace();
           const endpoint = `sb://${host}/`;
@@ -137,9 +128,7 @@ versionsToTest(serviceApiVersions, {}, (serviceVersion) => {
       }
 
       it("AzureNamedKeyCredential from `@azure/core-auth`", async () => {
-        const connectionStringProperties = parseServiceBusConnectionString(
-          env[EnvVarNames.SERVICEBUS_CONNECTION_STRING],
-        );
+        const connectionStringProperties = parseServiceBusConnectionString(connectionString!);
         const host = connectionStringProperties.fullyQualifiedNamespace;
         const serviceBusAdministrationClient = new ServiceBusAdministrationClient(
           host,
@@ -166,11 +155,11 @@ versionsToTest(serviceApiVersions, {}, (serviceVersion) => {
     describe("Atom management - forwarding", () => {
       let serviceBusClient: ServiceBusClientForTests;
 
-      before(() => {
+      beforeAll(() => {
         serviceBusClient = createServiceBusClientForTests();
       });
 
-      after(() => serviceBusClient.test.after());
+      afterAll(() => serviceBusClient.test.after());
 
       afterEach(async () => {
         serviceBusClient.test.afterEach();
@@ -255,7 +244,7 @@ versionsToTest(serviceApiVersions, {}, (serviceVersion) => {
       const ruleNames: string[] = [];
       const numberOfEntities = 5;
 
-      before(async () => {
+      beforeAll(async () => {
         await recreateTopic(managementTopic1);
         await recreateSubscription(managementTopic1, managementSubscription1);
         for (let i = 0; i < numberOfEntities; i++) {
@@ -286,7 +275,7 @@ versionsToTest(serviceApiVersions, {}, (serviceVersion) => {
         }
       });
 
-      after(async () => {
+      afterAll(async () => {
         for (let i = 0; i < numberOfEntities; i++) {
           await serviceBusAtomManagementClient.deleteQueue(baseName + "_queue_" + i);
           await serviceBusAtomManagementClient.deleteTopic(baseName + "_topic_" + i);
@@ -326,7 +315,7 @@ versionsToTest(serviceApiVersions, {}, (serviceVersion) => {
         "listRules",
       ].forEach((methodName) => {
         describe(`${methodName}`, (): void => {
-          function getIter() {
+          function getIter(): any {
             let iterator;
             if (methodName.includes("Subscription")) {
               iterator = (serviceBusAtomManagementClient as any)[methodName](managementTopic1);
@@ -2468,13 +2457,13 @@ versionsToTest(serviceApiVersions, {}, (serviceVersion) => {
           testCaseTitle: "Correlation Filter rule options",
           input: {
             filter: {
-              correlationId: "defg",
+              correlationId: "correlationId",
             },
             action: { sqlExpression: "SET sys.label='RED'" },
           },
           output: {
             filter: {
-              correlationId: "defg",
+              correlationId: "correlationId",
               contentType: undefined,
               subject: undefined,
               messageId: undefined,
@@ -2646,7 +2635,6 @@ versionsToTest(serviceApiVersions, {}, (serviceVersion) => {
           }
         }
       }
-      throw new Error("TestError: Unrecognized EntityType");
     }
 
     async function getEntity(
@@ -2973,18 +2961,14 @@ versionsToTest(serviceApiVersions, {}, (serviceVersion) => {
           return ruleResponse;
         }
       }
-      throw new Error("TestError: Unrecognized EntityType");
     }
 
-    describe("Premium Namespaces", () => {
-      const premiumNamespace = getEnvVarValue("SERVICEBUS_FQDN_PREMIUM");
+    const premiumNamespace = getFullyQualifiedNamespacePremium();
+    describe.runIf(premiumNamespace)("Premium Namespaces", () => {
       let atomClient: ServiceBusAdministrationClient;
       let entityNameWithmaxSize: { entityName: string; maxSize: number };
-      before(function (this: Mocha.Context) {
-        if (!premiumNamespace) {
-          this.skip();
-        }
-        atomClient = new ServiceBusAdministrationClient(premiumNamespace, createTestCredential());
+      beforeAll(function () {
+        atomClient = new ServiceBusAdministrationClient(premiumNamespace!, createTestCredential());
       });
 
       function setEntityNameWithMaxSize(

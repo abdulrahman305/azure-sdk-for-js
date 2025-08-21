@@ -2,16 +2,13 @@
 // Licensed under the MIT License.
 
 import { AzureCommunicationTokenCredential } from "@azure/communication-common";
-import {
-  HttpClient,
-  PipelineRequest,
-  PipelineResponse,
-  createHttpHeaders,
-} from "@azure/core-rest-pipeline";
-import * as RestModel from "../../../src/generated/src/models";
-import { ChatClient, ChatParticipant, ChatThreadClient } from "../../../src";
-import { CommunicationIdentifierModel } from "../../../src/generated/src";
-import { baseUri, generateToken } from "../../public/utils/connectionUtils";
+import type { HttpClient, PipelineRequest, PipelineResponse } from "@azure/core-rest-pipeline";
+import { createHttpHeaders } from "@azure/core-rest-pipeline";
+import type * as RestModel from "../../../src/generated/src/models/index.js";
+import type { ChatParticipant } from "../../../src/index.js";
+import { ChatClient, ChatThreadClient } from "../../../src/index.js";
+import type { CommunicationIdentifierModel } from "../../../src/generated/src/index.js";
+import { baseUri, generateToken } from "../../public/utils/connectionUtils.js";
 
 export const mockCommunicationIdentifier: CommunicationIdentifierModel = {
   communicationUser: { id: "id" },
@@ -22,6 +19,14 @@ export const mockParticipant: RestModel.ChatParticipant = {
   communicationIdentifier: mockCommunicationIdentifier,
   displayName: "displayName",
   shareHistoryTime: new Date("2020-05-26T18:06:06Z"),
+};
+
+export const mockParticipantWithMetadata: RestModel.ChatParticipant = {
+  communicationIdentifier: mockCommunicationIdentifier,
+  displayName: "displayName",
+  metadata: {
+    userType: "C2",
+  },
 };
 
 export const mockSdkModelParticipant: ChatParticipant = {
@@ -35,6 +40,7 @@ export const mockSdkModelParticipant: ChatParticipant = {
 export const mockThread: RestModel.ChatThreadProperties = {
   id: "threadid",
   topic: "topic",
+  metadata: { threadType: "primary", secondaryThread: "test-id" },
   createdByCommunicationIdentifier: mockCommunicationIdentifier,
   createdOn: new Date("2020-06-26T18:06:06Z"),
 };
@@ -48,6 +54,14 @@ export const mockThreadItem: RestModel.ChatThreadItem = {
   id: "threadid",
   topic: "topic",
   lastMessageReceivedOn: new Date("2020-06-26T18:06:06Z"),
+};
+
+export const mockThreadItemWithRetentionPolicy: RestModel.ChatThreadProperties = {
+  id: "threadid",
+  topic: "topic",
+  createdByCommunicationIdentifier: mockCommunicationIdentifier,
+  createdOn: new Date("2020-06-26T18:06:06Z"),
+  retentionPolicy: { kind: "threadCreationDate", deleteThreadAfterDays: 90 },
 };
 
 export const mockMessage: RestModel.ChatMessage = {

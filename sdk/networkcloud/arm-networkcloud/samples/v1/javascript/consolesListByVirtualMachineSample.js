@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get a list of consoles for the provided virtual machine.
  *
  * @summary Get a list of consoles for the provided virtual machine.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/Consoles_ListByVirtualMachine.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/Consoles_ListByVirtualMachine.json
  */
 async function listConsolesOfTheVirtualMachine() {
   const subscriptionId =
@@ -26,9 +24,9 @@ async function listConsolesOfTheVirtualMachine() {
   const credential = new DefaultAzureCredential();
   const client = new NetworkCloud(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.consoles.listByVirtualMachine(
+  for await (const item of client.consoles.listByVirtualMachine(
     resourceGroupName,
-    virtualMachineName
+    virtualMachineName,
   )) {
     resArray.push(item);
   }
@@ -36,7 +34,7 @@ async function listConsolesOfTheVirtualMachine() {
 }
 
 async function main() {
-  listConsolesOfTheVirtualMachine();
+  await listConsolesOfTheVirtualMachine();
 }
 
 main().catch(console.error);

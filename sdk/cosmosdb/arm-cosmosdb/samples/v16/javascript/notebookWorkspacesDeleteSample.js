@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Deletes the notebook workspace for a Cosmos DB account.
  *
  * @summary Deletes the notebook workspace for a Cosmos DB account.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBNotebookWorkspaceDelete.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBNotebookWorkspaceDelete.json
  */
 async function cosmosDbNotebookWorkspaceDelete() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -34,7 +32,7 @@ async function cosmosDbNotebookWorkspaceDelete() {
 }
 
 async function main() {
-  cosmosDbNotebookWorkspaceDelete();
+  await cosmosDbNotebookWorkspaceDelete();
 }
 
 main().catch(console.error);

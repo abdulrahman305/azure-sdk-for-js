@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Get a Container Apps Job's executions
  *
  * @summary Get a Container Apps Job's executions
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Job_Executions_Get.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Job_Executions_Get.json
  */
-async function getAContainerAppsJobExecutions() {
+async function getAContainerAppsJobExecutions(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345";
@@ -29,7 +27,7 @@ async function getAContainerAppsJobExecutions() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.jobsExecutions.list(
+  for await (const item of client.jobsExecutions.list(
     resourceGroupName,
     jobName,
   )) {
@@ -38,8 +36,8 @@ async function getAContainerAppsJobExecutions() {
   console.log(resArray);
 }
 
-async function main() {
-  getAContainerAppsJobExecutions();
+async function main(): Promise<void> {
+  await getAContainerAppsJobExecutions();
 }
 
 main().catch(console.error);

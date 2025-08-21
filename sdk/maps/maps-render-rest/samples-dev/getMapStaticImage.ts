@@ -1,14 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { DefaultAzureCredential } from "@azure/identity";
-import { createWriteStream } from "fs";
-import MapsRender, { createPathQuery, createPinsQuery } from "@azure-rest/maps-render";
-import { LatLon } from "@azure/maps-common";
-
 /**
  * @summary How to get the map static image with pins and paths specified.
  */
+
+import { DefaultAzureCredential } from "@azure/identity";
+import { createWriteStream } from "node:fs";
+import MapsRender, { createPathQuery, createPinsQuery } from "@azure-rest/maps-render";
+import type { LatLon } from "@azure/maps-common";
+
 async function main(): Promise<void> {
   /**
    * Azure Maps supports two ways to authenticate requests:
@@ -18,7 +19,7 @@ async function main(): Promise<void> {
    * In this sample you can populate the three AZURE_CLIENT_ID, AZURE_CLIENT_SECRET & AZURE_TENANT_ID variables for Microsoft Entra ID auth,
    * or put MAPS_SUBSCRIPTION_KEY into .env file to use the shared key authentication.
    *
-   * More info is available at https://docs.microsoft.com/en-us/azure/azure-maps/azure-maps-authentication.
+   * More info is available at https://learn.microsoft.com/azure/azure-maps/azure-maps-authentication.
    */
   /** Microsoft Entra ID authentication */
   const credential = new DefaultAzureCredential();
@@ -33,7 +34,7 @@ async function main(): Promise<void> {
   /** In this example, we handle the response stream in Node.js. For how to handle the browser stream, please refer to getMapTileInBrowser.ts */
   /** To get static image, one can assign bbox and zoom to the queryParameters */
   const res1 = await client
-    .path("/map/static/{format}", "png")
+    .path("/map/static")
     .get({
       queryParameters: {
         bbox: [13.228, 52.4559, 13.5794, 52.62],
@@ -45,11 +46,11 @@ async function main(): Promise<void> {
   if (!res1.body) {
     throw Error("No response body");
   }
-  res1.body.pipe(createWriteStream("image1.png"));
+  await res1.body.pipe(createWriteStream("image1.png"));
 
   /** The other way is to assign center with image width and height to the queryParameters */
   const res2 = await client
-    .path("/map/static/{format}", "png")
+    .path("/map/static")
     .get({
       queryParameters: {
         center: [13.228, 52.4559],
@@ -62,7 +63,7 @@ async function main(): Promise<void> {
   if (!res2.body) {
     throw Error("No response body");
   }
-  res2.body.pipe(createWriteStream("image2.png"));
+  await res2.body.pipe(createWriteStream("image2.png"));
 
   /** In a more complex scenario, we can also add pins and paths on the map to make it more vivid */
   // Prepare pins sets
@@ -105,7 +106,7 @@ async function main(): Promise<void> {
 
   // Make the request
   const res3 = await client
-    .path("/map/static/{format}", "png")
+    .path("/map/static")
     .get({
       queryParameters: {
         bbox: [13.228, 52.4559, 13.5794, 52.62],
@@ -121,7 +122,7 @@ async function main(): Promise<void> {
   if (!res3.body) {
     throw Error("No response body");
   }
-  res3.body.pipe(createWriteStream("image3.png"));
+  await res3.body.pipe(createWriteStream("image3.png"));
 }
 
 main().catch((err) => {

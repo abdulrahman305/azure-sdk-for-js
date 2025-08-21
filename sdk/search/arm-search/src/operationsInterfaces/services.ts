@@ -22,7 +22,9 @@ import {
   ServicesDeleteOptionalParams,
   ServicesCheckNameAvailabilityOptionalParams,
   ServicesCheckNameAvailabilityResponse,
-} from "../models";
+  ServicesUpgradeOptionalParams,
+  ServicesUpgradeResponse,
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Interface representing a Services. */
@@ -52,7 +54,7 @@ export interface Services {
    * @param searchServiceName The name of the Azure AI Search service to create or update. Search service
    *                          names must only contain lowercase letters, digits or dashes, cannot use dash as the first two or
    *                          last one characters, cannot contain consecutive dashes, and must be between 2 and 60 characters in
-   *                          length. Search service names must be globally unique since they are part of the service URI
+   *                          length. Search service names must be unique since they are part of the service URI
    *                          (https://<name>.search.windows.net). You cannot change the service name after the service is
    *                          created.
    * @param service The definition of the search service to create or update.
@@ -64,10 +66,7 @@ export interface Services {
     service: SearchService,
     options?: ServicesCreateOrUpdateOptionalParams,
   ): Promise<
-    SimplePollerLike<
-      OperationState<ServicesCreateOrUpdateResponse>,
-      ServicesCreateOrUpdateResponse
-    >
+    SimplePollerLike<OperationState<ServicesCreateOrUpdateResponse>, ServicesCreateOrUpdateResponse>
   >;
   /**
    * Creates or updates a search service in the given resource group. If the search service already
@@ -77,7 +76,7 @@ export interface Services {
    * @param searchServiceName The name of the Azure AI Search service to create or update. Search service
    *                          names must only contain lowercase letters, digits or dashes, cannot use dash as the first two or
    *                          last one characters, cannot contain consecutive dashes, and must be between 2 and 60 characters in
-   *                          length. Search service names must be globally unique since they are part of the service URI
+   *                          length. Search service names must be unique since they are part of the service URI
    *                          (https://<name>.search.windows.net). You cannot change the service name after the service is
    *                          created.
    * @param service The definition of the search service to create or update.
@@ -141,4 +140,30 @@ export interface Services {
     name: string,
     options?: ServicesCheckNameAvailabilityOptionalParams,
   ): Promise<ServicesCheckNameAvailabilityResponse>;
+  /**
+   * Upgrades the Azure AI Search service to the latest version available.
+   * @param resourceGroupName The name of the resource group within the current subscription. You can
+   *                          obtain this value from the Azure Resource Manager API or the portal.
+   * @param searchServiceName The name of the Azure AI Search service associated with the specified
+   *                          resource group.
+   * @param options The options parameters.
+   */
+  beginUpgrade(
+    resourceGroupName: string,
+    searchServiceName: string,
+    options?: ServicesUpgradeOptionalParams,
+  ): Promise<SimplePollerLike<OperationState<ServicesUpgradeResponse>, ServicesUpgradeResponse>>;
+  /**
+   * Upgrades the Azure AI Search service to the latest version available.
+   * @param resourceGroupName The name of the resource group within the current subscription. You can
+   *                          obtain this value from the Azure Resource Manager API or the portal.
+   * @param searchServiceName The name of the Azure AI Search service associated with the specified
+   *                          resource group.
+   * @param options The options parameters.
+   */
+  beginUpgradeAndWait(
+    resourceGroupName: string,
+    searchServiceName: string,
+    options?: ServicesUpgradeOptionalParams,
+  ): Promise<ServicesUpgradeResponse>;
 }

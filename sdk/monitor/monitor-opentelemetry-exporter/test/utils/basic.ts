@@ -3,23 +3,20 @@
 
 import * as opentelemetry from "@opentelemetry/api";
 import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
-import {
-  MeterProvider,
-  PeriodicExportingMetricReader,
-  PeriodicExportingMetricReaderOptions,
-} from "@opentelemetry/sdk-metrics";
+import type { PeriodicExportingMetricReaderOptions } from "@opentelemetry/sdk-metrics";
+import { MeterProvider, PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics";
 
-import { AzureMonitorTraceExporter, AzureMonitorMetricExporter } from "../../src";
-import { Expectation, Scenario } from "./types";
-import { SpanStatusCode } from "@opentelemetry/api";
-import { TelemetryItem as Envelope } from "../../src/generated";
-import { FlushSpanProcessor } from "./flushSpanProcessor";
-import { Resource } from "@opentelemetry/resources";
+import { AzureMonitorTraceExporter, AzureMonitorMetricExporter } from "../../src/index.js";
+import type { Expectation, Scenario } from "./types.js";
+import { SpanStatusCode, trace } from "@opentelemetry/api";
+import type { TelemetryItem as Envelope } from "../../src/generated/index.js";
+import { FlushSpanProcessor } from "./flushSpanProcessor.js";
+import { resourceFromAttributes } from "@opentelemetry/resources";
 import {
   SemanticResourceAttributes,
   SemanticAttributes,
 } from "@opentelemetry/semantic-conventions";
-import { AzureMonitorLogExporter } from "../../src/export/log";
+import { AzureMonitorLogExporter } from "../../src/export/log.js";
 import { LoggerProvider, SimpleLogRecordProcessor } from "@opentelemetry/sdk-logs";
 import { SeverityNumber } from "@opentelemetry/api-logs";
 
@@ -41,19 +38,20 @@ export class TraceBasicScenario implements Scenario {
       connectionString: `instrumentationkey=${COMMON_ENVELOPE_PARAMS.instrumentationKey}`,
     });
     this._processor = new FlushSpanProcessor(exporter);
-    const resource = new Resource({
+    const resource = resourceFromAttributes({
       "service.name": "testServiceName",
       "k8s.cluster.name": "testClusterName",
       "k8s.node.name": "testNodeName",
       "k8s.namespace.name": "testNamespaceName",
       "k8s.pod.name": "testPodName",
     });
-    const provider = new BasicTracerProvider({ resource: resource });
-    provider.addSpanProcessor(this._processor);
-    provider.register();
+    const provider = new BasicTracerProvider({
+      spanProcessors: [this._processor],
+      resource: resource,
+    });
+    trace.setGlobalTracerProvider(provider);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   async run(): Promise<void> {
     const tracer = opentelemetry.trace.getTracer("basic");
     const root = tracer.startSpan(`${this.constructor.name}.Root`, {
@@ -96,7 +94,6 @@ export class TraceBasicScenario implements Scenario {
   }
 
   flush(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this._processor.forceFlush();
   }
 
@@ -270,17 +267,11 @@ export class MetricBasicScenario implements Scenario {
   private _provider: MeterProvider;
 
   constructor() {
-    const testResource = new Resource({
+    const testResource = resourceFromAttributes({
       [SemanticResourceAttributes.SERVICE_NAME]: "my-helloworld-service",
       [SemanticResourceAttributes.SERVICE_NAMESPACE]: "my-namespace",
       [SemanticResourceAttributes.SERVICE_INSTANCE_ID]: "my-instance",
     });
-    this._provider = new MeterProvider({
-      resource: testResource,
-    });
-  }
-
-  prepare(): void {
     const exporter = new AzureMonitorMetricExporter({
       connectionString: `instrumentationkey=${COMMON_ENVELOPE_PARAMS.instrumentationKey}`,
     });
@@ -288,12 +279,16 @@ export class MetricBasicScenario implements Scenario {
       exporter: exporter,
       exportIntervalMillis: 100,
     };
-    const metricReader = new PeriodicExportingMetricReader(metricReaderOptions);
-
-    this._provider.addMetricReader(metricReader);
+    this._provider = new MeterProvider({
+      resource: testResource,
+      readers: [new PeriodicExportingMetricReader(metricReaderOptions)],
+    });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  prepare(): void {
+    // NOOP
+  }
+
   async run(): Promise<void> {
     const meter = this._provider.getMeter("basic");
     const counter = meter.createCounter("testCounter");
@@ -482,7 +477,6 @@ export class LogBasicScenario implements Scenario {
     this._provider.addLogRecordProcessor(this._processor);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-misused-promises
   async run(): Promise<void> {
     const logger = this._provider.getLogger("basic");
 
@@ -510,7 +504,6 @@ export class LogBasicScenario implements Scenario {
   }
 
   flush(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this._processor.forceFlush();
   }
 

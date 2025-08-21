@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as http from "node:http";
-import * as https from "node:https";
-import * as zlib from "node:zlib";
+import http from "node:http";
+import https from "node:https";
+import zlib from "node:zlib";
 import { Transform } from "node:stream";
 import { AbortError } from "./abort-controller/AbortError.js";
-import {
+import type {
   HttpClient,
   HttpHeaders,
   PipelineRequest,
@@ -17,8 +17,9 @@ import {
 } from "./interfaces.js";
 import { createHttpHeaders } from "./httpHeaders.js";
 import { RestError } from "./restError.js";
-import { IncomingMessage } from "node:http";
+import type { IncomingMessage } from "node:http";
 import { logger } from "./log.js";
+import { Sanitizer } from "./util/sanitizer.js";
 
 const DEFAULT_TLS_SETTINGS = {};
 
@@ -27,10 +28,21 @@ function isReadableStream(body: any): body is NodeJS.ReadableStream {
 }
 
 function isStreamComplete(stream: NodeJS.ReadableStream): Promise<void> {
+  if (stream.readable === false) {
+    return Promise.resolve();
+  }
+
   return new Promise((resolve) => {
-    stream.on("close", resolve);
-    stream.on("end", resolve);
-    stream.on("error", resolve);
+    const handler = (): void => {
+      resolve();
+      stream.removeListener("close", handler);
+      stream.removeListener("end", handler);
+      stream.removeListener("error", handler);
+    };
+
+    stream.on("close", handler);
+    stream.on("end", handler);
+    stream.on("error", handler);
   });
 }
 
@@ -77,7 +89,7 @@ class NodeHttpClient implements HttpClient {
     let abortListener: ((event: any) => void) | undefined;
     if (request.abortSignal) {
       if (request.abortSignal.aborted) {
-        throw new AbortError("The operation was aborted.");
+        throw new AbortError("The operation was aborted. Request has already been canceled.");
       }
 
       abortListener = (event: Event) => {
@@ -88,8 +100,11 @@ class NodeHttpClient implements HttpClient {
       request.abortSignal.addEventListener("abort", abortListener);
     }
 
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     if (request.timeout > 0) {
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
+        const sanitizer = new Sanitizer();
+        logger.info(`request to '${sanitizer.sanitizeUrl(request.url)}' timed out. canceling...`);
         abortController.abort();
       }, request.timeout);
     }
@@ -124,6 +139,10 @@ class NodeHttpClient implements HttpClient {
       }
 
       const res = await this.makeRequest(request, abortController, body);
+
+      if (timeoutId !== undefined) {
+        clearTimeout(timeoutId);
+      }
 
       const headers = getResponseHeaders(res);
 
@@ -177,7 +196,6 @@ class NodeHttpClient implements HttpClient {
         if (isReadableStream(responseStream)) {
           downloadStreamDone = isStreamComplete(responseStream);
         }
-
         Promise.all([uploadStreamDone, downloadStreamDone])
           .then(() => {
             // eslint-disable-next-line promise/always-return
@@ -213,6 +231,7 @@ class NodeHttpClient implements HttpClient {
       port: url.port,
       method: request.method,
       headers: request.headers.toJSON({ preserveCase: true }),
+      ...request.requestOverrides,
     };
 
     return new Promise<http.IncomingMessage>((resolve, reject) => {
@@ -225,7 +244,9 @@ class NodeHttpClient implements HttpClient {
       });
 
       abortController.signal.addEventListener("abort", () => {
-        const abortError = new AbortError("The operation was aborted.");
+        const abortError = new AbortError(
+          "The operation was aborted. Rejecting from abort signal callback while making request.",
+        );
         req.destroy(abortError);
         reject(abortError);
       });

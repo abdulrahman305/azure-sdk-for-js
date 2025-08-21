@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create a new cloud services network or update the properties of the existing cloud services network.
  *
  * @summary Create a new cloud services network or update the properties of the existing cloud services network.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/CloudServicesNetworks_Create.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/CloudServicesNetworks_Create.json
  */
 async function createOrUpdateCloudServicesNetwork() {
   const subscriptionId =
@@ -27,12 +25,7 @@ async function createOrUpdateCloudServicesNetwork() {
     additionalEgressEndpoints: [
       {
         category: "azure-resource-management",
-        endpoints: [
-          {
-            domainName: "https://storageaccountex.blob.core.windows.net",
-            port: 443,
-          },
-        ],
+        endpoints: [{ domainName: "storageaccountex.blob.core.windows.net", port: 443 }],
       },
     ],
     enableDefaultEgressEndpoints: "False",
@@ -48,13 +41,13 @@ async function createOrUpdateCloudServicesNetwork() {
   const result = await client.cloudServicesNetworks.beginCreateOrUpdateAndWait(
     resourceGroupName,
     cloudServicesNetworkName,
-    cloudServicesNetworkParameters
+    cloudServicesNetworkParameters,
   );
   console.log(result);
 }
 
 async function main() {
-  createOrUpdateCloudServicesNetwork();
+  await createOrUpdateCloudServicesNetwork();
 }
 
 main().catch(console.error);

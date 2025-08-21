@@ -43,22 +43,25 @@ import {
   FileForceCloseHandlesOptionalParams,
   FileForceCloseHandlesResponse,
   FileRenameOptionalParams,
-  FileRenameResponse
-} from "../models";
+  FileRenameResponse,
+  FileCreateSymbolicLinkOptionalParams,
+  FileCreateSymbolicLinkResponse,
+  FileGetSymbolicLinkOptionalParams,
+  FileGetSymbolicLinkResponse,
+  FileCreateHardLinkOptionalParams,
+  FileCreateHardLinkResponse,
+} from "../models/index.js";
 
 /** Interface representing a File. */
 export interface File {
   /**
    * Creates a new file or replaces a file. Note it only initializes the file with no content.
    * @param fileContentLength Specifies the maximum size for the file, up to 4 TB.
-   * @param fileAttributes If specified, the provided file attributes shall be set. Default value:
-   *                       ‘Archive’ for file and ‘Directory’ for directory. ‘None’ can also be specified as default.
    * @param options The options parameters.
    */
   create(
     fileContentLength: number,
-    fileAttributes: string,
-    options?: FileCreateOptionalParams
+    options?: FileCreateOptionalParams,
   ): Promise<FileCreateResponse>;
   /**
    * Reads or downloads a file from the system, including its metadata and properties.
@@ -71,7 +74,7 @@ export interface File {
    * @param options The options parameters.
    */
   getProperties(
-    options?: FileGetPropertiesOptionalParams
+    options?: FileGetPropertiesOptionalParams,
   ): Promise<FileGetPropertiesResponse>;
   /**
    * removes the file from the storage account.
@@ -80,20 +83,17 @@ export interface File {
   delete(options?: FileDeleteOptionalParams): Promise<FileDeleteResponse>;
   /**
    * Sets HTTP headers on the file.
-   * @param fileAttributes If specified, the provided file attributes shall be set. Default value:
-   *                       ‘Archive’ for file and ‘Directory’ for directory. ‘None’ can also be specified as default.
    * @param options The options parameters.
    */
   setHttpHeaders(
-    fileAttributes: string,
-    options?: FileSetHttpHeadersOptionalParams
+    options?: FileSetHttpHeadersOptionalParams,
   ): Promise<FileSetHttpHeadersResponse>;
   /**
    * Updates user-defined metadata for the specified file.
    * @param options The options parameters.
    */
   setMetadata(
-    options?: FileSetMetadataOptionalParams
+    options?: FileSetMetadataOptionalParams,
   ): Promise<FileSetMetadataResponse>;
   /**
    * [Update] The Lease File operation establishes and manages a lock on a file for write and delete
@@ -101,7 +101,7 @@ export interface File {
    * @param options The options parameters.
    */
   acquireLease(
-    options?: FileAcquireLeaseOptionalParams
+    options?: FileAcquireLeaseOptionalParams,
   ): Promise<FileAcquireLeaseResponse>;
   /**
    * [Update] The Lease File operation establishes and manages a lock on a file for write and delete
@@ -111,7 +111,7 @@ export interface File {
    */
   releaseLease(
     leaseId: string,
-    options?: FileReleaseLeaseOptionalParams
+    options?: FileReleaseLeaseOptionalParams,
   ): Promise<FileReleaseLeaseResponse>;
   /**
    * [Update] The Lease File operation establishes and manages a lock on a file for write and delete
@@ -121,7 +121,7 @@ export interface File {
    */
   changeLease(
     leaseId: string,
-    options?: FileChangeLeaseOptionalParams
+    options?: FileChangeLeaseOptionalParams,
   ): Promise<FileChangeLeaseResponse>;
   /**
    * [Update] The Lease File operation establishes and manages a lock on a file for write and delete
@@ -129,7 +129,7 @@ export interface File {
    * @param options The options parameters.
    */
   breakLease(
-    options?: FileBreakLeaseOptionalParams
+    options?: FileBreakLeaseOptionalParams,
   ): Promise<FileBreakLeaseResponse>;
   /**
    * Upload a range of bytes to a file.
@@ -151,7 +151,7 @@ export interface File {
     range: string,
     fileRangeWrite: FileRangeWriteType,
     contentLength: number,
-    options?: FileUploadRangeOptionalParams
+    options?: FileUploadRangeOptionalParams,
   ): Promise<FileUploadRangeResponse>;
   /**
    * Upload a range of bytes to a file where the contents are read from a URL.
@@ -170,14 +170,14 @@ export interface File {
     range: string,
     copySource: string,
     contentLength: number,
-    options?: FileUploadRangeFromURLOptionalParams
+    options?: FileUploadRangeFromURLOptionalParams,
   ): Promise<FileUploadRangeFromURLResponse>;
   /**
    * Returns the list of valid ranges for a file.
    * @param options The options parameters.
    */
   getRangeList(
-    options?: FileGetRangeListOptionalParams
+    options?: FileGetRangeListOptionalParams,
   ): Promise<FileGetRangeListResponse>;
   /**
    * Copies a blob or file to a destination file within the storage account.
@@ -191,7 +191,7 @@ export interface File {
    */
   startCopy(
     copySource: string,
-    options?: FileStartCopyOptionalParams
+    options?: FileStartCopyOptionalParams,
   ): Promise<FileStartCopyResponse>;
   /**
    * Aborts a pending Copy File operation, and leaves a destination file with zero length and full
@@ -202,14 +202,14 @@ export interface File {
    */
   abortCopy(
     copyId: string,
-    options?: FileAbortCopyOptionalParams
+    options?: FileAbortCopyOptionalParams,
   ): Promise<FileAbortCopyResponse>;
   /**
    * Lists handles for file
    * @param options The options parameters.
    */
   listHandles(
-    options?: FileListHandlesOptionalParams
+    options?: FileListHandlesOptionalParams,
   ): Promise<FileListHandlesResponse>;
   /**
    * Closes all handles open for given file
@@ -219,7 +219,7 @@ export interface File {
    */
   forceCloseHandles(
     handleId: string,
-    options?: FileForceCloseHandlesOptionalParams
+    options?: FileForceCloseHandlesOptionalParams,
   ): Promise<FileForceCloseHandlesResponse>;
   /**
    * Renames a file
@@ -228,6 +228,32 @@ export interface File {
    */
   rename(
     renameSource: string,
-    options?: FileRenameOptionalParams
+    options?: FileRenameOptionalParams,
   ): Promise<FileRenameResponse>;
+  /**
+   * Creates a symbolic link.
+   * @param linkText NFS only. Required. The path to the original file, the symbolic link is pointing to.
+   *                 The path is of type string which is not resolved and is stored as is. The path can be absolute path
+   *                 or the relative path depending on the content stored in the symbolic link file.
+   * @param options The options parameters.
+   */
+  createSymbolicLink(
+    linkText: string,
+    options?: FileCreateSymbolicLinkOptionalParams,
+  ): Promise<FileCreateSymbolicLinkResponse>;
+  /** @param options The options parameters. */
+  getSymbolicLink(
+    options?: FileGetSymbolicLinkOptionalParams,
+  ): Promise<FileGetSymbolicLinkResponse>;
+  /**
+   * Creates a hard link.
+   * @param targetFile NFS only. Required. Specifies the path of the target file to which the link will
+   *                   be created, up to 2 KiB in length. It should be full path of the target from the root.The target
+   *                   file must be in the same share and hence the same storage account.
+   * @param options The options parameters.
+   */
+  createHardLink(
+    targetFile: string,
+    options?: FileCreateHardLinkOptionalParams,
+  ): Promise<FileCreateHardLinkResponse>;
 }

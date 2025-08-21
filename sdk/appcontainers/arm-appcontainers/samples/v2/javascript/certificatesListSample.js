@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the Certificates in a given managed environment.
  *
  * @summary Get the Certificates in a given managed environment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Certificates_ListByManagedEnvironment.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Certificates_ListByManagedEnvironment.json
  */
 async function listCertificatesByManagedEnvironment() {
   const subscriptionId =
@@ -26,14 +26,14 @@ async function listCertificatesByManagedEnvironment() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.certificates.list(resourceGroupName, environmentName)) {
+  for await (const item of client.certificates.list(resourceGroupName, environmentName)) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  listCertificatesByManagedEnvironment();
+  await listCertificatesByManagedEnvironment();
 }
 
 main().catch(console.error);

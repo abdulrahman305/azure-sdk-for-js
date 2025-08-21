@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Creates or updates a Managed Environment used to host container apps.
  *
  * @summary Creates or updates a Managed Environment used to host container apps.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironments_CustomInfrastructureResourceGroup_Create.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedEnvironments_CustomInfrastructureResourceGroup_Create.json
  */
 async function createEnvironmentWithCustomInfrastructureResourceGroup() {
   const subscriptionId =
@@ -77,7 +77,7 @@ async function createEnvironmentWithCustomInfrastructureResourceGroup() {
  * This sample demonstrates how to Creates or updates a Managed Environment used to host container apps.
  *
  * @summary Creates or updates a Managed Environment used to host container apps.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironments_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedEnvironments_CreateOrUpdate.json
  */
 async function createEnvironments() {
   const subscriptionId =
@@ -95,6 +95,13 @@ async function createEnvironments() {
     },
     daprAIConnectionString:
       "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://northcentralus-0.in.applicationinsights.azure.com/",
+    identity: {
+      type: "SystemAssigned, UserAssigned",
+      userAssignedIdentities: {
+        "/subscriptions/00000000000000000000000000000000/resourceGroups/contosoResources/providers/MicrosoftManagedIdentity/userAssignedIdentities/contosoIdentity":
+          {},
+      },
+    },
     location: "East US",
     peerAuthentication: { mtls: { enabled: true } },
     peerTrafficConfiguration: { encryption: { enabled: true } },
@@ -136,8 +143,8 @@ async function createEnvironments() {
 }
 
 async function main() {
-  createEnvironmentWithCustomInfrastructureResourceGroup();
-  createEnvironments();
+  await createEnvironmentWithCustomInfrastructureResourceGroup();
+  await createEnvironments();
 }
 
 main().catch(console.error);

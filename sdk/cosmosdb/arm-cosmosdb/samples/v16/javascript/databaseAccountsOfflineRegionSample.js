@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Offline the specified region for the specified Azure Cosmos DB database account.
  *
  * @summary Offline the specified region for the specified Azure Cosmos DB database account.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBDatabaseAccountOfflineRegion.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBDatabaseAccountOfflineRegion.json
  */
 async function cosmosDbDatabaseAccountOfflineRegion() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -36,7 +34,7 @@ async function cosmosDbDatabaseAccountOfflineRegion() {
 }
 
 async function main() {
-  cosmosDbDatabaseAccountOfflineRegion();
+  await cosmosDbDatabaseAccountOfflineRegion();
 }
 
 main().catch(console.error);

@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { BatchingReceiver } from "../../../src/core/batchingReceiver";
-import { ServiceBusReceiverImpl } from "../../../src/receivers/receiver";
-import { assertThrows } from "../../public/utils/testUtils";
-import { createConnectionContextForTests, getPromiseResolverForTest } from "./unittestUtils";
-import chai from "chai";
-import { InternalMessageHandlers } from "../../../src/models";
-const assert: typeof chai.assert = chai.assert;
+import type { BatchingReceiver } from "../../../src/core/batchingReceiver.js";
+import { ServiceBusReceiverImpl } from "../../../src/receivers/receiver.js";
+import { assertThrows } from "../../public/utils/testUtils.js";
+import { createConnectionContextForTests, getPromiseResolverForTest } from "./unittestUtils.js";
+import type { InternalMessageHandlers } from "../../../src/models.js";
+import { afterEach, beforeEach, describe, it } from "vitest";
+import { assert } from "../../public/utils/chai.js";
 
 describe("ServiceBusReceiver unit tests", () => {
   let receiver: ServiceBusReceiverImpl;
@@ -55,7 +55,7 @@ describe("ServiceBusReceiver unit tests", () => {
 
     await assertThrows(
       subscribeFn,
-      expectedError,
+      expectedError as { name: string; message: string },
       "Trying to receive a separate way, in parallel, should throw",
     );
   });
@@ -83,7 +83,7 @@ describe("ServiceBusReceiver unit tests", () => {
 
     await assertThrows(
       () => receiver.receiveMessages(1),
-      expectedError,
+      expectedError as { name: string; message: string },
       "Trying to receive a separate way, in parallel, should throw",
     );
   });

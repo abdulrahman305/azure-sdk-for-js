@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { VolumeUpdate, ElasticSanManagement } from "@azure/arm-elasticsan";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Update an Volume.
  *
  * @summary Update an Volume.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/Volumes_Update_MaximumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/Volumes_Update_MaximumSet_Gen.json
  */
-async function volumesUpdateMaximumSetGen() {
+async function volumesUpdateMaximumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -36,7 +34,7 @@ async function volumesUpdateMaximumSetGen() {
     elasticSanName,
     volumeGroupName,
     volumeName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
@@ -45,9 +43,9 @@ async function volumesUpdateMaximumSetGen() {
  * This sample demonstrates how to Update an Volume.
  *
  * @summary Update an Volume.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/Volumes_Update_MinimumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/Volumes_Update_MinimumSet_Gen.json
  */
-async function volumesUpdateMinimumSetGen() {
+async function volumesUpdateMinimumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -63,12 +61,12 @@ async function volumesUpdateMinimumSetGen() {
     elasticSanName,
     volumeGroupName,
     volumeName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
-async function main() {
+async function main(): Promise<void> {
   volumesUpdateMaximumSetGen();
   volumesUpdateMinimumSetGen();
 }

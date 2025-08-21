@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Get the properties of a Managed Environment used to host container apps.
  *
  * @summary Get the properties of a Managed Environment used to host container apps.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironments_Get.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedEnvironments_Get.json
  */
-async function getEnvironmentsByName() {
+async function getEnvironmentsByName(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "8efdecc5-919e-44eb-b179-915dca89ebf9";
@@ -36,8 +34,8 @@ async function getEnvironmentsByName() {
   console.log(result);
 }
 
-async function main() {
-  getEnvironmentsByName();
+async function main(): Promise<void> {
+  await getEnvironmentsByName();
 }
 
 main().catch(console.error);

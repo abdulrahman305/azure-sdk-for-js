@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Update the version of the provided cluster to one of the available supported versions.
  *
  * @summary Update the version of the provided cluster to one of the available supported versions.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/Clusters_UpdateVersion.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/Clusters_UpdateVersion.json
  */
 async function updateClusterVersion() {
   const subscriptionId =
@@ -31,13 +29,13 @@ async function updateClusterVersion() {
   const result = await client.clusters.beginUpdateVersionAndWait(
     resourceGroupName,
     clusterName,
-    clusterUpdateVersionParameters
+    clusterUpdateVersionParameters,
   );
   console.log(result);
 }
 
 async function main() {
-  updateClusterVersion();
+  await updateClusterVersion();
 }
 
 main().catch(console.error);

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Azure Document Translator rest client library samples for TypeScript",
   "engine": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "build": "tsc",
@@ -31,11 +31,10 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/documenttranslator/ai-document-translator-rest",
   "dependencies": {
     "@azure-rest/ai-document-translator": "next",
-    "@azure-samples/ai-document-translator-ts": "file:",
     "dotenv": "latest"
   },
   "devDependencies": {
-    "rimraf": "latest",
-    "typescript": "~5.5.3"
+    "typescript": "~5.8.2",
+    "rimraf": "latest"
   }
 }

@@ -6,21 +6,17 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import { NetworkCloud } from "@azure/arm-networkcloud";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Get the properties of the provided rack SKU.
  *
  * @summary Get the properties of the provided rack SKU.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/RackSkus_Get.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/RackSkus_Get.json
  */
-async function getRackSkuResource() {
+async function getRackSkuResource(): Promise<void> {
   const subscriptionId =
     process.env["NETWORKCLOUD_SUBSCRIPTION_ID"] ||
     "123e4567-e89b-12d3-a456-426655440000";
@@ -31,8 +27,8 @@ async function getRackSkuResource() {
   console.log(result);
 }
 
-async function main() {
-  getRackSkuResource();
+async function main(): Promise<void> {
+  await getRackSkuResource();
 }
 
 main().catch(console.error);

@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 /**
  * This sample demonstrates how the createNotificationJob() method can be used to import registrations
  * descriptions from an existing set of exports.
  *
- * See https://docs.microsoft.com/azure/notification-hubs/export-modify-registrations-bulk
+ * See https://learn.microsoft.com/azure/notification-hubs/export-modify-registrations-bulk
  * to learn about Export and Import Registrations in Azure Notification Hubs.
  *
  *
@@ -12,7 +13,7 @@
  * @azsdk-weight 100
  */
 
-import * as dotenv from "dotenv";
+import "dotenv/config";
 import {
   createClientContext,
   getNotificationHubJob,
@@ -20,9 +21,6 @@ import {
 } from "@azure/notification-hubs/api";
 import { NotificationHubJob } from "@azure/notification-hubs/models";
 import { delay } from "@azure/core-util";
-
-// Load the .env file if it exists
-dotenv.config();
 
 // Define connection string and hub name
 const connectionString = process.env.NOTIFICATIONHUBS_CONNECTION_STRING || "<connection string>";

@@ -1,34 +1,28 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-
-import { assert } from "chai";
-
 import {
   configureBlobStorageClient,
   getBSU,
   getConnectionStringFromEnvironment,
+  getTokenBSUWithDefaultCredential,
   recorderEnvSetup,
   SimpleTokenCredential,
-} from "../utils";
-import {
-  BlobServiceClient,
-  getBlobServiceAccountAudience,
-  newPipeline,
-  StorageSharedKeyCredential,
-} from "../../src";
+} from "../utils/index.js";
+import type { StorageSharedKeyCredential } from "../../src/index.js";
+import { BlobServiceClient, getBlobServiceAccountAudience, newPipeline } from "../../src/index.js";
 import { Recorder } from "@azure-tools/test-recorder";
-import { Context } from "mocha";
 import { createTestCredential } from "@azure-tools/test-credential";
+import { describe, it, assert, beforeEach, afterEach } from "vitest";
 
 describe("BlobServiceClient Node.js only", () => {
   let recorder: Recorder;
 
-  beforeEach(async function (this: Context) {
-    recorder = new Recorder(this.currentTest);
+  beforeEach(async (ctx) => {
+    recorder = new Recorder(ctx);
     await recorder.start(recorderEnvSetup);
   });
 
-  afterEach(async function () {
+  afterEach(async () => {
     await recorder.stop();
   });
 
@@ -100,7 +94,7 @@ describe("BlobServiceClient Node.js only", () => {
     assert.ok(result.version!.length > 0);
   });
 
-  it("can be created with a url and a credential and an option bag", async function () {
+  it("can be created with a url and a credential and an option bag", async () => {
     const serviceClient = getBSU(recorder);
     const credential = (serviceClient as any).credential as StorageSharedKeyCredential;
     const newClient = new BlobServiceClient(serviceClient.url, credential, {
@@ -118,7 +112,7 @@ describe("BlobServiceClient Node.js only", () => {
     assert.ok(result.version!.length > 0);
   });
 
-  it("can be created with a url and a pipeline", async function () {
+  it("can be created with a url and a pipeline", async () => {
     const serviceClient = getBSU(recorder);
     const credential = (serviceClient as any).credential as StorageSharedKeyCredential;
     const pipeline = newPipeline(credential);
@@ -133,7 +127,7 @@ describe("BlobServiceClient Node.js only", () => {
     assert.ok(result.version!.length > 0);
   });
 
-  it("can be created from a connection string", async function () {
+  it("can be created from a connection string", async () => {
     const newClient = BlobServiceClient.fromConnectionString(getConnectionStringFromEnvironment());
     configureBlobStorageClient(recorder, newClient);
 
@@ -143,7 +137,7 @@ describe("BlobServiceClient Node.js only", () => {
     assert.ok(result.requestId!.length > 0);
   });
 
-  it("can be created from a connection string and an option bag", async function () {
+  it("can be created from a connection string and an option bag", async () => {
     const newClient = BlobServiceClient.fromConnectionString(getConnectionStringFromEnvironment(), {
       retryOptions: {
         maxTries: 5,
@@ -155,5 +149,14 @@ describe("BlobServiceClient Node.js only", () => {
 
     assert.ok(typeof result.requestId);
     assert.ok(result.requestId!.length > 0);
+  });
+
+  it("getAccountInfo with OAuth", async () => {
+    const blobServiceClient = getTokenBSUWithDefaultCredential(recorder);
+
+    const accountInfo = await blobServiceClient.getAccountInfo();
+    assert.ok(accountInfo.accountKind);
+    assert.ok(accountInfo.skuName);
+    assert.deepStrictEqual(accountInfo.isHierarchicalNamespaceEnabled, false);
   });
 });

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.4.4 (Unreleased)
+## 1.5.1 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,25 @@
 
 ### Bugs Fixed
 
-- Fix an issue on Firefox where "xmlns" namespace is missing from the result of `stringifyXML()` [Issue #11655](https://github.com/Azure/azure-sdk-for-js/issues/11655)
+### Other Changes
+
+## 1.5.0 (2025-07-10)
 
 ### Other Changes
+
+- Update `engines` to `"node": ">=20.0.0"`. Please refer to our [support policy](https://github.com/Azure/azure-sdk-for-js/blob/main/SUPPORT.md) for more information on our supported Node.js versions.
+
+## 1.4.5 (2025-03-06)
+
+### Bugs Fixed
+
+- Fix an issue where leading and trailing spaces are not preserved in parsed result [PR #33020](https://github.com/Azure/azure-sdk-for-js/pull/33020)
+
+## 1.4.4 (2024-10-03)
+
+### Bugs Fixed
+
+- Fix an issue on Firefox where "xmlns" namespace is missing from the result of `stringifyXML()` [Issue #11655](https://github.com/Azure/azure-sdk-for-js/issues/11655)
 
 ## 1.4.3 (2024-08-01)
 

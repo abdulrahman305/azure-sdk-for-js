@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the properties of a Container App.
  *
  * @summary Get the properties of a Container App.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerApps_Get.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_Get.json
  */
 async function getContainerApp() {
   const subscriptionId =
@@ -30,7 +30,7 @@ async function getContainerApp() {
 }
 
 async function main() {
-  getContainerApp();
+  await getContainerApp();
 }
 
 main().catch(console.error);

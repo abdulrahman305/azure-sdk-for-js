@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as fs from "fs";
-import { AvroReadableFromStream, AvroReader } from "../../src";
-import { Readable } from "stream";
-import { arraysEqual } from "../../src/utils/utils.common";
-import { assert } from "chai";
+import fs from "node:fs";
+import { AvroReadableFromStream, AvroReader } from "../../src/index.js";
+import { Readable } from "node:stream";
+import { arraysEqual } from "../../src/utils/utils.common.js";
+import { describe, it, assert } from "vitest";
 
 type Action = (o: Record<string, any> | null) => void;
 class TestCase {
@@ -64,7 +64,6 @@ describe("AvroReader", () => {
   });
 
   it("aborter", async () => {
-    // eslint-disable-next-line 	@typescript-eslint/no-empty-function
     const delayedReadable = new Readable({ read() {} });
     const rfs = new AvroReadableFromStream(delayedReadable);
     const avroReader = new AvroReader(rfs);

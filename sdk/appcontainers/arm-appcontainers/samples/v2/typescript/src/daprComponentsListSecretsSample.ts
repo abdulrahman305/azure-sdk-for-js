@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to List secrets for a dapr component
  *
  * @summary List secrets for a dapr component
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/DaprComponents_ListSecrets.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/DaprComponents_ListSecrets.json
  */
-async function listContainerAppsSecrets() {
+async function listContainerAppsSecrets(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "8efdecc5-919e-44eb-b179-915dca89ebf9";
@@ -38,8 +36,8 @@ async function listContainerAppsSecrets() {
   console.log(result);
 }
 
-async function main() {
-  listContainerAppsSecrets();
+async function main(): Promise<void> {
+  await listContainerAppsSecrets();
 }
 
 main().catch(console.error);

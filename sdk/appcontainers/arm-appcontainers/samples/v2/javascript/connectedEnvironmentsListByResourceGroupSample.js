@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get all connectedEnvironments in a resource group.
  *
  * @summary Get all connectedEnvironments in a resource group.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironments_ListByResourceGroup.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironments_ListByResourceGroup.json
  */
 async function listEnvironmentsByResourceGroup() {
   const subscriptionId =
@@ -25,14 +25,14 @@ async function listEnvironmentsByResourceGroup() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.connectedEnvironments.listByResourceGroup(resourceGroupName)) {
+  for await (const item of client.connectedEnvironments.listByResourceGroup(resourceGroupName)) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  listEnvironmentsByResourceGroup();
+  await listEnvironmentsByResourceGroup();
 }
 
 main().catch(console.error);

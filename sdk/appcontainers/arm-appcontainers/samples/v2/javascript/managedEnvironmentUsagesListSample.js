@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Gets the current usage information as well as the limits for environment.
  *
  * @summary Gets the current usage information as well as the limits for environment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironmentUsages_List.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedEnvironmentUsages_List.json
  */
 async function listManagedEnvironmentUsages() {
   const subscriptionId = process.env["APPCONTAINERS_SUBSCRIPTION_ID"] || "subid";
@@ -25,14 +25,17 @@ async function listManagedEnvironmentUsages() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.managedEnvironmentUsages.list(resourceGroupName, environmentName)) {
+  for await (const item of client.managedEnvironmentUsages.list(
+    resourceGroupName,
+    environmentName,
+  )) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  listManagedEnvironmentUsages();
+  await listManagedEnvironmentUsages();
 }
 
 main().catch(console.error);

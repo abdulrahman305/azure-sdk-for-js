@@ -4,23 +4,25 @@
 import { describe, it, assert, vi, afterEach } from "vitest";
 import { proxyPolicy, proxyPolicyName } from "../../src/policies/proxyPolicy.js";
 import { tlsPolicy, tlsPolicyName } from "../../src/policies/tlsPolicy.js";
-import { HttpClient } from "../../src/interfaces.js";
+import type { HttpClient } from "../../src/interfaces.js";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import { createEmptyPipeline } from "../../src/pipeline.js";
 import { createHttpHeaders } from "../../src/httpHeaders.js";
 import { createNodeHttpClient } from "../../src/nodeHttpClient.js";
 import { createPipelineFromOptions } from "../../src/createPipelineFromOptions.js";
 
-vi.mock("https", async () => {
-  const actual = await vi.importActual("https");
+vi.mock("node:https", async () => {
+  const actual = await vi.importActual("node:https");
   return {
-    ...actual,
-    request: vi.fn(),
+    default: {
+      ...(actual as any).default,
+      request: vi.fn(),
+    },
   };
 });
 
 import type { Agent } from "node:http";
-import * as https from "node:https";
+import https from "node:https";
 
 describe("HttpsPipeline", function () {
   describe("Agent creation", function () {

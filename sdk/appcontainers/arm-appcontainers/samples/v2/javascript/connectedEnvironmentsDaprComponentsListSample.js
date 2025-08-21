@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the Dapr Components for a connected environment.
  *
  * @summary Get the Dapr Components for a connected environment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironmentsDaprComponents_List.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironmentsDaprComponents_List.json
  */
 async function listDaprComponents() {
   const subscriptionId =
@@ -26,7 +26,7 @@ async function listDaprComponents() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.connectedEnvironmentsDaprComponents.list(
+  for await (const item of client.connectedEnvironmentsDaprComponents.list(
     resourceGroupName,
     connectedEnvironmentName,
   )) {
@@ -36,7 +36,7 @@ async function listDaprComponents() {
 }
 
 async function main() {
-  listDaprComponents();
+  await listDaprComponents();
 }
 
 main().catch(console.error);

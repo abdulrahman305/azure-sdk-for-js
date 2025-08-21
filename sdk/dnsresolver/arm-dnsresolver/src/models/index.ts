@@ -14,6 +14,30 @@ export interface SubResource {
   id: string;
 }
 
+/** Common fields that are returned in the response for all Azure Resource Manager resources */
+export interface Resource {
+  /**
+   * Fully qualified resource ID for the resource. E.g. "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}"
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly id?: string;
+  /**
+   * The name of the resource
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly name?: string;
+  /**
+   * The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly type?: string;
+  /**
+   * Azure Resource Manager metadata containing createdBy and modifiedBy information.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly systemData?: SystemData;
+}
+
 /** Metadata pertaining to creation and last modification of the resource. */
 export interface SystemData {
   /** The identity that created the resource. */
@@ -28,25 +52,6 @@ export interface SystemData {
   lastModifiedByType?: CreatedByType;
   /** The timestamp of resource last modification (UTC) */
   lastModifiedAt?: Date;
-}
-
-/** Common fields that are returned in the response for all Azure Resource Manager resources */
-export interface Resource {
-  /**
-   * Fully qualified resource ID for the resource. Ex - /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-   * NOTE: This property will not be serialized. It can only be populated by the server.
-   */
-  readonly id?: string;
-  /**
-   * The name of the resource
-   * NOTE: This property will not be serialized. It can only be populated by the server.
-   */
-  readonly name?: string;
-  /**
-   * The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
-   * NOTE: This property will not be serialized. It can only be populated by the server.
-   */
-  readonly type?: string;
 }
 
 /** An error message */
@@ -223,6 +228,147 @@ export interface VirtualNetworkDnsForwardingRuleset {
   virtualNetworkLink?: SubResource;
 }
 
+/** Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.). */
+export interface ErrorResponse {
+  /** The error object. */
+  error?: ErrorDetail;
+}
+
+/** The error detail. */
+export interface ErrorDetail {
+  /**
+   * The error code.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly code?: string;
+  /**
+   * The error message.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly message?: string;
+  /**
+   * The error target.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly target?: string;
+  /**
+   * The error details.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly details?: ErrorDetail[];
+  /**
+   * The error additional info.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly additionalInfo?: ErrorAdditionalInfo[];
+}
+
+/** The resource management error additional info. */
+export interface ErrorAdditionalInfo {
+  /**
+   * The additional info type.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly type?: string;
+  /**
+   * The additional info.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly info?: Record<string, unknown>;
+}
+
+/** Describes a DNS resolver policy for PATCH operation. */
+export interface DnsResolverPolicyPatch {
+  /** Tags for DNS resolver policy. */
+  tags?: { [propertyName: string]: string };
+}
+
+/** The response to an enumeration operation on DNS resolver policies. */
+export interface DnsResolverPolicyListResult {
+  /** Enumeration of the DNS resolver policies. */
+  value?: DnsResolverPolicy[];
+  /**
+   * The continuation token for the next page of results.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly nextLink?: string;
+}
+
+/** The action to take on DNS requests that match the DNS security rule. */
+export interface DnsSecurityRuleAction {
+  /** The type of action to take. */
+  actionType?: ActionType;
+}
+
+/** Describes a DNS security rule for PATCH operation. */
+export interface DnsSecurityRulePatch {
+  /** Tags for DNS security rule. */
+  tags?: { [propertyName: string]: string };
+  /** The action to take on DNS requests that match the DNS security rule. */
+  action?: DnsSecurityRuleAction;
+  /** DNS resolver policy domains lists that the DNS security rule applies to. */
+  dnsResolverDomainLists?: SubResource[];
+  /** The state of DNS security rule. */
+  dnsSecurityRuleState?: DnsSecurityRuleState;
+  /** The priority of the DNS security rule. */
+  priority?: number;
+}
+
+/** The response to an enumeration operation on DNS security rules within a DNS resolver policy. */
+export interface DnsSecurityRuleListResult {
+  /** Enumeration of the DNS security rules. */
+  value?: DnsSecurityRule[];
+  /**
+   * The continuation token for the next page of results.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly nextLink?: string;
+}
+
+/** Describes a DNS resolver policy virtual network link for PATCH operation. */
+export interface DnsResolverPolicyVirtualNetworkLinkPatch {
+  /** Tags for the DNS resolver policy virtual network link. */
+  tags?: { [propertyName: string]: string };
+}
+
+/** The response to an enumeration operation on DNS resolver policy virtual network links. */
+export interface DnsResolverPolicyVirtualNetworkLinkListResult {
+  /** Enumeration of the DNS resolver policy virtual network links. */
+  value?: DnsResolverPolicyVirtualNetworkLink[];
+  /**
+   * The continuation token for the next page of results.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly nextLink?: string;
+}
+
+/** Describes a DNS resolver domain list for PATCH operation. */
+export interface DnsResolverDomainListPatch {
+  /** Tags for DNS resolver domain list. */
+  tags?: { [propertyName: string]: string };
+  /** The domains in the domain list. */
+  domains?: string[];
+}
+
+/** The response to an enumeration operation on DNS resolver domain lists. */
+export interface DnsResolverDomainListResult {
+  /** Enumeration of the DNS resolver domain lists. */
+  value?: DnsResolverDomainList[];
+  /**
+   * The continuation token for the next page of results.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly nextLink?: string;
+}
+
+/** Describes a DNS resolver domain list for bulk UPLOAD or DOWNLOAD operations. */
+export interface DnsResolverDomainListBulk {
+  /** The storage account blob file URL to be used in the bulk upload or download request of DNS resolver domain list. */
+  storageUrl: string;
+  /** The action to take in the request, Upload or Download. */
+  action: Action;
+}
+
 /** The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location' */
 export interface TrackedResource extends Resource {
   /** Resource tags. */
@@ -241,11 +387,6 @@ export interface DnsResolver extends TrackedResource {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly etag?: string;
-  /**
-   * Metadata pertaining to creation and last modification of the resource.
-   * NOTE: This property will not be serialized. It can only be populated by the server.
-   */
-  readonly systemData?: SystemData;
   /** The reference to the virtual network. This cannot be changed after creation. */
   virtualNetwork: SubResource;
   /**
@@ -272,11 +413,6 @@ export interface InboundEndpoint extends TrackedResource {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly etag?: string;
-  /**
-   * Metadata pertaining to creation and last modification of the resource.
-   * NOTE: This property will not be serialized. It can only be populated by the server.
-   */
-  readonly systemData?: SystemData;
   /** IP configurations for the inbound endpoint. */
   ipConfigurations: IpConfiguration[];
   /**
@@ -298,11 +434,6 @@ export interface OutboundEndpoint extends TrackedResource {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly etag?: string;
-  /**
-   * Metadata pertaining to creation and last modification of the resource.
-   * NOTE: This property will not be serialized. It can only be populated by the server.
-   */
-  readonly systemData?: SystemData;
   /** The reference to the subnet used for the outbound endpoint. */
   subnet: SubResource;
   /**
@@ -324,11 +455,6 @@ export interface DnsForwardingRuleset extends TrackedResource {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly etag?: string;
-  /**
-   * Metadata pertaining to creation and last modification of the resource.
-   * NOTE: This property will not be serialized. It can only be populated by the server.
-   */
-  readonly systemData?: SystemData;
   /** The reference to the DNS resolver outbound endpoints that are used to route DNS queries matching the forwarding rules in the ruleset to the target DNS servers. */
   dnsResolverOutboundEndpoints: SubResource[];
   /**
@@ -343,6 +469,89 @@ export interface DnsForwardingRuleset extends TrackedResource {
   readonly resourceGuid?: string;
 }
 
+/** Describes a DNS resolver policy. */
+export interface DnsResolverPolicy extends TrackedResource {
+  /**
+   * ETag of the DNS resolver policy.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly etag?: string;
+  /**
+   * The current provisioning state of the DNS resolver policy. This is a read-only property and any attempt to set this value will be ignored.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly provisioningState?: ProvisioningState;
+  /**
+   * The resourceGuid property of the DNS resolver policy resource.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly resourceGuid?: string;
+}
+
+/** Describes a DNS security rule. */
+export interface DnsSecurityRule extends TrackedResource {
+  /**
+   * ETag of the DNS security rule.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly etag?: string;
+  /** The priority of the DNS security rule. */
+  priority: number;
+  /** The action to take on DNS requests that match the DNS security rule. */
+  action: DnsSecurityRuleAction;
+  /** DNS resolver policy domains lists that the DNS security rule applies to. */
+  dnsResolverDomainLists: SubResource[];
+  /** The state of DNS security rule. */
+  dnsSecurityRuleState?: DnsSecurityRuleState;
+  /**
+   * The current provisioning state of the DNS security rule. This is a read-only property and any attempt to set this value will be ignored.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly provisioningState?: ProvisioningState;
+}
+
+/** Describes a DNS resolver policy virtual network link. */
+export interface DnsResolverPolicyVirtualNetworkLink extends TrackedResource {
+  /**
+   * ETag of the DNS resolver policy virtual network link.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly etag?: string;
+  /** The reference to the virtual network. This cannot be changed after creation. */
+  virtualNetwork: SubResource;
+  /**
+   * The current provisioning state of the DNS resolver policy virtual network link. This is a read-only property and any attempt to set this value will be ignored.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly provisioningState?: ProvisioningState;
+}
+
+/** Describes a DNS resolver domain list. */
+export interface DnsResolverDomainList extends TrackedResource {
+  /**
+   * ETag of the DNS resolver domain list.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly etag?: string;
+  /** The domains in the domain list. Will be null if user is using large domain list. */
+  domains?: string[];
+  /**
+   * The URL for bulk upload or download for domain lists containing larger set of domains. This will be populated if domains is empty or null.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly domainsUrl?: string;
+  /**
+   * The current provisioning state of the DNS resolver domain list. This is a read-only property and any attempt to set this value will be ignored.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly provisioningState?: ProvisioningState;
+  /**
+   * The resourceGuid property of the DNS resolver domain list resource.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly resourceGuid?: string;
+}
+
 /** Describes a forwarding rule within a DNS forwarding ruleset. */
 export interface ForwardingRule extends ProxyResource {
   /**
@@ -350,11 +559,6 @@ export interface ForwardingRule extends ProxyResource {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly etag?: string;
-  /**
-   * Metadata pertaining to creation and last modification of the resource.
-   * NOTE: This property will not be serialized. It can only be populated by the server.
-   */
-  readonly systemData?: SystemData;
   /** The domain name for the forwarding rule. */
   domainName: string;
   /** DNS servers to forward the DNS query to. */
@@ -377,11 +581,6 @@ export interface VirtualNetworkLink extends ProxyResource {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly etag?: string;
-  /**
-   * Metadata pertaining to creation and last modification of the resource.
-   * NOTE: This property will not be serialized. It can only be populated by the server.
-   */
-  readonly systemData?: SystemData;
   /** The reference to the virtual network. This cannot be changed after creation. */
   virtualNetwork: SubResource;
   /** Metadata attached to the virtual network link. */
@@ -393,12 +592,57 @@ export interface VirtualNetworkLink extends ProxyResource {
   readonly provisioningState?: ProvisioningState;
 }
 
+/** Defines headers for DnsResolverPolicies_update operation. */
+export interface DnsResolverPoliciesUpdateHeaders {
+  location?: string;
+}
+
+/** Defines headers for DnsResolverPolicies_delete operation. */
+export interface DnsResolverPoliciesDeleteHeaders {
+  location?: string;
+}
+
+/** Defines headers for DnsSecurityRules_update operation. */
+export interface DnsSecurityRulesUpdateHeaders {
+  location?: string;
+}
+
+/** Defines headers for DnsSecurityRules_delete operation. */
+export interface DnsSecurityRulesDeleteHeaders {
+  location?: string;
+}
+
+/** Defines headers for DnsResolverPolicyVirtualNetworkLinks_update operation. */
+export interface DnsResolverPolicyVirtualNetworkLinksUpdateHeaders {
+  location?: string;
+}
+
+/** Defines headers for DnsResolverPolicyVirtualNetworkLinks_delete operation. */
+export interface DnsResolverPolicyVirtualNetworkLinksDeleteHeaders {
+  location?: string;
+}
+
+/** Defines headers for DnsResolverDomainLists_update operation. */
+export interface DnsResolverDomainListsUpdateHeaders {
+  location?: string;
+}
+
+/** Defines headers for DnsResolverDomainLists_delete operation. */
+export interface DnsResolverDomainListsDeleteHeaders {
+  location?: string;
+}
+
+/** Defines headers for DnsResolverDomainLists_bulk operation. */
+export interface DnsResolverDomainListsBulkHeaders {
+  location?: string;
+}
+
 /** Known values of {@link DnsResolverState} that the service accepts. */
 export enum KnownDnsResolverState {
   /** Connected */
   Connected = "Connected",
   /** Disconnected */
-  Disconnected = "Disconnected"
+  Disconnected = "Disconnected",
 }
 
 /**
@@ -424,7 +668,7 @@ export enum KnownProvisioningState {
   /** Failed */
   Failed = "Failed",
   /** Canceled */
-  Canceled = "Canceled"
+  Canceled = "Canceled",
 }
 
 /**
@@ -450,7 +694,7 @@ export enum KnownCreatedByType {
   /** ManagedIdentity */
   ManagedIdentity = "ManagedIdentity",
   /** Key */
-  Key = "Key"
+  Key = "Key",
 }
 
 /**
@@ -470,7 +714,7 @@ export enum KnownIpAllocationMethod {
   /** Static */
   Static = "Static",
   /** Dynamic */
-  Dynamic = "Dynamic"
+  Dynamic = "Dynamic",
 }
 
 /**
@@ -488,7 +732,7 @@ export enum KnownForwardingRuleState {
   /** Enabled */
   Enabled = "Enabled",
   /** Disabled */
-  Disabled = "Disabled"
+  Disabled = "Disabled",
 }
 
 /**
@@ -500,6 +744,63 @@ export enum KnownForwardingRuleState {
  * **Disabled**
  */
 export type ForwardingRuleState = string;
+
+/** Known values of {@link ActionType} that the service accepts. */
+export enum KnownActionType {
+  /** Allow */
+  Allow = "Allow",
+  /** Alert */
+  Alert = "Alert",
+  /** Block */
+  Block = "Block",
+}
+
+/**
+ * Defines values for ActionType. \
+ * {@link KnownActionType} can be used interchangeably with ActionType,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **Allow** \
+ * **Alert** \
+ * **Block**
+ */
+export type ActionType = string;
+
+/** Known values of {@link DnsSecurityRuleState} that the service accepts. */
+export enum KnownDnsSecurityRuleState {
+  /** Enabled */
+  Enabled = "Enabled",
+  /** Disabled */
+  Disabled = "Disabled",
+}
+
+/**
+ * Defines values for DnsSecurityRuleState. \
+ * {@link KnownDnsSecurityRuleState} can be used interchangeably with DnsSecurityRuleState,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **Enabled** \
+ * **Disabled**
+ */
+export type DnsSecurityRuleState = string;
+
+/** Known values of {@link Action} that the service accepts. */
+export enum KnownAction {
+  /** Upload */
+  Upload = "Upload",
+  /** Download */
+  Download = "Download",
+}
+
+/**
+ * Defines values for Action. \
+ * {@link KnownAction} can be used interchangeably with Action,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **Upload** \
+ * **Download**
+ */
+export type Action = string;
 
 /** Optional parameters. */
 export interface DnsResolversCreateOrUpdateOptionalParams
@@ -598,7 +899,8 @@ export interface DnsResolversListByVirtualNetworkNextOptionalParams
   extends coreClient.OperationOptions {}
 
 /** Contains response data for the listByVirtualNetworkNext operation. */
-export type DnsResolversListByVirtualNetworkNextResponse = SubResourceListResult;
+export type DnsResolversListByVirtualNetworkNextResponse =
+  SubResourceListResult;
 
 /** Optional parameters. */
 export interface InboundEndpointsCreateOrUpdateOptionalParams
@@ -786,7 +1088,8 @@ export interface DnsForwardingRulesetsListByResourceGroupOptionalParams
 }
 
 /** Contains response data for the listByResourceGroup operation. */
-export type DnsForwardingRulesetsListByResourceGroupResponse = DnsForwardingRulesetListResult;
+export type DnsForwardingRulesetsListByResourceGroupResponse =
+  DnsForwardingRulesetListResult;
 
 /** Optional parameters. */
 export interface DnsForwardingRulesetsListOptionalParams
@@ -806,28 +1109,32 @@ export interface DnsForwardingRulesetsListByVirtualNetworkOptionalParams
 }
 
 /** Contains response data for the listByVirtualNetwork operation. */
-export type DnsForwardingRulesetsListByVirtualNetworkResponse = VirtualNetworkDnsForwardingRulesetListResult;
+export type DnsForwardingRulesetsListByVirtualNetworkResponse =
+  VirtualNetworkDnsForwardingRulesetListResult;
 
 /** Optional parameters. */
 export interface DnsForwardingRulesetsListByResourceGroupNextOptionalParams
   extends coreClient.OperationOptions {}
 
 /** Contains response data for the listByResourceGroupNext operation. */
-export type DnsForwardingRulesetsListByResourceGroupNextResponse = DnsForwardingRulesetListResult;
+export type DnsForwardingRulesetsListByResourceGroupNextResponse =
+  DnsForwardingRulesetListResult;
 
 /** Optional parameters. */
 export interface DnsForwardingRulesetsListNextOptionalParams
   extends coreClient.OperationOptions {}
 
 /** Contains response data for the listNext operation. */
-export type DnsForwardingRulesetsListNextResponse = DnsForwardingRulesetListResult;
+export type DnsForwardingRulesetsListNextResponse =
+  DnsForwardingRulesetListResult;
 
 /** Optional parameters. */
 export interface DnsForwardingRulesetsListByVirtualNetworkNextOptionalParams
   extends coreClient.OperationOptions {}
 
 /** Contains response data for the listByVirtualNetworkNext operation. */
-export type DnsForwardingRulesetsListByVirtualNetworkNextResponse = VirtualNetworkDnsForwardingRulesetListResult;
+export type DnsForwardingRulesetsListByVirtualNetworkNextResponse =
+  VirtualNetworkDnsForwardingRulesetListResult;
 
 /** Optional parameters. */
 export interface ForwardingRulesCreateOrUpdateOptionalParams
@@ -946,6 +1253,358 @@ export interface VirtualNetworkLinksListNextOptionalParams
 
 /** Contains response data for the listNext operation. */
 export type VirtualNetworkLinksListNextResponse = VirtualNetworkLinkListResult;
+
+/** Optional parameters. */
+export interface DnsResolverPoliciesCreateOrUpdateOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Set to '*' to allow a new resource to be created, but to prevent updating an existing resource. Other values will be ignored. */
+  ifNoneMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the createOrUpdate operation. */
+export type DnsResolverPoliciesCreateOrUpdateResponse = DnsResolverPolicy;
+
+/** Optional parameters. */
+export interface DnsResolverPoliciesUpdateOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the update operation. */
+export type DnsResolverPoliciesUpdateResponse = DnsResolverPolicy;
+
+/** Optional parameters. */
+export interface DnsResolverPoliciesDeleteOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the delete operation. */
+export type DnsResolverPoliciesDeleteResponse =
+  DnsResolverPoliciesDeleteHeaders;
+
+/** Optional parameters. */
+export interface DnsResolverPoliciesGetOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the get operation. */
+export type DnsResolverPoliciesGetResponse = DnsResolverPolicy;
+
+/** Optional parameters. */
+export interface DnsResolverPoliciesListByResourceGroupOptionalParams
+  extends coreClient.OperationOptions {
+  /** The maximum number of results to return. If not specified, returns up to 100 results. */
+  top?: number;
+}
+
+/** Contains response data for the listByResourceGroup operation. */
+export type DnsResolverPoliciesListByResourceGroupResponse =
+  DnsResolverPolicyListResult;
+
+/** Optional parameters. */
+export interface DnsResolverPoliciesListOptionalParams
+  extends coreClient.OperationOptions {
+  /** The maximum number of results to return. If not specified, returns up to 100 results. */
+  top?: number;
+}
+
+/** Contains response data for the list operation. */
+export type DnsResolverPoliciesListResponse = DnsResolverPolicyListResult;
+
+/** Optional parameters. */
+export interface DnsResolverPoliciesListByVirtualNetworkOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the listByVirtualNetwork operation. */
+export type DnsResolverPoliciesListByVirtualNetworkResponse =
+  SubResourceListResult;
+
+/** Optional parameters. */
+export interface DnsResolverPoliciesListByResourceGroupNextOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the listByResourceGroupNext operation. */
+export type DnsResolverPoliciesListByResourceGroupNextResponse =
+  DnsResolverPolicyListResult;
+
+/** Optional parameters. */
+export interface DnsResolverPoliciesListNextOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the listNext operation. */
+export type DnsResolverPoliciesListNextResponse = DnsResolverPolicyListResult;
+
+/** Optional parameters. */
+export interface DnsResolverPoliciesListByVirtualNetworkNextOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the listByVirtualNetworkNext operation. */
+export type DnsResolverPoliciesListByVirtualNetworkNextResponse =
+  SubResourceListResult;
+
+/** Optional parameters. */
+export interface DnsSecurityRulesCreateOrUpdateOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Set to '*' to allow a new resource to be created, but to prevent updating an existing resource. Other values will be ignored. */
+  ifNoneMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the createOrUpdate operation. */
+export type DnsSecurityRulesCreateOrUpdateResponse = DnsSecurityRule;
+
+/** Optional parameters. */
+export interface DnsSecurityRulesUpdateOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the update operation. */
+export type DnsSecurityRulesUpdateResponse = DnsSecurityRule;
+
+/** Optional parameters. */
+export interface DnsSecurityRulesDeleteOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the delete operation. */
+export type DnsSecurityRulesDeleteResponse = DnsSecurityRulesDeleteHeaders;
+
+/** Optional parameters. */
+export interface DnsSecurityRulesGetOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the get operation. */
+export type DnsSecurityRulesGetResponse = DnsSecurityRule;
+
+/** Optional parameters. */
+export interface DnsSecurityRulesListOptionalParams
+  extends coreClient.OperationOptions {
+  /** The maximum number of results to return. If not specified, returns up to 100 results. */
+  top?: number;
+}
+
+/** Contains response data for the list operation. */
+export type DnsSecurityRulesListResponse = DnsSecurityRuleListResult;
+
+/** Optional parameters. */
+export interface DnsSecurityRulesListNextOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the listNext operation. */
+export type DnsSecurityRulesListNextResponse = DnsSecurityRuleListResult;
+
+/** Optional parameters. */
+export interface DnsResolverPolicyVirtualNetworkLinksCreateOrUpdateOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Set to '*' to allow a new resource to be created, but to prevent updating an existing resource. Other values will be ignored. */
+  ifNoneMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the createOrUpdate operation. */
+export type DnsResolverPolicyVirtualNetworkLinksCreateOrUpdateResponse =
+  DnsResolverPolicyVirtualNetworkLink;
+
+/** Optional parameters. */
+export interface DnsResolverPolicyVirtualNetworkLinksUpdateOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the update operation. */
+export type DnsResolverPolicyVirtualNetworkLinksUpdateResponse =
+  DnsResolverPolicyVirtualNetworkLink;
+
+/** Optional parameters. */
+export interface DnsResolverPolicyVirtualNetworkLinksDeleteOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the delete operation. */
+export type DnsResolverPolicyVirtualNetworkLinksDeleteResponse =
+  DnsResolverPolicyVirtualNetworkLinksDeleteHeaders;
+
+/** Optional parameters. */
+export interface DnsResolverPolicyVirtualNetworkLinksGetOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the get operation. */
+export type DnsResolverPolicyVirtualNetworkLinksGetResponse =
+  DnsResolverPolicyVirtualNetworkLink;
+
+/** Optional parameters. */
+export interface DnsResolverPolicyVirtualNetworkLinksListOptionalParams
+  extends coreClient.OperationOptions {
+  /** The maximum number of results to return. If not specified, returns up to 100 results. */
+  top?: number;
+}
+
+/** Contains response data for the list operation. */
+export type DnsResolverPolicyVirtualNetworkLinksListResponse =
+  DnsResolverPolicyVirtualNetworkLinkListResult;
+
+/** Optional parameters. */
+export interface DnsResolverPolicyVirtualNetworkLinksListNextOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the listNext operation. */
+export type DnsResolverPolicyVirtualNetworkLinksListNextResponse =
+  DnsResolverPolicyVirtualNetworkLinkListResult;
+
+/** Optional parameters. */
+export interface DnsResolverDomainListsCreateOrUpdateOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Set to '*' to allow a new resource to be created, but to prevent updating an existing resource. Other values will be ignored. */
+  ifNoneMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the createOrUpdate operation. */
+export type DnsResolverDomainListsCreateOrUpdateResponse =
+  DnsResolverDomainList;
+
+/** Optional parameters. */
+export interface DnsResolverDomainListsUpdateOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the update operation. */
+export type DnsResolverDomainListsUpdateResponse = DnsResolverDomainList;
+
+/** Optional parameters. */
+export interface DnsResolverDomainListsDeleteOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the delete operation. */
+export type DnsResolverDomainListsDeleteResponse =
+  DnsResolverDomainListsDeleteHeaders;
+
+/** Optional parameters. */
+export interface DnsResolverDomainListsGetOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the get operation. */
+export type DnsResolverDomainListsGetResponse = DnsResolverDomainList;
+
+/** Optional parameters. */
+export interface DnsResolverDomainListsListByResourceGroupOptionalParams
+  extends coreClient.OperationOptions {
+  /** The maximum number of results to return. If not specified, returns up to 100 results. */
+  top?: number;
+}
+
+/** Contains response data for the listByResourceGroup operation. */
+export type DnsResolverDomainListsListByResourceGroupResponse =
+  DnsResolverDomainListResult;
+
+/** Optional parameters. */
+export interface DnsResolverDomainListsListOptionalParams
+  extends coreClient.OperationOptions {
+  /** The maximum number of results to return. If not specified, returns up to 100 results. */
+  top?: number;
+}
+
+/** Contains response data for the list operation. */
+export type DnsResolverDomainListsListResponse = DnsResolverDomainListResult;
+
+/** Optional parameters. */
+export interface DnsResolverDomainListsBulkOptionalParams
+  extends coreClient.OperationOptions {
+  /** ETag of the resource. Omit this value to always overwrite the current resource. Specify the last-seen ETag value to prevent accidentally overwriting any concurrent changes. */
+  ifMatch?: string;
+  /** Set to '*' to allow a new resource to be created, but to prevent updating an existing resource. Other values will be ignored. */
+  ifNoneMatch?: string;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the bulk operation. */
+export type DnsResolverDomainListsBulkResponse = DnsResolverDomainList;
+
+/** Optional parameters. */
+export interface DnsResolverDomainListsListByResourceGroupNextOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the listByResourceGroupNext operation. */
+export type DnsResolverDomainListsListByResourceGroupNextResponse =
+  DnsResolverDomainListResult;
+
+/** Optional parameters. */
+export interface DnsResolverDomainListsListNextOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the listNext operation. */
+export type DnsResolverDomainListsListNextResponse =
+  DnsResolverDomainListResult;
 
 /** Optional parameters. */
 export interface DnsResolverManagementClientOptionalParams

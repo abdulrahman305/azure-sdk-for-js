@@ -6,8 +6,8 @@
  *
  */
 
-import { createRuleTester } from "../ruleTester";
-import rule from "../../src/rules/ts-package-json-sdktype";
+import { createRuleTester } from "../ruleTester.js";
+import rule from "../../src/rules/ts-package-json-sdktype.js";
 
 //------------------------------------------------------------------------------
 // Example files
@@ -34,7 +34,7 @@ const examplePackageGood = `{
     "url": "https://github.com/Azure/azure-sdk-for-js/issues"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "main": "./dist/index.js",
   "module": "dist-esm/src/index.js",
@@ -87,7 +87,7 @@ const examplePackageGood = `{
       "azure-event-hubs"
     ],
     "requiredResources": {
-      "Azure Event Hub": "https://docs.microsoft.com/azure/event-hubs/event-hubs-create"
+      "Azure Event Hub": "https://learn.microsoft.com/azure/event-hubs/event-hubs-create"
     }
   },
   "dependencies": {
@@ -108,10 +108,8 @@ const examplePackageGood = `{
     "@azure/dev-tool": "^1.0.0",
     "@azure/eslint-plugin-azure-sdk": "^3.0.0",
     "@azure/identity": "^2.0.1",
-    "@azure/mock-hub": "^1.0.0",
-    "@azure-tools/test-utils": "^1.0.0",
+    "@azure-tools/mock-hub": "^1.0.0",
     "@azure-tools/test-perf": "^1.0.0",
-    "@microsoft/api-extractor": "^7.31.1",
     "@rollup/plugin-commonjs": "11.0.2",
     "@rollup/plugin-inject": "^4.0.0",
     "@rollup/plugin-json": "^4.0.0",
@@ -125,7 +123,7 @@ const examplePackageGood = `{
     "@types/debug": "^4.1.4",
     "@types/long": "^4.0.0",
     "@types/mocha": "^10.0.0",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.0.0",
     "@types/sinon": "^9.0.4",
     "@types/uuid": "^8.0.0",
     "@types/ws": "^7.2.4",
@@ -138,7 +136,6 @@ const examplePackageGood = `{
     "debug": "^4.1.1",
     "dotenv": "^16.0.0",
     "eslint": "^9.9.0",
-    "esm": "^3.2.18",
     "https-proxy-agent": "^5.0.0",
     "karma": "^6.2.0",
     "karma-chrome-launcher": "^3.0.0",
@@ -149,7 +146,7 @@ const examplePackageGood = `{
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
     "karma-sourcemap-loader": "^0.3.8",
-    "mocha": "^10.0.0",
+    "mocha": "^11.0.2",
     "mocha-junit-reporter": "^1.18.0",
     "moment": "^2.24.0",
     "nyc": "^14.0.0",
@@ -162,7 +159,7 @@ const examplePackageGood = `{
     "rollup-plugin-terser": "^5.1.1",
     "sinon": "^9.0.2",
     "ts-node": "^10.0.0",
-    "typescript": "~5.5.3",
+    "typescript": "~5.8.2",
     "ws": "^7.1.1",
     "typedoc": "0.15.2"
   }
@@ -188,7 +185,7 @@ const examplePackageBad = `{
     "url": "https://github.com/Azure/azure-sdk-for-js/issues"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "main": "./dist/index.js",
   "module": "dist-esm/src/index.js",
@@ -241,7 +238,7 @@ const examplePackageBad = `{
       "azure-event-hubs"
     ],
     "requiredResources": {
-      "Azure Event Hub": "https://docs.microsoft.com/azure/event-hubs/event-hubs-create"
+      "Azure Event Hub": "https://learn.microsoft.com/azure/event-hubs/event-hubs-create"
     }
   },
   "dependencies": {
@@ -262,10 +259,8 @@ const examplePackageBad = `{
     "@azure/dev-tool": "^1.0.0",
     "@azure/eslint-plugin-azure-sdk": "^3.0.0",
     "@azure/identity": "^2.0.1",
-    "@azure/mock-hub": "^1.0.0",
-    "@azure-tools/test-utils": "^1.0.0",
+    "@azure-tools/mock-hub": "^1.0.0",
     "@azure-tools/test-perf": "^1.0.0",
-    "@microsoft/api-extractor": "^7.31.1",
     "@rollup/plugin-commonjs": "11.0.2",
     "@rollup/plugin-inject": "^4.0.0",
     "@rollup/plugin-json": "^4.0.0",
@@ -279,7 +274,7 @@ const examplePackageBad = `{
     "@types/debug": "^4.1.4",
     "@types/long": "^4.0.0",
     "@types/mocha": "^10.0.0",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.0.0",
     "@types/sinon": "^9.0.4",
     "@types/uuid": "^8.0.0",
     "@types/ws": "^7.2.4",
@@ -292,7 +287,6 @@ const examplePackageBad = `{
     "debug": "^4.1.1",
     "dotenv": "^16.0.0",
     "eslint": "^9.9.0",
-    "esm": "^3.2.18",
     "https-proxy-agent": "^5.0.0",
     "karma": "^6.2.0",
     "karma-chrome-launcher": "^3.0.0",
@@ -303,7 +297,7 @@ const examplePackageBad = `{
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
     "karma-sourcemap-loader": "^0.3.8",
-    "mocha": "^10.0.0",
+    "mocha": "^11.0.2",
     "mocha-junit-reporter": "^1.18.0",
     "moment": "^2.24.0",
     "nyc": "^14.0.0",
@@ -316,7 +310,7 @@ const examplePackageBad = `{
     "rollup-plugin-terser": "^5.1.1",
     "sinon": "^9.0.2",
     "ts-node": "^10.0.0",
-    "typescript": "~5.5.3",
+    "typescript": "~5.8.2",
     "ws": "^7.1.1",
     "typedoc": "0.15.2"
   }
@@ -364,7 +358,7 @@ ruleTester.run("ts-package-json-sdktype", rule, {
       errors: [
         {
           message:
-            "unrecognized sdk-type value: clien. Expected one of 'client', 'mgmt', or 'utility.'",
+            "unrecognized sdk-type value: clien. Expected one of 'client', 'mgmt', 'perf-test', or 'utility'.",
         },
       ],
     },
@@ -375,7 +369,7 @@ ruleTester.run("ts-package-json-sdktype", rule, {
       errors: [
         {
           message:
-            "unrecognized sdk-type value: mgm. Expected one of 'client', 'mgmt', or 'utility.'",
+            "unrecognized sdk-type value: mgm. Expected one of 'client', 'mgmt', 'perf-test', or 'utility'.",
         },
       ],
     },
@@ -386,7 +380,7 @@ ruleTester.run("ts-package-json-sdktype", rule, {
       errors: [
         {
           message:
-            "unrecognized sdk-type value: util. Expected one of 'client', 'mgmt', or 'utility.'",
+            "unrecognized sdk-type value: util. Expected one of 'client', 'mgmt', 'perf-test', or 'utility'.",
         },
       ],
     },

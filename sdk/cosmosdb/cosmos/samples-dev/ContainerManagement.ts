@@ -5,19 +5,16 @@
  * @summary Demonstrates container create, read, delete and reading all containers belonging to a database.
  */
 
-import * as dotenv from "dotenv";
-dotenv.config();
-
-import { finish, handleError, logStep, logSampleHeader } from "./Shared/handleError";
+import "dotenv/config";
+import { finish, handleError, logStep, logSampleHeader } from "./Shared/handleError.js";
+import type { ContainerDefinition, IndexingPolicy, SpatialIndex } from "@azure/cosmos";
 import {
-  ContainerDefinition,
   CosmosClient,
-  IndexingPolicy,
-  SpatialIndex,
   VectorEmbeddingDataType,
   VectorEmbeddingDistanceFunction,
   VectorIndexType,
 } from "@azure/cosmos";
+
 const key = process.env.COSMOS_KEY || "<cosmos key>";
 const endpoint = process.env.COSMOS_ENDPOINT || "<cosmos endpoint>";
 const databaseId = process.env.COSMOS_DATABASE || "<cosmos database>";
@@ -161,8 +158,19 @@ async function run(): Promise<void> {
     spatialIndexes: [{ path: "/location/*", types: ["Point", "Polygon"] }] as SpatialIndex[],
     vectorIndexes: [
       { path: "/vector1", type: VectorIndexType.Flat },
-      { path: "/vector2", type: VectorIndexType.QuantizedFlat },
-      { path: "/vector3", type: VectorIndexType.DiskANN },
+      {
+        path: "/vector2",
+        type: VectorIndexType.QuantizedFlat,
+        quantizationByteSize: 2,
+        vectorIndexShardKey: ["/Country"],
+      },
+      {
+        path: "/vector3",
+        type: VectorIndexType.DiskANN,
+        quantizationByteSize: 2,
+        indexingSearchListSize: 50,
+        vectorIndexShardKey: ["/ZipCode"],
+      },
     ],
   };
 
@@ -174,6 +182,33 @@ async function run(): Promise<void> {
   };
   await database.containers.createIfNotExists(containerDefinition);
   console.log("Container with vector embedding and indexing policies created");
+
+  logStep("Create container with full text search container policy");
+
+  // Create a container with full text policy and full text indexes
+  const indexingPolicyFTS: IndexingPolicy = {
+    automatic: true,
+    includedPaths: [{ path: "/*" }],
+    excludedPaths: [{ path: '/"_etag"/?' }],
+    fullTextIndexes: [{ path: "/text1" }, { path: "/text2" }],
+  };
+
+  const fullTextPolicy = {
+    defaultLanguage: "en-US",
+    fullTextPaths: [
+      { path: "/text1", language: "1033" },
+      { path: "/text2", language: "en-US" },
+    ],
+  };
+
+  await database.containers.createIfNotExists({
+    id: "ContainerWithFTSPolicy",
+    partitionKey: { paths: ["/id"] },
+    fullTextPolicy: fullTextPolicy,
+    indexingPolicy: indexingPolicyFTS,
+  });
+  console.log("Container with full text search policy created");
+
   await finish();
 }
 

@@ -3,7 +3,12 @@
 
 export { AzureKeyCredential, AzureSASCredential } from "@azure/core-auth";
 
-export { CloudEvent, EventGridEvent, SendCloudEventInput, SendEventGridEventInput } from "./models";
+export {
+  CloudEvent,
+  EventGridEvent,
+  SendCloudEventInput,
+  SendEventGridEventInput,
+} from "./models.js";
 
 export {
   EventGridPublisherClient,
@@ -13,18 +18,40 @@ export {
   InputSchema,
   InputSchemaToInputTypeMap,
   InputSchemaToOptionsTypeMap,
-} from "./eventGridClient";
+} from "./eventGridClient.js";
 
 export {
   generateSharedAccessSignature,
   GenerateSharedAccessSignatureOptions,
-} from "./generateSharedAccessSignature";
+} from "./generateSharedAccessSignature.js";
 
-export { EventGridDeserializer } from "./consumer";
+export { EventGridDeserializer } from "./consumer.js";
 
-export { isSystemEvent, KnownSystemEventTypes, SystemEventNameToEventData } from "./predicates";
+export { isSystemEvent, KnownSystemEventTypes, SystemEventNameToEventData } from "./predicates.js";
 
 export {
+  AcsCallEndedBy,
+  AcsCallEndedByKind,
+  AcsCallEndedEventData,
+  AcsCallEndReason,
+  AcsCallGroup,
+  AcsCallingEvent,
+  AcsCallParticipantAddedEventData,
+  AcsCallParticipantRemovedEventData,
+  AcsCallParticipant,
+  AcsCallParticipantEventData,
+  AcsCallRoom,
+  AcsCallStartedEventData,
+  AcsChatAzureBotCommandReceivedInThreadEventData,
+  AcsChatTypingIndicatorReceivedInThreadEventData,
+  ApiManagementCircuitBreaker,
+  ApiManagementCircuitBreakerOpenedEventData,
+  ApiManagementCircuitBreakerClosedEventData,
+  ApiManagementExpiredGatewayToken,
+  ApiManagementGateway,
+  ApiManagementGatewayTokenExpiredEventData,
+  ApiManagementGatewayTokenNearExpiry,
+  ApiManagementGatewayTokenNearExpiryEventData,
   AcsChatEventBase,
   AcsChatEventInThreadBase,
   AcsChatMessageEventInThreadBase,
@@ -110,6 +137,7 @@ export {
   KeyVaultAccessPolicyChangedEventData,
   SubscriptionValidationEventData,
   SubscriptionDeletedEventData,
+  EdgeSolutionVersionPublishedEventData,
   EventHubCaptureFileCreatedEventData,
   MachineLearningServicesDatasetDriftDetectedEventData,
   MachineLearningServicesModelDeployedEventData,
@@ -331,6 +359,7 @@ export {
   KnownRecordingContentType,
   KnownRecordingChannelType,
   KnownRecordingFormatType,
+  KnownAcsCallEndedByKind,
   KnownAcsEmailDeliveryReportStatus,
   KnownAcsUserEngagement,
   KnownHealthcareFhirResourceType,
@@ -338,6 +367,7 @@ export {
   ApiCenterApiDefinitionUpdatedEventData,
   ApiCenterApiSpecification,
   AcsMessageDeliveryStatusUpdatedEventData,
+  AcsMessageReactionContent,
   AcsMessageReceivedEventData,
   AcsRouterWorkerUpdatedEventData,
   AcsMessageEventData,
@@ -364,4 +394,8 @@ export {
   AcsChatThreadPropertiesUpdatedEventData,
   AcsChatThreadEventInThreadBase,
   StorageBlobAccessTier,
-} from "./generated/models";
+  ResourceNotificationsContainerServiceEventResourcesScheduledEventData,
+  StorageLifecyclePolicyRunSummary,
+  StorageLifecycleCompletionStatus,
+  KnownStorageLifecycleCompletionStatus,
+} from "./generated/models/index.js";

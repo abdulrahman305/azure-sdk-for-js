@@ -8,8 +8,24 @@ The generated code is not enough to release at once and you need to update it fo
 After this finishes, you will see the generated code in `src` folder in your **{PROJECT_ROOT}**. Refer [the development workflows guide](https://github.com/Azure/azure-sdk-for-js/blob/main/CONTRIBUTING.md#development-workflows) for more details if you'd like to know more.
 
 ```shell
-rush update
-rush build -t <your-package-name>
+pnpm install
+pnpm build --filter=<your-package-name>...
+```
+
+# Generate CHANGELOG.md
+
+Install `js-sdk-release-tools`
+```
+npm install -g @azure-tools/js-sdk-release-tools
+```
+
+After you build your package, run
+```
+changelog-tool <your-package-path>
+```
+Here is the example
+```
+changelog-tool sdk/advisor/arm-advisor
 ```
 
 # Improve README.md document
@@ -39,15 +55,15 @@ See the [Javascript Codegen Quick Start for Test](https://github.com/Azure/azure
     On Linux, you could use `export` to set env variable:
 
     ```shell
-    rush build -t ${PACKAGE_NAME}
-    export TEST_MODE=record && rushx test # this will run live test and generate a recordings folder, you will need to submit it in the PR.
+    pnpm build --filter=${PACKAGE_NAME}...
+    export TEST_MODE=record && pnpm test # this will run live test and generate a recordings folder, you will need to submit it in the PR.
     ```
 
     On Windows, you could use `SET`:
 
     ```shell
-    rush build -t ${PACKAGE_NAME}
-    SET TEST_MODE=record&& rushx test # this will run live test and generate a recordings folder, you will need to submit it in the PR.
+    pnpm build --filter=${PACKAGE_NAME}
+    SET TEST_MODE=record&& pnpm test # this will run live test and generate a recordings folder, you will need to submit it in the PR.
     ```
 
     You can also run the `playback` mode test if your apis don't have breaking changes and you've already done the recording before.
@@ -55,14 +71,14 @@ See the [Javascript Codegen Quick Start for Test](https://github.com/Azure/azure
     On Linux, you could use below commands:
 
     ```shell
-    rush build -t ${PACKAGE_NAME}
-    export TEST_MODE=playback && rushx test # this will run live test and generate a recordings folder, you will need to submit it in the PR.
+      pnpm build --filter=${PACKAGE_NAME}
+    export TEST_MODE=playback && pnpm test # this will run live test and generate a recordings folder, you will need to submit it in the PR.
     ```
     On Windows, you can use:
 
     ```shell
-    rush build -t ${PACKAGE_NAME}
-    SET TEST_MODE=playback&& rushx test # this will run live test and generate a recordings folder, you will need to submit it in the PR.
+    pnpm build --filter=${PACKAGE_NAME}
+    SET TEST_MODE=playback&& pnpm test # this will run live test and generate a recordings folder, you will need to submit it in the PR.
     ```
 
 # How to write samples
@@ -96,7 +112,7 @@ You will need to add a sample configuration section in your `package.json` file 
     "productName": "A description of your services",
     "productSlugs": ["azure"],
     "disableDocsMs": true,
-    "apiRefLink": "<the-link-to-your-service-on-docs.microsoft.com>"
+    "apiRefLink": "<the-link-to-your-service-on-learn.microsoft.com>"
   }
 ```
 
@@ -114,19 +130,19 @@ You will see the workable samples in the `${PROJECT_ROOT}/samples` folder.
 After you have finished the generation and added your own tests or samples, you can use the following command to format the code.
 
 ```shell
-cd ${PROJECT_ROOT} && rushx format
+cd ${PROJECT_ROOT} && pnpm format
 ```
 
 Also, we'll recommand you to run `lint` command to analyze your code and quickly find any problems.
 
 ```shell
-cd ${PROJECT_ROOT} && rushx lint
+cd ${PROJECT_ROOT} && pnpm lint
 ```
 
 And we could use `lint:fix` if there are any errors.
 
 ```shell
-cd ${PROJECT_ROOT} && rushx lint:fix
+cd ${PROJECT_ROOT} && pnpm lint:fix
 ```
 
 # How to create package
@@ -134,11 +150,11 @@ cd ${PROJECT_ROOT} && rushx lint:fix
 Now, we can use the exact same steps to build a releasable artifact.
 
 ```shell
-rush update
-rush build -t <your-package-name>
+pnpm update
+pnpm build --filter=<your-package-name>...
 cd <your-sdk-folder>
-export TEST_MODE=record && rushx test
-rushx pack
+export TEST_MODE=record && pnpm test
+pnpm pack
 ```
 
 You may send this artifact to your customer if your services are still in private preview and some customers want to try it out.
@@ -216,10 +232,6 @@ Please add below comment in your PR to include `dpg-devs` to review your PR time
 cc @Azure/dpg-devs for awareness
 ```
 
-# Create API View
-
-When submitting a PR our pipeline would automatically prepare the API view in [API View Website](https://apiview.dev/). You could see an [example link](https://github.com/Azure/azure-sdk-for-js/pull/23866#issuecomment-1316259448) here. Then, you could click the API view link in that comment to know more details.
-
 # Release
 
-After the PR is merged, it is time to release package. Here is the [Release Checklist](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/8/Release-Checklist?anchor=prepare-release-script) you should know before release.
+Prepare your SDK for release. The necessary approvals, guidance for testing, documentation, and release pipelines is described in your release plan. More information about the Azure SDK Release Tool is [here](https://eng.ms/docs/products/azure-developer-experience/plan/release-plan)

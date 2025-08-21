@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Gets the notebook workspace resources of an existing Cosmos DB account.
  *
  * @summary Gets the notebook workspace resources of an existing Cosmos DB account.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBNotebookWorkspaceList.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBNotebookWorkspaceList.json
  */
 async function cosmosDbNotebookWorkspaceList() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -25,7 +23,7 @@ async function cosmosDbNotebookWorkspaceList() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.notebookWorkspaces.listByDatabaseAccount(
+  for await (const item of client.notebookWorkspaces.listByDatabaseAccount(
     resourceGroupName,
     accountName,
   )) {
@@ -35,7 +33,7 @@ async function cosmosDbNotebookWorkspaceList() {
 }
 
 async function main() {
-  cosmosDbNotebookWorkspaceList();
+  await cosmosDbNotebookWorkspaceList();
 }
 
 main().catch(console.error);

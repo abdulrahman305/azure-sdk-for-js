@@ -26,8 +26,9 @@ export interface GetBearerTokenProviderOptions {
 /**
  * Returns a callback that provides a bearer token.
  * For example, the bearer token can be used to authenticate a request as follows:
- * ```js
- * import { DefaultAzureCredential } from "@azure/identity";
+ * ```ts snippet:token_provider_example
+ * import { DefaultAzureCredential, getBearerTokenProvider } from "@azure/identity";
+ * import { createPipelineRequest } from "@azure/core-rest-pipeline";
  *
  * const credential = new DefaultAzureCredential();
  * const scope = "https://cognitiveservices.azure.com/.default";

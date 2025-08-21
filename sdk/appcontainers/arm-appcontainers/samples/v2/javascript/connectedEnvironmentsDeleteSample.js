@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Delete an connectedEnvironment.
  *
  * @summary Delete an connectedEnvironment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironments_Delete.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironments_Delete.json
  */
 async function deleteConnectedEnvironmentByConnectedEnvironmentName() {
   const subscriptionId =
@@ -33,7 +33,7 @@ async function deleteConnectedEnvironmentByConnectedEnvironmentName() {
 }
 
 async function main() {
-  deleteConnectedEnvironmentByConnectedEnvironmentName();
+  await deleteConnectedEnvironmentByConnectedEnvironmentName();
 }
 
 main().catch(console.error);

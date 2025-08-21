@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Gets the private link resources that need to be created for a Cosmos DB account.
  *
  * @summary Gets the private link resources that need to be created for a Cosmos DB account.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBPrivateLinkResourceGet.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBPrivateLinkResourceGet.json
  */
 async function getsPrivateEndpointConnection() {
   const subscriptionId =
@@ -31,7 +29,7 @@ async function getsPrivateEndpointConnection() {
 }
 
 async function main() {
-  getsPrivateEndpointConnection();
+  await getsPrivateEndpointConnection();
 }
 
 main().catch(console.error);

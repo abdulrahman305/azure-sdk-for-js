@@ -6,26 +6,23 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import {
   PrivateEndpointConnection,
-  CognitiveServicesManagementClient
+  CognitiveServicesManagementClient,
 } from "@azure/arm-cognitiveservices";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Update the state of specified private endpoint connection associated with the Cognitive Services account.
  *
  * @summary Update the state of specified private endpoint connection associated with the Cognitive Services account.
- * x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/PutPrivateEndpointConnection.json
+ * x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-06-01/examples/PutPrivateEndpointConnection.json
  */
-async function putPrivateEndpointConnection() {
+async function putPrivateEndpointConnection(): Promise<void> {
   const subscriptionId =
-    process.env["COGNITIVESERVICES_SUBSCRIPTION_ID"] || "{subscription-id}";
+    process.env["COGNITIVESERVICES_SUBSCRIPTION_ID"] ||
+    "00000000-1111-2222-3333-444444444444";
   const resourceGroupName =
     process.env["COGNITIVESERVICES_RESOURCE_GROUP"] || "res7687";
   const accountName = "sto9699";
@@ -34,26 +31,27 @@ async function putPrivateEndpointConnection() {
     properties: {
       privateLinkServiceConnectionState: {
         description: "Auto-Approved",
-        status: "Approved"
-      }
-    }
+        status: "Approved",
+      },
+    },
   };
   const credential = new DefaultAzureCredential();
   const client = new CognitiveServicesManagementClient(
     credential,
-    subscriptionId
+    subscriptionId,
   );
-  const result = await client.privateEndpointConnections.beginCreateOrUpdateAndWait(
-    resourceGroupName,
-    accountName,
-    privateEndpointConnectionName,
-    properties
-  );
+  const result =
+    await client.privateEndpointConnections.beginCreateOrUpdateAndWait(
+      resourceGroupName,
+      accountName,
+      privateEndpointConnectionName,
+      properties,
+    );
   console.log(result);
 }
 
-async function main() {
-  putPrivateEndpointConnection();
+async function main(): Promise<void> {
+  await putPrivateEndpointConnection();
 }
 
 main().catch(console.error);

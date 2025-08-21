@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Update tags associated with the provided trunked network.
  *
  * @summary Update tags associated with the provided trunked network.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/TrunkedNetworks_Patch.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/TrunkedNetworks_Patch.json
  */
 async function patchTrunkedNetwork() {
   const subscriptionId =
@@ -34,13 +32,13 @@ async function patchTrunkedNetwork() {
   const result = await client.trunkedNetworks.update(
     resourceGroupName,
     trunkedNetworkName,
-    options
+    options,
   );
   console.log(result);
 }
 
 async function main() {
-  patchTrunkedNetwork();
+  await patchTrunkedNetwork();
 }
 
 main().catch(console.error);

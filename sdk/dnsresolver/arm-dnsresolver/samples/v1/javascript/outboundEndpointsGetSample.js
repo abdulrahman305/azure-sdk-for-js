@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Gets properties of an outbound endpoint for a DNS resolver.
  *
  * @summary Gets properties of an outbound endpoint for a DNS resolver.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/OutboundEndpoint_Get.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/OutboundEndpoint_Get.json
  */
 async function retrieveOutboundEndpointForDnsResolver() {
   const subscriptionId =
@@ -29,13 +27,13 @@ async function retrieveOutboundEndpointForDnsResolver() {
   const result = await client.outboundEndpoints.get(
     resourceGroupName,
     dnsResolverName,
-    outboundEndpointName
+    outboundEndpointName,
   );
   console.log(result);
 }
 
 async function main() {
-  retrieveOutboundEndpointForDnsResolver();
+  await retrieveOutboundEndpointForDnsResolver();
 }
 
 main().catch(console.error);

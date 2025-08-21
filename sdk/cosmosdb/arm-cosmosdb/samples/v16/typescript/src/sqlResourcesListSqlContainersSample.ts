@@ -6,21 +6,17 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import { CosmosDBManagementClient } from "@azure/arm-cosmosdb";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Lists the SQL container under an existing Azure Cosmos DB database account.
  *
  * @summary Lists the SQL container under an existing Azure Cosmos DB database account.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBSqlContainerList.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBSqlContainerList.json
  */
-async function cosmosDbSqlContainerList() {
+async function cosmosDbSqlContainerList(): Promise<void> {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
   const resourceGroupName = process.env["COSMOSDB_RESOURCE_GROUP"] || "rgName";
   const accountName = "ddb1";
@@ -28,7 +24,7 @@ async function cosmosDbSqlContainerList() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.sqlResources.listSqlContainers(
+  for await (const item of client.sqlResources.listSqlContainers(
     resourceGroupName,
     accountName,
     databaseName,
@@ -38,8 +34,8 @@ async function cosmosDbSqlContainerList() {
   console.log(resArray);
 }
 
-async function main() {
-  cosmosDbSqlContainerList();
+async function main(): Promise<void> {
+  await cosmosDbSqlContainerList();
 }
 
 main().catch(console.error);

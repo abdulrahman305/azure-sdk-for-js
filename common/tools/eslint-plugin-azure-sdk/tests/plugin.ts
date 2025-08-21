@@ -7,17 +7,15 @@
  */
 
 import { describe, it, assert } from "vitest";
-import plugin from "../src";
+import plugin from "../src/index.js";
 
 /**
  * A list of all currently supported rules
  */
 const ruleList = [
   "github-source-headers",
-  "ts-apiextractor-json-types",
   "ts-apisurface-standardized-verbs",
   "ts-apisurface-supportcancellation",
-  "ts-config-include",
   "ts-doc-internal",
   "ts-doc-internal-private-member",
   "ts-error-handling",
@@ -26,6 +24,7 @@ const ruleList = [
   "ts-naming-options",
   "ts-naming-subclients",
   "ts-no-const-enums",
+  "ts-no-invalid-test-imports",
   "ts-no-window",
   "ts-package-json-author",
   "ts-package-json-bugs",
@@ -35,7 +34,6 @@ const ruleList = [
   "ts-package-json-keywords",
   "ts-package-json-license",
   "ts-package-json-main-is-cjs",
-  "ts-package-json-module",
   "ts-package-json-name",
   "ts-package-json-repo",
   "ts-package-json-required-scripts",
@@ -45,6 +43,7 @@ const ruleList = [
   "ts-pagination-list",
   "ts-use-interface-parameters",
   "ts-use-promises",
+  "ts-use-cjs-polyfill",
   "ts-versioning-semver",
 ];
 
@@ -122,7 +121,7 @@ describe("plugin", (): void => {
     });
     it("the number of rules should match the expected value", (): void => {
       assert.exists(plugin.rules);
-      assert.equal(Object.keys(plugin.rules).length, ruleList.length);
+      assert.equal(Object.keys(plugin.rules!).length, ruleList.length);
     });
     const rules = plugin.rules;
     ruleList.forEach((rule: string): void => {
@@ -139,7 +138,7 @@ describe("plugin", (): void => {
         assert.property(processors, ".json", ".json is not a member of processors");
       });
       assert.exists(processors);
-      const JSONProcessor = processors[".json"];
+      const JSONProcessor = processors![".json"];
       it("preprocess should be a member of .json", (): void => {
         assert.property(JSONProcessor, "preprocess", "preprocess is not a member of .json");
       });
@@ -156,75 +155,6 @@ describe("plugin", (): void => {
     describe("recommended", (): void => {
       it("recommended should be a member of configs", (): void => {
         assert.property(configs, "recommended", "recommended is not a member of configs");
-      });
-      const recommendedLegacy = configs["recommended-legacy"];
-      describe("plugins", (): void => {
-        it("plugins should be a member of recommended", (): void => {
-          assert.property(recommendedLegacy, "plugins", "plugins is not a member of recommended");
-        });
-        const plugins = recommendedLegacy.plugins;
-        it("plugins should be an array", (): void => {
-          assert.isArray(plugins, "plugins is not an array");
-        });
-        it("plugins should contain '@azure/azure-sdk'", (): void => {
-          assert.include(
-            plugins,
-            "@azure/azure-sdk",
-            "plugins does not contain '@azure/azure-sdk'",
-          );
-        });
-      });
-      describe("env", (): void => {
-        it("env should be a member of recommended", (): void => {
-          assert.property(recommendedLegacy, "env", "env is not a member of recommended");
-        });
-        const env = recommendedLegacy.env;
-        it("env should be an object", (): void => {
-          assert.isObject(env, "env is not an object");
-        });
-      });
-      describe("parser", (): void => {
-        it("parser should be a member of recommended", (): void => {
-          assert.property(recommendedLegacy, "parser", "parser is not a member of recommmended");
-        });
-        const parser = recommendedLegacy.parser;
-        it("parser should be set to '@typescript-eslint/parser'", (): void => {
-          assert.strictEqual(
-            parser,
-            "@typescript-eslint/parser",
-            "parser is not set to '@typescript-eslint/parser'",
-          );
-        });
-      });
-      describe("rules", (): void => {
-        it("rules should be a member of recommended", (): void => {
-          assert.property(recommendedLegacy, "rules", "rules is not a member of recommended");
-        });
-        const rules = recommendedLegacy.rules;
-        it("rules should contain settings for every supported rule", (): void => {
-          ruleList.forEach((rule: string): void => {
-            assert.property(
-              rules,
-              `@azure/azure-sdk/${rule}`,
-              `rules does not contain a setting for ${rule}`,
-            );
-          });
-        });
-      });
-      describe("settings", (): void => {
-        it("settings should be a member of recommended-legacy", (): void => {
-          assert.property(recommendedLegacy, "settings", "settings is not a member of recommended");
-        });
-        const settings = recommendedLegacy.settings;
-        describe("main", (): void => {
-          it("main should be a member of settings", (): void => {
-            assert.property(settings, "main", "main is not a member of settings");
-          });
-          const main = settings.main;
-          it("main should be set to 'src/index.ts'", (): void => {
-            assert.strictEqual(main, "src/index.ts", "main is not set to 'src/index.ts'");
-          });
-        });
       });
     });
   });

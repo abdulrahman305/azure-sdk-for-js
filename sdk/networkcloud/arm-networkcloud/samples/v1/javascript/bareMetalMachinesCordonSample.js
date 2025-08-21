@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Cordon the provided bare metal machine's Kubernetes node.
  *
  * @summary Cordon the provided bare metal machine's Kubernetes node.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/BareMetalMachines_Cordon.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/BareMetalMachines_Cordon.json
  */
 async function cordonBareMetalMachine() {
   const subscriptionId =
@@ -34,13 +32,13 @@ async function cordonBareMetalMachine() {
   const result = await client.bareMetalMachines.beginCordonAndWait(
     resourceGroupName,
     bareMetalMachineName,
-    options
+    options,
   );
   console.log(result);
 }
 
 async function main() {
-  cordonBareMetalMachine();
+  await cordonBareMetalMachine();
 }
 
 main().catch(console.error);

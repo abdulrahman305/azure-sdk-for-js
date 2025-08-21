@@ -1,0 +1,25 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+/**
+ * This sample demonstrates how to delete a Site
+ *
+ * @summary delete a Site
+ * x-ms-original-file: 2025-03-01-preview/Sites_Delete_MaximumSet_Gen.json
+ */
+
+import { EdgeClient } from "@azure/arm-sitemanager";
+import { DefaultAzureCredential } from "@azure/identity";
+
+async function deleteSiteGeneratedByMaximumSetRule(): Promise<void> {
+  const credential = new DefaultAzureCredential();
+  const subscriptionId = "0154f7fe-df09-4981-bf82-7ad5c1f596eb";
+  const client = new EdgeClient(credential, subscriptionId);
+  await client.sites.delete("rgsites", "string");
+}
+
+async function main(): Promise<void> {
+  await deleteSiteGeneratedByMaximumSetRule();
+}
+
+main().catch(console.error);

@@ -12,6 +12,11 @@ export enum ServiceApiVersion {
 }
 
 /**
+ * Operation Name attribute name.
+ */
+export const AI_OPERATION_NAME = "ai.operation.name";
+
+/**
  * Default Breeze endpoint.
  * @internal
  */
@@ -45,13 +50,77 @@ export const ENV_INSTRUMENTATION_KEY = "APPINSIGHTS_INSTRUMENTATIONKEY";
  * Disable Statsbeat environment variable name.
  * @internal
  */
-export const ENV_DISABLE_STATSBEAT = "APPLICATION_INSIGHTS_NO_STATSBEAT";
+export const ENV_DISABLE_STATSBEAT = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED";
+/**
+ * Legacy disable Statsbeat environment variable name.
+ * @internal
+ */
+export const LEGACY_ENV_DISABLE_STATSBEAT = "APPLICATION_INSIGHTS_NO_STATSBEAT";
 /**
  * Disable OpenTelemetry Resource Metric.
  * @internal
  */
 export const ENV_OPENTELEMETRY_RESOURCE_METRIC_DISABLED =
   "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED";
+/**
+ * OTLP Metrics Endpoint.
+ * @internal
+ */
+export const ENV_OTLP_METRICS_ENDPOINT = "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT";
+/**
+ * OTel Metrics Exporter.
+ * @internal
+ */
+export const ENV_OTEL_METRICS_EXPORTER = "OTEL_METRICS_EXPORTER";
+/**
+ * Determine if exporter was initialized in an auto-attach scenario.
+ * @internal
+ */
+export const ENV_AZURE_MONITOR_AUTO_ATTACH = "AZURE_MONITOR_AUTO_ATTACH";
+/**
+ * Determines if custom metrics should be sent to Breeze.
+ * @internal
+ */
+export const ENV_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED =
+  "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED";
+
+/**
+ * REST error types for failed requests that can be retried.
+ * @internal
+ */
+export enum RetriableRestErrorTypes {
+  REQUEST_SEND_ERROR = "REQUEST_SEND_ERROR",
+  DNS_LOOKUP_TIMEOUT = "EAI_AGAIN",
+}
+/**
+ * Application Insights shim version.
+ * @internal
+ */
+export const ENV_APPLICATIONINSIGHTS_SHIM_VERSION = "APPLICATION_INSIGHTS_SHIM_VERSION";
+/**
+ * Azure Monitor version prefix.
+ * @internal
+ */
+export const ENV_AZURE_MONITOR_PREFIX = "AZURE_MONITOR_PREFIX";
+/**
+ * Azure Monitor Distro version.
+ * @internal
+ */
+export const ENV_AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION";
+
+/**
+ * Enables the preview version of customer-facing SDK Stats.
+ * @internal
+ */
+export const ENV_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW =
+  "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW";
+
+/**
+ * Sets the export interval for customer-facing SDK Stats in seconds.
+ * @internal
+ */
+export const ENV_APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL =
+  "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL";
 
 /**
  * QuickPulse metric counter names.
@@ -89,11 +158,17 @@ export enum PerformanceCounter {
 
   // CPU
   PROCESSOR_TIME = "\\Processor(_Total)\\% Processor Time",
-  PROCESS_TIME = "\\Process(??APP_WIN32_PROC??)\\% Processor Time",
+  PROCESS_TIME_STANDARD = "\\Process(??APP_WIN32_PROC??)\\% Processor Time",
+  PROCESS_TIME_NORMALIZED = "\\Process(??APP_WIN32_PROC??)\\% Processor Time Normalized",
 
   // Requests
   REQUEST_RATE = "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Requests/Sec",
   REQUEST_DURATION = "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Request Execution Time",
+
+  // Exception
+  EXCEPTION_RATE = "\\.NET CLR Exceptions(??APP_CLR_PROC??)\\# of Exceps Thrown / sec",
+  // I/O
+  IO_RATE = "\\Process(??APP_WIN32_PROC??)\\IO Data Bytes/sec",
 }
 
 /**

@@ -1,6 +1,90 @@
 # Release History
 
-## 1.7.1 ()
+### 1.12.1 ()
+
+### Bugs Fixed
+
+- Fix declaration of the preview customer statsbeat enablement environment variable.
+- Change customer statsbeat feature name to customer SDK Stats.
+
+## 1.12.0 (2025-08-04)
+
+### Features Added
+
+- Add RateLimitedSampler.
+
+### Other Changes
+
+- Add customer statsbeat feature to feature statsbeat.
+- Add multi-ikey feature to feature statsbeat.
+- Silence noisy warnings about expected async attributes and the @azure/core-tracing load order not being populated.
+
+## 1.11.1 (2025-06-09)
+
+### Other Changes
+
+- Update to using monitor-opentelemetry-exporter beta 32.
+
+## 1.11.0 (2025-04-16)
+
+### Features Added
+
+- Added support for Process Time Normalized and Exception Rate performance counters.
+
+### Bugs Fixed
+
+- Fixed process time normalized calculation returning NaN.
+- Fixed import issue with @azure/functions-core that was causing bundling errors in applications that don't use Azure Functions. [#34045](https://github.com/Azure/azure-sdk-for-js/issues/34045)
+
+### Other Changes
+
+- Hide iKey in debug logs.
+
+## 1.10.0 (2025-04-09)
+
+### Features Added
+
+- Add support for performance counters.
+
+## Other Changes
+
+- Add support for detecting the Application Insights shim on internal verison.
+- Native ESM support has been added, and this package will now emit both CommonJS and ESM. [#32819](https://github.com/Azure/azure-sdk-for-js/pull/32819)
+- Add undefined checks for document filtering functions.
+
+## 1.9.0 (2025-03-04)
+
+### Features Added
+
+- Add support for stable OpenTelemetry semantic conventions.
+
+### Other Changes
+
+- Added support for detecting AKS when `KUBERNETES_SERVICE_HOST` is set.
+
+## 1.8.1 (2025-01-28)
+
+### Bugs Fixed
+
+- Should not use reserved 7th bit for statsbeat instrumentations.
+- Fix incorrectly setting the cloud role name and role instance to undefined on standard metrics in AKS environments.
+- Handle exceptions thrown when no http url is present on request telemetry quickpulse documents.
+
+## 1.8.0 (2024-10-23)
+
+### Features Added
+- Changed live metrics CPU/Memory perf counter metrics to emit normalized process CPU and process physical memory bytes.
+- Support for Live Metrics Filtering.
+- Support parsing AAD Audience from the connection string for live metrics.
+
+### Other Changes
+
+- Update to using the logRecordProcessors property.
+
+## 1.7.1 (2024-09-13)
+
+### Bugs Fixed
+- Live Metrics: Do not send documents from past time intervals.
 
 ### Other Changes
 

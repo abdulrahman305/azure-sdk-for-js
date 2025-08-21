@@ -15,7 +15,7 @@ See our [support policy](https://github.com/Azure/azure-sdk-for-js/blob/main/SUP
 
 ### Installation
 
-This package is primarily used in generated code and not meant to be consumed directly by end users.
+This package is primarily used in generated code and not meant to be consumed directly by end users. Only top-level exports from this package should be used. Any exports under the `internal` subpath are for private use and stability is not guaranteed.
 
 ## Key concepts
 
@@ -31,16 +31,20 @@ A `PipelineResponse` describes the HTTP response (body, headers, and status code
 
 A `SendRequest` method is a method that given a `PipelineRequest` can asynchronously return a `PipelineResponse`.
 
-```ts
-export type SendRequest = (request: PipelineRequest) => Promise<PipelineResponse>;
+```ts snippet:ReadmeSampleSendRequest
+import { PipelineRequest, PipelineResponse } from "@typespec/ts-http-runtime";
+
+type SendRequest = (request: PipelineRequest) => Promise<PipelineResponse>;
 ```
 
 ### HttpClient
 
 An `HttpClient` is any object that satisfies the following interface to implement a `SendRequest` method:
 
-```ts
-export interface HttpClient {
+```ts snippet:ReadmeSampleHttpRequest
+import { SendRequest } from "@typespec/ts-http-runtime";
+
+interface HttpClient {
   /**
    * The method that makes the request and returns a response.
    */
@@ -54,16 +58,18 @@ export interface HttpClient {
 
 A `PipelinePolicy` is a simple object that implements the following interface:
 
-```ts
-export interface PipelinePolicy {
+```ts snippet:ReadmeSamplePipelinePolicy
+import { PipelineRequest, SendRequest, PipelineResponse } from "@typespec/ts-http-runtime";
+
+interface PipelinePolicy {
   /**
    * The policy name. Must be a unique string in the pipeline.
    */
   name: string;
   /**
    * The main method to implement that manipulates a request/response.
-   * @param request The request being performed.
-   * @param next The next policy in the pipeline. Must be called to continue the pipeline.
+   * @param request - The request being performed.
+   * @param next - The next policy in the pipeline. Must be called to continue the pipeline.
    */
   sendRequest(request: PipelineRequest, next: SendRequest): Promise<PipelineResponse>;
 }
@@ -75,16 +81,19 @@ One can view the role of policies as that of `middleware`, a concept that is fam
 
 The `sendRequest` implementation can both transform the outgoing request as well as the incoming response:
 
-```ts
+```ts snippet:ReadmeSampleCustomPolicy
+import { PipelineRequest, SendRequest, PipelineResponse } from "@typespec/ts-http-runtime";
+
 const customPolicy = {
   name: "My wonderful policy",
   async sendRequest(request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> {
     // Change the outgoing request by adding a new header
     request.headers.set("X-Cool-Header", 42);
     const result = await next(request);
-    if (response.status === 403) {
+    if (result.status === 403) {
       // Do something special if this policy sees Forbidden
     }
+
     return result;
   },
 };
@@ -100,8 +109,17 @@ You can think of policies being applied like a stack (first-in/last-out.) The fi
 
 A `Pipeline` satisfies the following interface:
 
-```ts
-export interface Pipeline {
+```ts snippet:ReadmeSamplePipeline
+import {
+  PipelinePolicy,
+  AddPolicyOptions,
+  PipelinePhase,
+  HttpClient,
+  PipelineRequest,
+  PipelineResponse,
+} from "@typespec/ts-http-runtime";
+
+interface Pipeline {
   addPolicy(policy: PipelinePolicy, options?: AddPolicyOptions): void;
   removePolicy(options: { name?: string; phase?: PipelinePhase }): PipelinePolicy[];
   sendRequest(httpClient: HttpClient, request: PipelineRequest): Promise<PipelineResponse>;
@@ -123,8 +141,10 @@ Phases occur in the above order, with serialization policies being applied first
 
 When adding a policy to the pipeline you can specify not only what phase a policy is in, but also if it has any dependencies:
 
-```ts
-export interface AddPolicyOptions {
+```ts snippet:ReadmeSampleAddPipelineOptions
+import { PipelinePhase } from "@typespec/ts-http-runtime";
+
+interface AddPipelineOptions {
   beforePolicies?: string[];
   afterPolicies?: string[];
   afterPhase?: PipelinePhase;
@@ -146,7 +166,7 @@ Examples can be found in the `samples` folder.
 
 ## Next steps
 
-You can build and run the tests locally by executing `rushx test`. Explore the `test` folder to see advanced usage and behavior of the public classes.
+You can build and run the tests locally by executing `npm run test`. Explore the `test` folder to see advanced usage and behavior of the public classes.
 
 ## Troubleshooting
 
@@ -155,5 +175,3 @@ If you run into issues while using this library, please feel free to [file an is
 ## Contributing
 
 If you'd like to contribute to this library, please read the [contributing guide](https://github.com/Azure/azure-sdk-for-js/blob/main/CONTRIBUTING.md) to learn more about how to build and test the code.
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-js%2Fsdk%2Fcore%2Fts-http-runtime%2FREADME.png)

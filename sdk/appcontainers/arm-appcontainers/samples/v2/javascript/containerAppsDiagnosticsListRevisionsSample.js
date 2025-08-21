@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the Revisions for a given Container App.
  *
  * @summary Get the Revisions for a given Container App.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Revisions_List.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Revisions_List.json
  */
 async function listContainerAppRevisions() {
   const subscriptionId =
@@ -26,7 +26,7 @@ async function listContainerAppRevisions() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.containerAppsDiagnostics.listRevisions(
+  for await (const item of client.containerAppsDiagnostics.listRevisions(
     resourceGroupName,
     containerAppName,
   )) {
@@ -36,7 +36,7 @@ async function listContainerAppRevisions() {
 }
 
 async function main() {
-  listContainerAppRevisions();
+  await listContainerAppRevisions();
 }
 
 main().catch(console.error);

@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Creates or updates a virtual network link to a DNS forwarding ruleset.
  *
  * @summary Creates or updates a virtual network link to a DNS forwarding ruleset.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/VirtualNetworkLink_Put.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/VirtualNetworkLink_Put.json
  */
 async function upsertVirtualNetworkLinkToADnsForwardingRuleset() {
   const subscriptionId =
@@ -36,13 +34,13 @@ async function upsertVirtualNetworkLinkToADnsForwardingRuleset() {
     resourceGroupName,
     dnsForwardingRulesetName,
     virtualNetworkLinkName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
 async function main() {
-  upsertVirtualNetworkLinkToADnsForwardingRuleset();
+  await upsertVirtualNetworkLinkToADnsForwardingRuleset();
 }
 
 main().catch(console.error);

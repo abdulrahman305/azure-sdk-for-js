@@ -5,7 +5,7 @@
  * This sample demonstrates how the listRegistrations() method can be used to find all registrations for
  * the given Notification Hub with an optional set of query parameters such as OData $top and $filter.
  *
- * See https://docs.microsoft.com/azure/notification-hubs/notification-hubs-push-notification-registration-management
+ * See https://learn.microsoft.com/azure/notification-hubs/notification-hubs-push-notification-registration-management
  * to learn about registrations.
  *
  *
@@ -13,11 +13,8 @@
  * @azsdk-weight 100
  */
 
-import * as dotenv from "dotenv";
+import "dotenv/config";
 import { createClientContext, listRegistrations } from "@azure/notification-hubs/api";
-
-// Load the .env file if it exists
-dotenv.config();
 
 // Define connection string and hub name
 const connectionString = process.env.NOTIFICATIONHUBS_CONNECTION_STRING || "<connection string>";

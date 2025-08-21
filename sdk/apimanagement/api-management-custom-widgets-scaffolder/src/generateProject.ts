@@ -1,18 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import type { ServiceInformation, Options, WidgetConfig } from "./scaffolding.js";
 import {
-  ServiceInformation,
   OVERRIDE_DEFAULT_PORT,
   OVERRIDE_PORT_KEY,
-  Options,
-  WidgetConfig,
   displayNameToName,
   widgetFolderName,
 } from "./scaffolding.js";
 import { sourceDir } from "./sourceDir.js";
 import { join as joinPath, parse as parsePath } from "node:path";
-import * as fs from "node:fs/promises";
+import fs from "node:fs/promises";
 import { getTemplates } from "./getTemplates.js";
 import mustache from "mustache";
 

@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ElasticSanManagement } from "@azure/arm-elasticsan";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Get an Volume.
  *
  * @summary Get an Volume.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/Volumes_Get_MaximumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/Volumes_Get_MaximumSet_Gen.json
  */
-async function volumesGetMaximumSetGen() {
+async function volumesGetMaximumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -34,7 +32,7 @@ async function volumesGetMaximumSetGen() {
     resourceGroupName,
     elasticSanName,
     volumeGroupName,
-    volumeName
+    volumeName,
   );
   console.log(result);
 }
@@ -43,9 +41,9 @@ async function volumesGetMaximumSetGen() {
  * This sample demonstrates how to Get an Volume.
  *
  * @summary Get an Volume.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/Volumes_Get_MinimumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/Volumes_Get_MinimumSet_Gen.json
  */
-async function volumesGetMinimumSetGen() {
+async function volumesGetMinimumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -59,12 +57,12 @@ async function volumesGetMinimumSetGen() {
     resourceGroupName,
     elasticSanName,
     volumeGroupName,
-    volumeName
+    volumeName,
   );
   console.log(result);
 }
 
-async function main() {
+async function main(): Promise<void> {
   volumesGetMaximumSetGen();
   volumesGetMinimumSetGen();
 }

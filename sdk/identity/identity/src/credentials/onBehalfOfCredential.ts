@@ -1,29 +1,30 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AccessToken, GetTokenOptions, TokenCredential } from "@azure/core-auth";
-import { MsalClient, createMsalClient } from "../msal/nodeFlows/msalClient";
-import {
+import type { AccessToken, GetTokenOptions, TokenCredential } from "@azure/core-auth";
+import type { MsalClient } from "../msal/nodeFlows/msalClient.js";
+import { createMsalClient } from "../msal/nodeFlows/msalClient.js";
+import type {
   OnBehalfOfCredentialAssertionOptions,
   OnBehalfOfCredentialCertificateOptions,
   OnBehalfOfCredentialOptions,
   OnBehalfOfCredentialSecretOptions,
-} from "./onBehalfOfCredentialOptions";
-import { credentialLogger, formatError } from "../util/logging";
+} from "./onBehalfOfCredentialOptions.js";
+import { credentialLogger, formatError } from "../util/logging.js";
 import {
   processMultiTenantRequest,
   resolveAdditionallyAllowedTenantIds,
-} from "../util/tenantIdUtils";
+} from "../util/tenantIdUtils.js";
 
-import { CertificateParts } from "../msal/types";
-import { ClientCertificatePEMCertificatePath } from "./clientCertificateCredential";
-import { CredentialPersistenceOptions } from "./credentialPersistenceOptions";
-import { CredentialUnavailableError } from "../errors";
-import { MultiTenantTokenCredentialOptions } from "./multiTenantTokenCredentialOptions";
+import type { CertificateParts } from "../msal/types.js";
+import type { ClientCertificatePEMCertificatePath } from "./clientCertificateCredentialModels.js";
+import type { CredentialPersistenceOptions } from "./credentialPersistenceOptions.js";
+import { CredentialUnavailableError } from "../errors.js";
+import type { MultiTenantTokenCredentialOptions } from "./multiTenantTokenCredentialOptions.js";
 import { createHash } from "node:crypto";
-import { ensureScopes } from "../util/scopeUtils";
+import { ensureScopes } from "../util/scopeUtils.js";
 import { readFile } from "node:fs/promises";
-import { tracingClient } from "../util/tracing";
+import { tracingClient } from "../util/tracing.js";
 
 const credentialName = "OnBehalfOfCredential";
 const logger = credentialLogger(credentialName);
@@ -48,12 +49,15 @@ export class OnBehalfOfCredential implements TokenCredential {
    *
    * Example using the `KeyClient` from [\@azure/keyvault-keys](https://www.npmjs.com/package/\@azure/keyvault-keys):
    *
-   * ```ts
+   * ```ts snippet:on_behalf_of_credential_pem_example
+   * import { OnBehalfOfCredential } from "@azure/identity";
+   * import { KeyClient } from "@azure/keyvault-keys";
+   *
    * const tokenCredential = new OnBehalfOfCredential({
-   *   tenantId,
-   *   clientId,
+   *   tenantId: "tenant-id",
+   *   clientId: "client-id",
    *   certificatePath: "/path/to/certificate.pem",
-   *   userAssertionToken: "access-token"
+   *   userAssertionToken: "access-token",
    * });
    * const client = new KeyClient("vault-url", tokenCredential);
    *
@@ -74,12 +78,15 @@ export class OnBehalfOfCredential implements TokenCredential {
    *
    * Example using the `KeyClient` from [\@azure/keyvault-keys](https://www.npmjs.com/package/\@azure/keyvault-keys):
    *
-   * ```ts
+   * ```ts snippet:on_behalf_of_credential_secret_example
+   * import { OnBehalfOfCredential } from "@azure/identity";
+   * import { KeyClient } from "@azure/keyvault-keys";
+   *
    * const tokenCredential = new OnBehalfOfCredential({
-   *   tenantId,
-   *   clientId,
-   *   clientSecret,
-   *   userAssertionToken: "access-token"
+   *   tenantId: "tenant-id",
+   *   clientId: "client-id",
+   *   clientSecret: "client-secret",
+   *   userAssertionToken: "access-token",
    * });
    * const client = new KeyClient("vault-url", tokenCredential);
    *
@@ -101,12 +108,17 @@ export class OnBehalfOfCredential implements TokenCredential {
    *
    * Example using the `KeyClient` from [\@azure/keyvault-keys](https://www.npmjs.com/package/\@azure/keyvault-keys):
    *
-   * ```ts
+   * ```ts snippet:on_behalf_of_credential_assertion_example
+   * import { OnBehalfOfCredential } from "@azure/identity";
+   * import { KeyClient } from "@azure/keyvault-keys";
+   *
    * const tokenCredential = new OnBehalfOfCredential({
-   *   tenantId,
-   *   clientId,
-   *   getAssertion: () => { return Promise.resolve("my-jwt")},
-   *   userAssertionToken: "access-token"
+   *   tenantId: "tenant-id",
+   *   clientId: "client-id",
+   *   getAssertion: () => {
+   *     return Promise.resolve("my-jwt");
+   *   },
+   *   userAssertionToken: "access-token",
    * });
    * const client = new KeyClient("vault-url", tokenCredential);
    *
@@ -227,6 +239,7 @@ export class OnBehalfOfCredential implements TokenCredential {
       const parts = await this.parseCertificate({ certificatePath }, this.sendCertificateChain);
       return {
         thumbprint: parts.thumbprint,
+        thumbprintSha256: parts.thumbprintSha256,
         privateKey: parts.certificateContents,
         x5c: parts.x5c,
       };
@@ -260,14 +273,19 @@ export class OnBehalfOfCredential implements TokenCredential {
     if (publicKeys.length === 0) {
       throw new Error("The file at the specified path does not contain a PEM-encoded certificate.");
     }
+    const thumbprint = createHash("sha1") // CodeQL [SM04514] Needed for backward compatibility reason
+      .update(Buffer.from(publicKeys[0], "base64"))
+      .digest("hex")
+      .toUpperCase();
 
-    const thumbprint = createHash("sha1")
+    const thumbprintSha256 = createHash("sha256")
       .update(Buffer.from(publicKeys[0], "base64"))
       .digest("hex")
       .toUpperCase();
 
     return {
       certificateContents,
+      thumbprintSha256,
       thumbprint,
       x5c,
     };

@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to List Cosmos DB locations and their properties
  *
  * @summary List Cosmos DB locations and their properties
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBLocationList.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBLocationList.json
  */
 async function cosmosDbLocationList() {
   const subscriptionId =
@@ -24,14 +22,14 @@ async function cosmosDbLocationList() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.locations.list()) {
+  for await (const item of client.locations.list()) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  cosmosDbLocationList();
+  await cosmosDbLocationList();
 }
 
 main().catch(console.error);

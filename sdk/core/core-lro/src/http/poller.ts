@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { RunningOperation, OperationResponse } from "./models.js";
-import { OperationState, PollerLike } from "../poller/models.js";
+import type { RunningOperation, OperationResponse } from "./models.js";
+import type { OperationState, PollerLike } from "../poller/models.js";
 import {
   getErrorFromResponse,
   getOperationLocation,
@@ -13,8 +13,9 @@ import {
   isOperationError,
   parseRetryAfter,
 } from "./operation.js";
-import { CreateHttpPollerOptions } from "./models.js";
+import type { CreateHttpPollerOptions } from "./models.js";
 import { buildCreatePoller } from "../poller/poller.js";
+import { rewriteUrl } from "./utils.js";
 
 /**
  * Creates a poller that can be used to poll a long-running operation.
@@ -34,6 +35,8 @@ export function createHttpPoller<TResult, TState extends OperationState<TResult>
     updateState,
     withOperationLocation,
     resolveOnUnsuccessful = false,
+    baseUrl,
+    skipFinalGet,
   } = options || {};
   return buildCreatePoller<OperationResponse, TResult, TState>({
     getStatusFromInitialResponse,
@@ -48,11 +51,11 @@ export function createHttpPoller<TResult, TState extends OperationState<TResult>
     {
       init: async () => {
         const response = await lro.sendInitialRequest();
-        const config = inferLroMode(response.rawResponse, resourceLocationConfig);
+        const config = inferLroMode(response.rawResponse, resourceLocationConfig, skipFinalGet);
         return {
           response,
-          operationLocation: config?.operationLocation,
-          resourceLocation: config?.resourceLocation,
+          operationLocation: rewriteUrl({ url: config?.operationLocation, baseUrl }),
+          resourceLocation: rewriteUrl({ url: config?.resourceLocation, baseUrl }),
           initialRequestUrl: config?.initialRequestUrl,
           requestMethod: config?.requestMethod,
           ...(config?.mode ? { metadata: { mode: config.mode } } : {}),

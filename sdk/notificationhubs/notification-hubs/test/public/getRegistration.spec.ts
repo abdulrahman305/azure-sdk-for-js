@@ -2,16 +2,10 @@
 // Licensed under the MIT License.
 
 import { describe, it, assert, beforeEach, afterEach } from "vitest";
-import {
-  AppleRegistrationDescription,
-  createAppleRegistrationDescription,
-} from "../../src/models/index.js";
-import {
-  NotificationHubsClientContext,
-  createRegistration,
-  deleteRegistration,
-  getRegistration,
-} from "../../src/api/index.js";
+import type { AppleRegistrationDescription } from "../../src/models/index.js";
+import { createAppleRegistrationDescription } from "../../src/models/index.js";
+import type { NotificationHubsClientContext } from "../../src/api/index.js";
+import { createRegistration, deleteRegistration, getRegistration } from "../../src/api/index.js";
 import { Recorder } from "@azure-tools/test-recorder";
 import { createRecordedClientContext } from "./utils/recordedClient.js";
 
@@ -23,7 +17,6 @@ describe("getRegistration", () => {
 
   beforeEach(async (ctx) => {
     recorder = new Recorder(ctx);
-    await recorder.setMatcher("BodilessMatcher");
     context = await createRecordedClientContext(recorder);
 
     let registration = createAppleRegistrationDescription({

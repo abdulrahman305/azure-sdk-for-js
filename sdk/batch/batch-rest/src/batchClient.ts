@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { getClient, ClientOptions } from "@azure-rest/core-client";
+import type { ClientOptions } from "@azure-rest/core-client";
+import { getClient } from "@azure-rest/core-client";
 import { logger } from "./logger.js";
-import { TokenCredential, AzureNamedKeyCredential, isTokenCredential } from "@azure/core-auth";
-import { BatchClient } from "./clientDefinitions.js";
+import type { TokenCredential, AzureNamedKeyCredential } from "@azure/core-auth";
+import { isTokenCredential } from "@azure/core-auth";
+import type { BatchClient } from "./clientDefinitions.js";
 import { createBatchSharedKeyCredentialsPolicy } from "./credentials/batchSharedKeyCredentials.js";
-import { createReplacePoolPropertiesPolicy } from "./replacePoolPropertiesPolicy.js";
 
 /** The optional parameters for the client */
 export interface BatchClientOptions extends ClientOptions {
@@ -23,10 +24,10 @@ export interface BatchClientOptions extends ClientOptions {
 export default function createClient(
   endpointParam: string,
   credentials: TokenCredential | AzureNamedKeyCredential,
-  { apiVersion = "2024-02-01.19.0", ...options }: BatchClientOptions = {},
+  { apiVersion = "2024-07-01.20.0", ...options }: BatchClientOptions = {},
 ): BatchClient {
-  const endpointUrl = options.endpoint ?? options.baseUrl ?? `${endpointParam}`;
-  const userAgentInfo = `azsdk-js-batch-rest/1.0.0-beta.1`;
+  const endpointUrl = options.endpoint ?? `${endpointParam}`;
+  const userAgentInfo = `azsdk-js-batch-rest/1.0.0-beta.3`;
   const userAgentPrefix =
     options.userAgentOptions && options.userAgentOptions.userAgentPrefix
       ? `${options.userAgentOptions.userAgentPrefix} ${userAgentInfo}`
@@ -46,14 +47,6 @@ export default function createClient(
     credentials: {
       scopes: options.credentials?.scopes ?? ["https://batch.core.windows.net//.default"],
     },
-    additionalPolicies: [
-      ...(options?.additionalPolicies ?? []),
-      // TODO: remove after service remove certificate feature completely
-      {
-        policy: createReplacePoolPropertiesPolicy(),
-        position: "perCall",
-      },
-    ],
   };
 
   const addClientApiVersionPolicy = (client: BatchClient): BatchClient => {
@@ -84,6 +77,7 @@ export default function createClient(
   // If the credentials are not a TokenCredential, we need to add a policy to handle the shared key auth.
   const client = getClient(endpointUrl, options) as BatchClient;
   const authPolicy = createBatchSharedKeyCredentialsPolicy(credentials);
+  addClientApiVersionPolicy(client);
   client.pipeline.addPolicy(authPolicy);
-  return addClientApiVersionPolicy(client);
+  return client;
 }

@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { OperationArguments, OperationSpec } from "@azure/core-client";
-import { StorageClient } from "./generated/src";
+import type { OperationArguments, OperationSpec } from "@azure/core-client";
+import { StorageClient } from "./generated/src/index.js";
 
 /**
  * @internal

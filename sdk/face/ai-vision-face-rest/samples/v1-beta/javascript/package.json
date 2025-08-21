@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Face API client library samples for JavaScript (Beta)",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "repository": {
     "type": "git",
@@ -27,9 +27,8 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/face/ai-vision-face-rest",
   "dependencies": {
     "@azure-rest/ai-vision-face": "next",
-    "@azure-samples/ai-vision-face-js-beta": "file:",
-    "@azure/core-auth": "^1.6.0",
+    "dotenv": "latest",
     "@azure/identity": "^4.2.1",
-    "dotenv": "latest"
+    "@azure/core-auth": "^1.6.0"
   }
 }

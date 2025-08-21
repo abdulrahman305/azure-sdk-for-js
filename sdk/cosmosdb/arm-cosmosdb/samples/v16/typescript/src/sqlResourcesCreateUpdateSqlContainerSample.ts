@@ -6,24 +6,20 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import {
   SqlContainerCreateUpdateParameters,
   CosmosDBManagementClient,
 } from "@azure/arm-cosmosdb";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Create or update an Azure Cosmos DB SQL container
  *
  * @summary Create or update an Azure Cosmos DB SQL container
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBSqlContainerCreateUpdate.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBSqlContainerCreateUpdate.json
  */
-async function cosmosDbSqlContainerCreateUpdate() {
+async function cosmosDbSqlContainerCreateUpdate(): Promise<void> {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
   const resourceGroupName = process.env["COSMOSDB_RESOURCE_GROUP"] || "rg1";
   const accountName = "ddb1";
@@ -53,6 +49,14 @@ async function cosmosDbSqlContainerCreateUpdate() {
           mode: "LastWriterWins",
         },
         defaultTtl: 100,
+        fullTextPolicy: {
+          defaultLanguage: "1033",
+          fullTextPaths: [
+            { path: "/ftPath1", language: "en-US" },
+            { path: "/ftPath2", language: "fr-FR" },
+            { path: "/ftPath3", language: "de-DE" },
+          ],
+        },
         id: "containerName",
         indexingPolicy: {
           automatic: true,
@@ -67,9 +71,36 @@ async function cosmosDbSqlContainerCreateUpdate() {
             },
           ],
           indexingMode: "consistent",
+          vectorIndexes: [
+            { type: "flat", path: "/vectorPath1" },
+            { type: "quantizedFlat", path: "/vectorPath2" },
+            { type: "diskANN", path: "/vectorPath3" },
+          ],
         },
         partitionKey: { kind: "Hash", paths: ["/AccountNumber"] },
         uniqueKeyPolicy: { uniqueKeys: [{ paths: ["/testPath"] }] },
+        vectorEmbeddingPolicy: {
+          vectorEmbeddings: [
+            {
+              path: "/vectorPath1",
+              dataType: "float32",
+              dimensions: 400,
+              distanceFunction: "euclidean",
+            },
+            {
+              path: "/vectorPath2",
+              dataType: "uint8",
+              dimensions: 512,
+              distanceFunction: "cosine",
+            },
+            {
+              path: "/vectorPath3",
+              dataType: "int8",
+              dimensions: 512,
+              distanceFunction: "dotproduct",
+            },
+          ],
+        },
       },
       tags: {},
     };
@@ -85,8 +116,8 @@ async function cosmosDbSqlContainerCreateUpdate() {
   console.log(result);
 }
 
-async function main() {
-  cosmosDbSqlContainerCreateUpdate();
+async function main(): Promise<void> {
+  await cosmosDbSqlContainerCreateUpdate();
 }
 
 main().catch(console.error);

@@ -1,13 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-import { setAuthorizationHeader } from "../auth";
-import { Constants, HTTPMethod, jsonStringifyAndEscapeNonASCII, ResourceType } from "../common";
-import { CosmosClientOptions } from "../CosmosClientOptions";
-import { PartitionKeyInternal } from "../documents";
-import { CosmosHeaders } from "../queryExecutionContext";
-import { FeedOptions, RequestOptions } from "./index";
-import { defaultLogger } from "../common/logger";
-import { ChangeFeedMode } from "../client/ChangeFeed";
+import { setAuthorizationHeader } from "../auth.js";
+import {
+  Constants,
+  HTTPMethod,
+  jsonStringifyAndEscapeNonASCII,
+  OperationType,
+  ResourceType,
+  SDKSupportedCapabilities,
+} from "../common/index.js";
+import type { CosmosClientOptions } from "../CosmosClientOptions.js";
+import type { PartitionKeyInternal } from "../documents/index.js";
+import type { CosmosHeaders } from "../queryExecutionContext/index.js";
+import { ErrorResponse, type FeedOptions, type RequestOptions } from "./index.js";
+import { defaultLogger } from "../common/logger.js";
+import { ChangeFeedMode } from "../client/ChangeFeed/index.js";
 // ----------------------------------------------------------------------------
 // Utility methods
 //
@@ -40,6 +47,7 @@ interface GetHeadersOptions {
   resourceId: string;
   resourceType: ResourceType;
   options: RequestOptions & FeedOptions;
+  operationType?: OperationType;
   partitionKeyRangeId?: string;
   useMultipleWriteLocations?: boolean;
   partitionKey?: PartitionKeyInternal;
@@ -58,6 +66,7 @@ export async function getHeaders({
   resourceId,
   resourceType,
   options = {},
+  operationType,
   partitionKeyRangeId,
   useMultipleWriteLocations,
   partitionKey,
@@ -67,6 +76,9 @@ export async function getHeaders({
     [Constants.HttpHeaders.EnableCrossPartitionQuery]: true,
     ...defaultHeaders,
   };
+
+  // Adding SDKSupportedCapabilities header to hint that SDK supports partition merge
+  headers[Constants.HttpHeaders.SDKSupportedCapabilities] = SDKSupportedCapabilities.PartitionMerge;
 
   if (useMultipleWriteLocations) {
     headers[Constants.HttpHeaders.ALLOW_MULTIPLE_WRITES] = true;
@@ -139,6 +151,10 @@ export async function getHeaders({
     headers[Constants.HttpHeaders.PriorityLevel] = options.priorityLevel;
   }
 
+  if (options.throughputBucket) {
+    headers[Constants.HttpHeaders.ThroughputBucket] = options.throughputBucket;
+  }
+
   if (options.maxIntegratedCacheStalenessInMs && resourceType === ResourceType.item) {
     if (typeof options.maxIntegratedCacheStalenessInMs === "number") {
       headers[Constants.HttpHeaders.DedicatedGatewayPerRequestCacheStaleness] =
@@ -176,7 +192,11 @@ export async function getHeaders({
     headers[Constants.HttpHeaders.PopulateQueryMetrics] = options.populateQueryMetrics;
   }
 
-  if (options.maxDegreeOfParallelism !== undefined) {
+  if (
+    options.maxDegreeOfParallelism !== undefined &&
+    options.maxDegreeOfParallelism !== 0 &&
+    options.maxDegreeOfParallelism !== 1
+  ) {
     headers[Constants.HttpHeaders.ParallelizeCrossPartitionQuery] = true;
   }
 
@@ -186,6 +206,8 @@ export async function getHeaders({
 
   if (partitionKey !== undefined && !headers[Constants.HttpHeaders.PartitionKey]) {
     headers[Constants.HttpHeaders.PartitionKey] = jsonStringifyAndEscapeNonASCII(partitionKey);
+  } else if (partitionKeyRangeId !== undefined) {
+    headers[Constants.HttpHeaders.PartitionKeyRangeID] = partitionKeyRangeId;
   }
 
   if (clientOptions.key || clientOptions.tokenProvider) {
@@ -202,10 +224,6 @@ export async function getHeaders({
     headers[Constants.HttpHeaders.Accept] = JsonContentType;
   }
 
-  if (partitionKeyRangeId !== undefined) {
-    headers[Constants.HttpHeaders.PartitionKeyRangeID] = partitionKeyRangeId;
-  }
-
   if (options.enableScriptLogging) {
     headers[Constants.HttpHeaders.EnableScriptLogging] = options.enableScriptLogging;
   }
@@ -218,6 +236,13 @@ export async function getHeaders({
     headers[Constants.HttpHeaders.PopulateIndexMetrics] = options.populateIndexMetrics;
   }
 
+  if (clientOptions.clientEncryptionOptions) {
+    headers[Constants.HttpHeaders.IsClientEncryptedHeader] = true;
+    if (options.containerRid) {
+      headers[Constants.HttpHeaders.IntendedCollectionHeader] = options.containerRid;
+    }
+  }
+
   if (
     clientOptions.key ||
     clientOptions.resourceTokens ||
@@ -225,6 +250,20 @@ export async function getHeaders({
     clientOptions.permissionFeed
   ) {
     await setAuthorizationHeader(clientOptions, verb, path, resourceId, resourceType, headers);
+  }
+
+  if (
+    resourceType === ResourceType.item &&
+    Object.prototype.hasOwnProperty.call(options, "contentResponseOnWriteEnabled") &&
+    !options.contentResponseOnWriteEnabled
+  ) {
+    if (operationType === OperationType.Batch) {
+      headers[Constants.HttpHeaders.Prefer] = Constants.HttpHeaders.PreferReturnMinimal;
+    } else {
+      throw new ErrorResponse(
+        "Currently `contentResponseOnWriteEnabled` option is only supported for batch and bulk operations.",
+      );
+    }
   }
   return headers;
 }

@@ -1,12 +1,36 @@
 # Release History
 
-## 1.0.0-beta.7 (Unreleased)
+## 1.0.0-beta.10 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0-beta.9 (2025-06-10)
+
+### Other Changes
+
+- Updates OpenTelemetry packages to v2.
+
+## 1.0.0-beta.8 (2025-02-11)
+
+### Bugs Fixed
+
+- Fixes an issue where tracing spans were marked as failed when a conditional request failed with a 304 status code. [#32666](https://github.com/Azure/azure-sdk-for-js/pull/32666)
+
+### Other Changes
+
+- In order to better align with the OpenTelemetry specification, tracing spans will no longer be marked successful, leaving them UNSET by default. [#32666](https://github.com/Azure/azure-sdk-for-js/pull/32666)
+
+## 1.0.0-beta.7 (2024-10-08)
+
+### Features Added
+
+- Added support for attaching events to a span. [#31162](https://github.com/Azure/azure-sdk-for-js/pull/31162)
 
 ### Other Changes
 

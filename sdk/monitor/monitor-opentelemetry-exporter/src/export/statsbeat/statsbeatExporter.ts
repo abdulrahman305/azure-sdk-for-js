@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 import { context } from "@opentelemetry/api";
-import { PushMetricExporter, ResourceMetrics } from "@opentelemetry/sdk-metrics";
-import { ExportResult, ExportResultCode, suppressTracing } from "@opentelemetry/core";
-import { AzureMonitorExporterOptions } from "../../config";
-import { TelemetryItem as Envelope } from "../../generated";
-import { resourceMetricsToEnvelope } from "../../utils/metricUtils";
-import { AzureMonitorBaseExporter } from "../base";
-import { HttpSender } from "../../platform";
+import type { PushMetricExporter, ResourceMetrics } from "@opentelemetry/sdk-metrics";
+import type { ExportResult } from "@opentelemetry/core";
+import { ExportResultCode, suppressTracing } from "@opentelemetry/core";
+import type { AzureMonitorExporterOptions } from "../../config.js";
+import type { TelemetryItem as Envelope } from "../../generated/index.js";
+import { resourceMetricsToEnvelope } from "../../utils/metricUtils.js";
+import { AzureMonitorBaseExporter } from "../base.js";
+import { HttpSender } from "../../platform/index.js";
 
 /**
  * Azure Monitor Statsbeat Exporter
@@ -38,9 +39,26 @@ export class AzureMonitorStatsbeatExporter
   }
 
   /**
+   * Filter out envelopes with zero metric values to prevent exporting zero counts.
+   * This ensures zero counts are observed for internal cleanup but not exported to Azure Monitor.
+   * @param envelopes - Array of telemetry envelopes to filter
+   * @returns Filtered array of envelopes with non-zero metric values
+   */
+  private filterZeroValueMetrics(envelopes: Envelope[]): Envelope[] {
+    return envelopes.filter((envelope) => {
+      // Check if this is a metric envelope
+      if (envelope.data?.baseType === "MetricData" && envelope.data?.baseData?.metrics) {
+        const metrics = envelope.data.baseData.metrics;
+        // Filter out metrics where all values are zero
+        return metrics.some((metric: any) => metric.value !== 0);
+      }
+      return true;
+    });
+  }
+
+  /**
    * Export Statsbeat metrics.
    */
-  // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-misused-promises
   async export(
     metrics: ResourceMetrics,
     resultCallback: (result: ExportResult) => void,
@@ -55,9 +73,13 @@ export class AzureMonitorStatsbeatExporter
       this.instrumentationKey,
       true, // isStatsbeat flag passed to create a Statsbeat envelope.
     );
+
+    // Filter out zero-value metrics before export
+    const filteredEnvelopes = this.filterZeroValueMetrics(envelopes);
+
     // Supress tracing until OpenTelemetry Metrics SDK support it
     context.with(suppressTracing(context.active()), async () => {
-      resultCallback(await this._sender.exportEnvelopes(envelopes));
+      resultCallback(await this._sender.exportEnvelopes(filteredEnvelopes));
     });
   }
 

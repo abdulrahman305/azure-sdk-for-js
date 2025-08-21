@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": " client library samples for JavaScript (Beta)",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "repository": {
     "type": "git",
@@ -25,9 +25,8 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/deploymentmanager/arm-deploymentmanager",
   "dependencies": {
-    "@azure-samples/arm-deploymentmanager-js-beta": "file:",
     "@azure/arm-deploymentmanager": "next",
-    "@azure/identity": "^4.2.1",
-    "dotenv": "latest"
+    "dotenv": "latest",
+    "@azure/identity": "^4.2.1"
   }
 }

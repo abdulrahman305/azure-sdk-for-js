@@ -1,38 +1,34 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-
-import Sinon, { createSandbox } from "sinon";
-import { AzureDeveloperCliCredential } from "../../../src/credentials/azureDeveloperCliCredential";
-import { GetTokenOptions } from "@azure/core-auth";
-import { assert } from "@azure-tools/test-utils";
-import child_process from "child_process";
+import { AzureDeveloperCliCredential } from "@azure/identity";
+import type { GetTokenOptions } from "@azure/core-auth";
+import child_process, { type ChildProcess } from "node:child_process";
+import { describe, it, assert, expect, vi, beforeEach, afterEach } from "vitest";
 
 describe("AzureDeveloperCliCredential (internal)", function () {
-  let sandbox: Sinon.SinonSandbox | undefined;
   let stdout: string = "";
   let stderr: string = "";
-  let azdArgs: string[][] = [];
-  let azdOptions: { cwd: string }[] = [];
+  let azdCommands: string[] = [];
+  let azdOptions: { cwd: string; timeout?: number }[] = [];
 
   beforeEach(async function () {
-    sandbox = createSandbox();
-    azdArgs = [];
+    azdCommands = [];
     azdOptions = [];
-    sandbox
-      .stub(child_process, "execFile")
-      .callsFake((_file, args, options, callback): child_process.ChildProcess => {
-        azdArgs.push(args as string[]);
-        azdOptions.push(options as { cwd: string });
+    vi.spyOn(child_process, "exec").mockImplementation(
+      (command, options, callback): ChildProcess => {
+        azdCommands.push(command as string);
+        azdOptions.push(options as { cwd: string; timeout?: number });
         if (callback) {
           callback(null, stdout, stderr);
         }
         // Bypassing the type check. We don't use this return value in our code.
-        return {} as child_process.ChildProcess;
-      });
+        return {} as ChildProcess;
+      },
+    );
   });
 
   afterEach(async function () {
-    sandbox?.restore();
+    vi.restoreAllMocks();
   });
 
   it("get access token without error", async function () {
@@ -41,8 +37,8 @@ describe("AzureDeveloperCliCredential (internal)", function () {
     const credential = new AzureDeveloperCliCredential();
     const actualToken = await credential.getToken("https://service/.default");
     assert.equal(actualToken!.token, "token");
-    assert.deepEqual(azdArgs, [
-      ["auth", "token", "--output", "json", "--scope", "https://service/.default"],
+    assert.deepEqual(azdCommands, [
+      "azd auth token --output json --scope https://service/.default",
     ]);
     // Used a working directory, and a shell
     assert.deepEqual(
@@ -61,17 +57,8 @@ describe("AzureDeveloperCliCredential (internal)", function () {
       tenantId: "TENANT-ID",
     } as GetTokenOptions);
     assert.equal(actualToken!.token, "token");
-    assert.deepEqual(azdArgs, [
-      [
-        "auth",
-        "token",
-        "--output",
-        "json",
-        "--scope",
-        "https://service/.default",
-        "--tenant-id",
-        "TENANT-ID",
-      ],
+    assert.deepEqual(azdCommands, [
+      "azd auth token --output json --scope https://service/.default --tenant-id TENANT-ID",
     ]);
     // Used a working directory, and a shell
     assert.deepEqual(
@@ -90,17 +77,8 @@ describe("AzureDeveloperCliCredential (internal)", function () {
     });
     const actualToken = await credential.getToken("https://service/.default");
     assert.equal(actualToken!.token, "token");
-    assert.deepEqual(azdArgs, [
-      [
-        "auth",
-        "token",
-        "--output",
-        "json",
-        "--scope",
-        "https://service/.default",
-        "--tenant-id",
-        "tenantId",
-      ],
+    assert.deepEqual(azdCommands, [
+      "azd auth token --output json --scope https://service/.default --tenant-id tenantId",
     ]);
     // Used a working directory, and a shell
     assert.deepEqual(
@@ -183,12 +161,11 @@ describe("AzureDeveloperCliCredential (internal)", function () {
       tenantId === " " ? "whitespace" : tenantId === "\0" ? "null character" : `"${tenantId}"`;
     it(`rejects invalid tenant id of ${testCase} in getToken`, async function () {
       const credential = new AzureDeveloperCliCredential();
-      await assert.isRejected(
+      await expect(
         credential.getToken("https://service/.default", {
           tenantId: tenantId,
         }),
-        tenantIdErrorMessage,
-      );
+      ).rejects.toThrow(tenantIdErrorMessage);
     });
     it(`rejects invalid tenant id of ${testCase} in constructor`, function () {
       assert.throws(() => {
@@ -206,8 +183,7 @@ describe("AzureDeveloperCliCredential (internal)", function () {
           : `"${inputScope}"`;
     it(`rejects invalid scope of ${testCase}`, async function () {
       const credential = new AzureDeveloperCliCredential();
-      await assert.isRejected(
-        credential.getToken(inputScope),
+      await expect(credential.getToken(inputScope)).rejects.toThrow(
         "Invalid scope was specified by the user or calling client",
       );
     });

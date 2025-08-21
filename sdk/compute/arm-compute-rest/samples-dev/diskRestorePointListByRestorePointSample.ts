@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createComputeManagementClient, {
-  DiskRestorePointListByRestorePointParameters,
-  paginate,
-} from "@azure-rest/arm-compute";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Lists diskRestorePoints under a vmRestorePoint.
  *
  * @summary Lists diskRestorePoints under a vmRestorePoint.
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/DiskRP/stable/2022-07-02/examples/diskRestorePointExamples/DiskRestorePoint_ListByVmRestorePoint.json
  */
-async function getAnIncrementalDiskRestorePointResource() {
+
+import type { DiskRestorePointListByRestorePointParameters } from "@azure-rest/arm-compute";
+import createComputeManagementClient, { paginate } from "@azure-rest/arm-compute";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function getAnIncrementalDiskRestorePointResource(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";

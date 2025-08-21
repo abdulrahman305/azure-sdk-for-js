@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Delete a Dapr Component from a connected environment.
  *
  * @summary Delete a Dapr Component from a connected environment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironmentsDaprComponents_Delete.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironmentsDaprComponents_Delete.json
  */
-async function deleteDaprComponent() {
+async function deleteDaprComponent(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "8efdecc5-919e-44eb-b179-915dca89ebf9";
@@ -38,8 +36,8 @@ async function deleteDaprComponent() {
   console.log(result);
 }
 
-async function main() {
-  deleteDaprComponent();
+async function main(): Promise<void> {
+  await deleteDaprComponent();
 }
 
 main().catch(console.error);

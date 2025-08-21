@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
- * This sample demonstrates how to Deploy the cluster to the provided rack.
+ * This sample demonstrates how to Deploy the cluster using the rack configuration provided during creation.
  *
- * @summary Deploy the cluster to the provided rack.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/Clusters_Deploy.json
+ * @summary Deploy the cluster using the rack configuration provided during creation.
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/Clusters_Deploy.json
  */
 async function deployCluster() {
   const subscriptionId =
@@ -32,10 +30,10 @@ async function deployCluster() {
 }
 
 /**
- * This sample demonstrates how to Deploy the cluster to the provided rack.
+ * This sample demonstrates how to Deploy the cluster using the rack configuration provided during creation.
  *
- * @summary Deploy the cluster to the provided rack.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/Clusters_Deploy_SkipValidation.json
+ * @summary Deploy the cluster using the rack configuration provided during creation.
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/Clusters_Deploy_SkipValidation.json
  */
 async function deployClusterSkippingValidation() {
   const subscriptionId =
@@ -53,8 +51,8 @@ async function deployClusterSkippingValidation() {
 }
 
 async function main() {
-  deployCluster();
-  deployClusterSkippingValidation();
+  await deployCluster();
+  await deployClusterSkippingValidation();
 }
 
 main().catch(console.error);

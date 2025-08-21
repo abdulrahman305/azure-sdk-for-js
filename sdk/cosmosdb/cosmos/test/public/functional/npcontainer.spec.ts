@@ -1,28 +1,25 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-/* eslint-disable no-unused-expressions */
-import assert from "assert";
-import {
-  CosmosClient,
-  Constants,
+
+import type {
   Container,
   PluginConfig,
   CosmosClientOptions,
   OperationInput,
-  PatchOperationType,
-} from "../../../src";
-import { getTestContainer, removeAllDatabases } from "../common/TestHelpers";
-import { endpoint } from "../common/_testConfig";
-import { masterKey } from "../common/_fakeTestSecrets";
-import { ResourceType, HTTPMethod, StatusCodes } from "../../../src";
-import { expect } from "chai";
+} from "../../../src/index.js";
+import { CosmosClient, Constants, PatchOperationType } from "../../../src/index.js";
+import { getTestContainer, removeAllDatabases } from "../common/TestHelpers.js";
+import { endpoint } from "../common/_testConfig.js";
+import { masterKey } from "../common/_fakeTestSecrets.js";
+import { ResourceType, HTTPMethod, StatusCodes } from "../../../src/index.js";
+import { describe, it, assert, beforeEach, afterAll } from "vitest";
 
 const plugins: PluginConfig[] = [
   {
     on: "request",
     plugin: (context, diagNode, next) => {
       // Intercepts the API request to create a non-partitioned container using an old API version
-      expect(diagNode, "DiagnosticsNode should not be undefined or null").to.exist;
+      assert.isDefined(diagNode, "DiagnosticsNode should not be undefined or null");
       if (context.resourceType === ResourceType.container && context.method === HTTPMethod.post) {
         context.body = JSON.stringify({ id: JSON.parse(context.body).id });
       }
@@ -44,7 +41,7 @@ const client = new CosmosClient({
   key: masterKey,
 });
 
-describe("Non Partitioned Container", function () {
+describe("Non Partitioned Container", () => {
   let container: Container;
   beforeEach(async () => {
     await removeAllDatabases();
@@ -52,7 +49,7 @@ describe("Non Partitioned Container", function () {
     container = client.database(npContainer.database.id).container(npContainer.id);
   });
 
-  after(async () => {
+  afterAll(async () => {
     client.dispose();
     legacyClient.dispose();
   });
@@ -150,7 +147,7 @@ describe("Non Partitioned Container", function () {
     assert.equal(response[5].statusCode, StatusCodes.Ok);
   });
 
-  it("should handle batch operations", async function () {
+  it("should handle batch operations", async () => {
     const operations: OperationInput[] = [
       {
         operationType: "Create",

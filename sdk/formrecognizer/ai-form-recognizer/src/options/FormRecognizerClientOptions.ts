@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { CommonClientOptions } from "@azure/core-client";
+import type { CommonClientOptions } from "@azure/core-client";
 
 /**
  * Valid string index types supported by the Form Recognizer service and SDK clients.
@@ -45,9 +45,34 @@ export interface DocumentAnalysisClientOptions extends CommonClientOptions {
    * Default: "utf16CodeUnit"
    */
   stringIndexType?: StringIndexType;
+  /**
+   * The audience (scope) to use for authentication with Azure Active Directory.
+   *
+   * Setting this option is only necessary
+   * - if you are using Entra Id
+   *   (and)
+   * - if you are using a cloud other than the `AzurePublicCloud` ("https://cognitiveservices.azure.com")
+   *
+   * The authentication scope will be set from this audience.
+   * See {@link KnownFormRecognizerAudience} for known audience values.
+   */
+  audience?: string;
 }
 
 /**
  * Configurable options for DocumentModelAdministrationClient.
  */
-export interface DocumentModelAdministrationClientOptions extends CommonClientOptions {}
+export interface DocumentModelAdministrationClientOptions extends CommonClientOptions {
+  /**
+   * The audience (scope) to use for authentication with Azure Active Directory.
+   *
+   * Setting this option is only necessary
+   * - if you are using Entra Id
+   *   (and)
+   * - if you are using a cloud other than the `AzurePublicCloud` ("https://cognitiveservices.azure.com")
+   *
+   * The authentication scope will be set from this audience.
+   * See {@link KnownFormRecognizerAudience} for known audience values.
+   */
+  audience?: string;
+}

@@ -3,34 +3,37 @@
 
 import { createSasTokenProvider } from "@azure/core-amqp";
 import { AzureNamedKeyCredential, AzureSASCredential } from "@azure/core-auth";
-import chai from "chai";
-import { ServiceBusClient, ServiceBusReceiver, parseServiceBusConnectionString } from "../../src";
-import { getEnvVars } from "../public/utils/envVarUtils";
-import { TestClientType } from "../public/utils/testUtils";
-import {
-  createServiceBusClientForTests,
+import type { ServiceBusReceiver } from "../../src/index.js";
+import { ServiceBusClient, parseServiceBusConnectionString } from "../../src/index.js";
+import { TestClientType } from "../public/utils/testUtils.js";
+import type {
   ServiceBusClientForTests,
   ServiceBusTestHelpers,
-} from "../public/utils/testutils2";
-const assert: typeof chai.assert = chai.assert;
+} from "../public/utils/testutils2.js";
+import { createServiceBusClientForTests } from "../public/utils/testutils2.js";
+import { afterAll, beforeAll, describe, it } from "vitest";
+import { assert } from "../public/utils/chai.js";
+import { getConnectionString } from "../utils/injectables.js";
 
 type UnpackReturnType<T extends (...args: any) => any> =
   ReturnType<T> extends Promise<infer U> ? U : never;
 
-const { SERVICEBUS_CONNECTION_STRING: serviceBusConnectionString } = getEnvVars();
-
-[TestClientType.UnpartitionedQueue, TestClientType.UnpartitionedSubscription].forEach(
+describe
+  .runIf(getConnectionString())
+  .each([TestClientType.UnpartitionedQueue, TestClientType.UnpartitionedSubscription])(
+  "[%s] Authentication",
   (entityType) => {
+    const serviceBusConnectionString = getConnectionString()!;
     describe(`Authentication via SAK to ${TestClientType[entityType]}`, () => {
       let tempClient: ServiceBusClientForTests;
       let entities: UnpackReturnType<ServiceBusTestHelpers["createTestEntities"]>;
 
-      before(async () => {
+      beforeAll(async () => {
         tempClient = createServiceBusClientForTests();
         entities = await tempClient.test.createTestEntities(entityType);
       });
 
-      after(async () => {
+      afterAll(async () => {
         await tempClient.test.afterEach();
         await tempClient.test.after();
       });
@@ -112,7 +115,7 @@ const { SERVICEBUS_CONNECTION_STRING: serviceBusConnectionString } = getEnvVars(
       let sasConnectionString: string;
       let sharedAccessSignature: string;
 
-      before(async () => {
+      beforeAll(async () => {
         tempClient = createServiceBusClientForTests();
         entities = await tempClient.test.createTestEntities(entityType);
 
@@ -130,7 +133,7 @@ const { SERVICEBUS_CONNECTION_STRING: serviceBusConnectionString } = getEnvVars(
         );
       });
 
-      after(async () => {
+      afterAll(async () => {
         await tempClient.test.afterEach();
         await tempClient.test.after();
       });

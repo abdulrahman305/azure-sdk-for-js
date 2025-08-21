@@ -6,23 +6,25 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import {
   RegenAuthKeys,
-  DataMigrationManagementClient
+  DataMigrationManagementClient,
 } from "@azure/arm-datamigration";
 import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Regenerate a new set of Authentication Keys for Self Hosted Integration Runtime.
  *
  * @summary Regenerate a new set of Authentication Keys for Self Hosted Integration Runtime.
- * x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/preview/2021-10-30-preview/examples/RegenAuthKeysMigrationService.json
+ * x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/preview/2025-03-15-preview/examples/RegenAuthKeysSqlMigrationService.json
  */
-async function regenerateTheOfAuthenticationKeys() {
-  const subscriptionId = "00000000-1111-2222-3333-444444444444";
-  const resourceGroupName = "testrg";
+async function regenerateTheOfAuthenticationKeys(): Promise<void> {
+  const subscriptionId =
+    process.env["DATAMIGRATION_SUBSCRIPTION_ID"] ||
+    "00000000-1111-2222-3333-444444444444";
+  const resourceGroupName =
+    process.env["DATAMIGRATION_RESOURCE_GROUP"] || "testrg";
   const sqlMigrationServiceName = "service1";
   const parameters: RegenAuthKeys = { keyName: "authKey1" };
   const credential = new DefaultAzureCredential();
@@ -30,9 +32,13 @@ async function regenerateTheOfAuthenticationKeys() {
   const result = await client.sqlMigrationServices.regenerateAuthKeys(
     resourceGroupName,
     sqlMigrationServiceName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
-regenerateTheOfAuthenticationKeys().catch(console.error);
+async function main(): Promise<void> {
+  await regenerateTheOfAuthenticationKeys();
+}
+
+main().catch(console.error);

@@ -1,18 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AccessToken, GetTokenOptions, TokenCredential } from "@azure/core-auth";
-import { credentialLogger, formatError, formatSuccess } from "../util/logging";
-import { AzureDeveloperCliCredentialOptions } from "./azureDeveloperCliCredentialOptions";
-import { CredentialUnavailableError } from "../errors";
+import type { AccessToken, GetTokenOptions, TokenCredential } from "@azure/core-auth";
+import { credentialLogger, formatError, formatSuccess } from "../util/logging.js";
+import type { AzureDeveloperCliCredentialOptions } from "./azureDeveloperCliCredentialOptions.js";
+import { CredentialUnavailableError } from "../errors.js";
 import child_process from "child_process";
 import {
   checkTenantId,
   processMultiTenantRequest,
   resolveAdditionallyAllowedTenantIds,
-} from "../util/tenantIdUtils";
-import { tracingClient } from "../util/tracing";
-import { ensureValidScopeForDevTimeCreds } from "../util/scopeUtils";
+} from "../util/tenantIdUtils.js";
+import { tracingClient } from "../util/tracing.js";
+import { ensureValidScopeForDevTimeCreds } from "../util/scopeUtils.js";
+
+const logger = credentialLogger("AzureDeveloperCliCredential");
 
 /**
  * Mockable reference to the Developer CLI credential cliCredentialFunctions
@@ -24,12 +26,16 @@ export const developerCliCredentialInternals = {
    */
   getSafeWorkingDir(): string {
     if (process.platform === "win32") {
-      if (!process.env.SystemRoot) {
-        throw new Error(
-          "Azure Developer CLI credential expects a 'SystemRoot' environment variable",
+      let systemRoot = process.env.SystemRoot || process.env["SYSTEMROOT"];
+      if (!systemRoot) {
+        logger.getToken.warning(
+          "The SystemRoot environment variable is not set. This may cause issues when using the Azure Developer CLI credential.",
         );
+
+        systemRoot = "C:\\Windows";
       }
-      return process.env.SystemRoot;
+
+      return systemRoot;
     } else {
       return "/bin";
     }
@@ -51,19 +57,20 @@ export const developerCliCredentialInternals = {
     }
     return new Promise((resolve, reject) => {
       try {
-        child_process.execFile(
-          "azd",
-          [
-            "auth",
-            "token",
-            "--output",
-            "json",
-            ...scopes.reduce<string[]>(
-              (previous, current) => previous.concat("--scope", current),
-              [],
-            ),
-            ...tenantSection,
-          ],
+        const args = [
+          "auth",
+          "token",
+          "--output",
+          "json",
+          ...scopes.reduce<string[]>(
+            (previous, current) => previous.concat("--scope", current),
+            [],
+          ),
+          ...tenantSection,
+        ];
+        const command = ["azd", ...args].join(" ");
+        child_process.exec(
+          command,
           {
             cwd: developerCliCredentialInternals.getSafeWorkingDir(),
             timeout,
@@ -78,8 +85,6 @@ export const developerCliCredentialInternals = {
     });
   },
 };
-
-const logger = credentialLogger("AzureDeveloperCliCredential");
 
 /**
  * Azure Developer CLI is a command-line interface tool that allows developers to create, manage, and deploy
@@ -197,7 +202,8 @@ export class AzureDeveloperCliCredential implements TokenCredential {
           return {
             token: resp.token,
             expiresOnTimestamp: new Date(resp.expiresOn).getTime(),
-          };
+            tokenType: "Bearer",
+          } as AccessToken;
         } catch (e: any) {
           if (obj.stderr) {
             throw new CredentialUnavailableError(obj.stderr);

@@ -3,15 +3,12 @@
 
 import { ServiceClient } from "@azure/core-client";
 import { createPipelineRequest } from "@azure/core-rest-pipeline";
-import { assert } from "chai";
-import { Context } from "mocha";
-import { isLiveMode } from "@azure-tools/test-recorder";
+import { describe, it, assert } from "vitest";
 
 describe("AzureFunctions Integration test", function () {
-  it("test the Azure Functions endpoint where the sync MI credential is used.", async function (this: Context) {
-    if (!isLiveMode()) {
-      this.skip();
-    }
+  // TODO: Reenable the test https://github.com/Azure/azure-sdk-for-js/issues/35416
+  it("test the Azure Functions endpoint where the sync MI credential is used.", async function (ctx) {
+    ctx.skip();
     const baseUri = baseUrl();
     const client = new ServiceClient({ baseUri: baseUri });
     const pipelineRequest = createPipelineRequest({

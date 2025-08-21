@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Azure SDK Core client library samples for JavaScript",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/core/core-sse",
   "dependencies": {
-    "@azure-samples/core-sse-js": "file:",
     "@azure/core-sse": "^1.0.0",
     "dotenv": "latest"
   }

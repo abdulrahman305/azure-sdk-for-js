@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createNetworkManagementClient, {
-  FirewallPolicyRuleCollectionGroupsListParameters,
-  paginate,
-} from "@azure-rest/arm-network";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Lists all FirewallPolicyRuleCollectionGroups in a FirewallPolicy resource.
  *
  * @summary Lists all FirewallPolicyRuleCollectionGroups in a FirewallPolicy resource.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/FirewallPolicyRuleCollectionGroupWithWebCategoriesList.json
  */
-async function listAllFirewallPolicyRuleCollectionGroupWithWebCategories() {
+
+import type { FirewallPolicyRuleCollectionGroupsListParameters } from "@azure-rest/arm-network";
+import createNetworkManagementClient, { paginate } from "@azure-rest/arm-network";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function listAllFirewallPolicyRuleCollectionGroupWithWebCategories(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";
@@ -50,7 +45,7 @@ listAllFirewallPolicyRuleCollectionGroupWithWebCategories().catch(console.error)
  * @summary Lists all FirewallPolicyRuleCollectionGroups in a FirewallPolicy resource.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/FirewallPolicyRuleCollectionGroupList.json
  */
-async function listAllFirewallPolicyRuleCollectionGroupsForAGivenFirewallPolicy() {
+async function listAllFirewallPolicyRuleCollectionGroupsForAGivenFirewallPolicy(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";
@@ -82,7 +77,7 @@ listAllFirewallPolicyRuleCollectionGroupsForAGivenFirewallPolicy().catch(console
  * @summary Lists all FirewallPolicyRuleCollectionGroups in a FirewallPolicy resource.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/FirewallPolicyRuleCollectionGroupWithIpGroupsList.json
  */
-async function listAllFirewallPolicyRuleCollectionGroupsWithIPGroupsForAGivenFirewallPolicy() {
+async function listAllFirewallPolicyRuleCollectionGroupsWithIPGroupsForAGivenFirewallPolicy(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";

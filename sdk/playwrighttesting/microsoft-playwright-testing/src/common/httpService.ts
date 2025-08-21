@@ -1,16 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
+import type { PipelineResponse, HttpMethods } from "@azure/core-rest-pipeline";
 import {
   createDefaultHttpClient,
   createHttpHeaders,
   createPipelineRequest,
-  PipelineResponse,
-  HttpMethods,
   createPipelineFromOptions,
 } from "@azure/core-rest-pipeline";
-import { reporterLogger } from "./logger";
+import { reporterLogger } from "./logger.js";
 
 const HTTP_CALL_TIMEOUT = 70000;
 

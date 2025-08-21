@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Update tags associated with the provided layer 2 (L2) network.
  *
  * @summary Update tags associated with the provided layer 2 (L2) network.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/L2Networks_Patch.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/L2Networks_Patch.json
  */
 async function patchL2Network() {
   const subscriptionId =
@@ -34,7 +32,7 @@ async function patchL2Network() {
 }
 
 async function main() {
-  patchL2Network();
+  await patchL2Network();
 }
 
 main().catch(console.error);

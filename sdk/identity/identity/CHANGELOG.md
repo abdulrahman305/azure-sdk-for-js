@@ -1,19 +1,150 @@
 # Release History
 
-## 4.5.0-beta.3 (Unreleased)
+## 4.11.2 (Unreleased)
 
 ### Features Added
-
-- Added support for the field `refreshAfterTimestamp` in `AccessToken` [#30402](https://github.com/Azure/azure-sdk-for-js/pull/30402)
-- Added support for providing an object ID to `ManagedIdentityCredential`. [#30771](https://github.com/Azure/azure-sdk-for-js/pull/30771)
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- `ManagedIdentityCredential` now throws an error when attempting to pass a user-assigned Managed Identity in a CloudShell environment instead of silently ignoring it. [#30955](https://github.com/Azure/azure-sdk-for-js/pull/30955)
+### Other Changes
+
+## 4.11.1 (2025-08-05)
+
+### Bugs Fixed
+
+- Fixed an issue in which `AzurePowerShellCredential` command is not parsed correctly. [#35469](https://github.com/Azure/azure-sdk-for-js/pull/35469)
+
+## 4.11.0 (2025-08-05)
+
+- All the features shipped as part of 4.11.0-beta.1 will be GA with this version. The most important features include single credential selection in `DefaultAzureCredential` via `AZURE_TOKEN_CREDENTIALS` environment variable, broker authentication support through `VisualStudioCodeCredential`, and signed-in Windows account support in `DefaultAzureCredential`.
+
+### Bugs Fixed
+
+- Fixed deprecation warnings in `AzureCliCredential` and `AzureDeveloperCliCredential`. [#34878](https://github.com/Azure/azure-sdk-for-js/pull/34878)
+- Fixed an issue where `InteractiveBrowserCredential` did not resolve correctly on Mac OS. [#35406](https://github.com/Azure/azure-sdk-for-js/pull/35406)
+
+## 4.11.0-beta.1 (2025-07-17)
+
+### Features Added
+
+- `VisualStudioCodeCredential` has been restored and now supports **broker authentication** using the Azure account signed in via Visual Studio Code. The credential has been added to `DefaultAzureCredential` [#35150](https://github.com/Azure/azure-sdk-for-js/pull/35150)
+- `DefaultAzureCredential` now supports authentication with the currently signed-in Windows account when the `@azure/identity-broker` package is installed and configured with `useIdentityPlugin`. This auth mechanism is added at the end of the `DefaultAzureCredential` credential chain. [#35213](https://github.com/Azure/azure-sdk-for-js/pull/35213)
+- Added support for more `AZURE_TOKEN_CREDENTIALS` environment variable values to specify a single credential type to use in `DefaultAzureCredential`. In addition to `dev` and `prod`, possible values now include `VisualStudioCodeCredential`, `EnvironmentCredential`, `WorkloadIdentityCredential`, `ManagedIdentityCredential`, `AzureDeveloperCliCredential`, `AzurePowershellCredential` and `AzureCliCredential` - each for the corresponding credential type. [#34966](https://github.com/Azure/azure-sdk-for-js/pull/34966)
 
 ### Other Changes
+
+- Added HTTP 410 status code handling to `ManagedIdentityCredential` retry policy with minimum 70-second total retry duration to meet Azure IMDS service requirements. [#34981](https://github.com/Azure/azure-sdk-for-js/pull/34981)
+
+## 4.10.2 (2025-07-02)
+
+### Bugs Fixed
+
+- Fixed an issue in `AzurePowerShellCredential` where `-AsPlainText` is not supported in the `ConvertFrom-SecureString` cmdlet in older versions. [#34902](https://github.com/Azure/azure-sdk-for-js/pull/34902)
+
+### Other Changes
+
+- Added support to specify `subscription` ID or name on `AzureCliCredential` error message. [#34801](https://github.com/Azure/azure-sdk-for-js/pull/34801)
+
+## 4.10.1 (2025-06-12)
+
+### Bugs Fixed
+
+- Fixed the bug in interactive authentication request to account for the correct user login prompt based on the login hint provided, in case there are multiple accounts present in the browser flow. [#34321](https://github.com/Azure/azure-sdk-for-js/pull/34321)
+- Fixed the typing for `WorkloadIdentityCredential.getToken` to better represent the runtime behavior. [#34786](https://github.com/Azure/azure-sdk-for-js/pull/34786)
+
+## 4.10.0 (2025-05-14)
+
+### Features Added
+
+- Added support for the `AZURE_TOKEN_CREDENTIALS` environment variable to `DefaultAzureCredential`, which allows for choosing between 'deployed service' and 'developer tools' credentials. Valid values are 'dev' for developer tools and 'prod' for deployed service. [#34301](https://github.com/Azure/azure-sdk-for-js/pull/34301)
+
+### Other Changes
+
+- Added deprecation warnings for username password usage in `EnvironmentCredential` constructor to warn the users. `UsernamePassword` authentication doesn't support Multi-Factor Authentication (MFA), and MFA will enabled soon on all tenants. For more details, see [Planning for mandatory MFA](https://aka.ms/mfaforazure). [#34054](https://github.com/Azure/azure-sdk-for-js/pull/34054)
+
+## 4.9.1 (2025-04-17)
+
+### Bugs Fixed
+
+- Update the order for conditional exports so that the most specific conditions are listed first. [#33914](https://github.com/Azure/azure-sdk-for-js/pull/33914)
+- Fix a bug in which `self.location` is undefined in specific environment. [#33914](https://github.com/Azure/azure-sdk-for-js/pull/33914)
+
+## 4.9.0 (2025-04-16)
+
+### Features Added
+
+- Add `workerd` conditional exports support for Cloudflare environment. [#32422](https://github.com/Azure/azure-sdk-for-js/pull/32422)
+
+### Other Changes
+
+- Marked `VisualStudioCodeCredential`, `VisualStudioCodeCredentialOptions` and `VSCodeCredentialFinder` as deprecated. [#33413](https://github.com/Azure/azure-sdk-for-js/pull/33413)
+- Upgraded version of `@azure/msal-node` to v3.5.0 that has [a bug fix](https://github.com/AzureAD/microsoft-authentication-library-for-js/pull/7631) for Azure Machine Learning Managed Identity. [#33792](https://github.com/Azure/azure-sdk-for-js/pull/33792)
+
+## 4.8.0 (2025-03-11)
+
+### Features Added
+
+- `ManagedIdentityCredential` will now log the configured user-assigned managed identity ID. [#33144](https://github.com/Azure/azure-sdk-for-js/pull/33144)
+
+### Other Changes
+
+- Deprecated `UsernamePasswordCredential` and `UsernamePasswordCredentialOptions`, as the credential doesn't support multifactor authentication (MFA). MFA will soon be enforced on all Microsoft Entra tenants. For more details, see [Planning for mandatory MFA](https://aka.ms/mfaforazure). [#33136](https://github.com/Azure/azure-sdk-for-js/pull/33136) and [#33312](https://github.com/Azure/azure-sdk-for-js/pull/33312)
+- For `AzureCliCredential` and `AzureDeveloperCliCredential`, if system root environment variable is not found on the Windows platform, the system root variable is set to the appropriate value with a warning logged as opposed to throwing an error. [#33178](https://github.com/Azure/azure-sdk-for-js/pull/33178)
+
+## 4.7.0 (2025-02-18)
+
+### Features Added
+
+- Added `subscription` property in `AzureCliCredentialOptions`. [#31451](https://github.com/Azure/azure-sdk-for-js/pull/31451)
+
+### Bugs Fixed
+
+- Fixed the logic to return authority without the scheme and tenant ID [#31540](https://github.com/Azure/azure-sdk-for-js/pull/31540)
+- Fixed an issue where an incorrect tenant ID was presented in multi-tenant authentication errors [#32505](https://github.com/Azure/azure-sdk-for-js/pull/32505)
+- `ManagedIdentityCredential` now throws an error when attempting to pass a user-assigned Managed Identity in a ServiceFabric environment instead of silently ignoring it. [#32841](https://github.com/Azure/azure-sdk-for-js/pull/32841)
+- Fixed the bug in silent authentication behavior to happen only in scenarios where an account is present either in the persistent cache (if tokenCachePersistence is enabled and authentication record is provided) or the in-memory cache, instead of silently picking up the first account found in token cache. [#32134](https://github.com/Azure/azure-sdk-for-js/pull/32134)
+- Fixed the bug in interactive authentication request to account for the correct user login prompt based on the login hint provided, in case there are multiple accounts present. [#32134](https://github.com/Azure/azure-sdk-for-js/pull/32134)
+- Incorporated the [fix by @azure/msal-node (v 3.2.1)](https://github.com/AzureAD/microsoft-authentication-library-for-js/pull/7469) for silent authentication to do token lookup in persistent cache.
+
+### Other Changes
+
+- Mark `AzureAuthorityHosts.AZURE_GERMANY` deprecated as the Germany cloud closed in 2021. [#31519](https://github.com/Azure/azure-sdk-for-js/pull/31519)
+- Native ESM support has been added, and this package will now emit both CommonJS and ESM. [#31647](https://github.com/Azure/azure-sdk-for-js/pull/31647)
+
+## 4.6.0 (2025-01-16)
+
+### Other Changes
+
+- Update `@azure/msal-browser` to 4.x [#32565](https://github.com/Azure/azure-sdk-for-js/pull/32565)
+
+## 4.5.0 (2024-10-15)
+
+### Features Added
+
+- Added Proof-of-Possession via Signed HTTP Request (SHR) support to `AccessToken` and `GetTokenOptions` for native broker scenarios in `InteractiveBrowserCredential` to be used with plugin `@azure/identity-broker` [#30961](https://github.com/Azure/azure-sdk-for-js/pull/30961).
+
+### Bugs Fixed
+
+- Fixed the request sent in AzurePipelinesCredential so it doesn't result in a redirect response when an invalid system access token is provided [#31209](https://github.com/Azure/azure-sdk-for-js/pull/31209).
+
+### Other Changes
+
+- Allow certain response headers to be logged in `AzurePipelinesCredential` for diagnostics and include them in the error message [#31209](https://github.com/Azure/azure-sdk-for-js/pull/31209)
+
+## 4.5.0-beta.3 (2024-09-18)
+
+### Features Added
+
+- Added support for the field `refreshAfterTimestamp` in `AccessToken` [#30402](https://github.com/Azure/azure-sdk-for-js/pull/30402)
+- Added support for providing an object ID to `ManagedIdentityCredential`. [#30771](https://github.com/Azure/azure-sdk-for-js/pull/30771)
+- Added support for token cache persistence via the `CredentialTokenPersistence` options to the `ClientAssertionCredential`. [#31129](https://github.com/Azure/azure-sdk-for-js/pull/31129)
+
+### Bugs Fixed
+
+- `ManagedIdentityCredential` now throws an error when attempting to pass a user-assigned Managed Identity in a CloudShell environment instead of silently ignoring it. [#30955](https://github.com/Azure/azure-sdk-for-js/pull/30955)
+- Fixed an issue where cross-tenant federation did not read the AZURE_AUTHORITY_HOST environment in all scenarios. [#31134](https://github.com/Azure/azure-sdk-for-js/pull/31134)
 
 ## 4.5.0-beta.2 (2024-08-13)
 
@@ -455,7 +586,7 @@ Identity v2 provides a top-level `useIdentityPlugin` function, which allows usin
   - If the `@azure/identity-vscode` plugin isn't used through the `useIdentityPlugin` function, the `VisualStudioCodeCredential` exposed by Identity v2 will throw a `CredentialUnavailableError`.
 - [@azure/identity-cache-persistence](https://www.npmjs.com/package/@azure/identity-cache-persistence), which provides persistent token caching.
 
-Most credentials on Identity v2 now support the persistent token caching feature. Such credentials include the property [tokenCachePersistenceOptions](https://docs.microsoft.com/javascript/api/@azure/identity/tokencachepersistenceoptions) in the constructor options which can be used to enable this feature.
+Most credentials on Identity v2 now support the persistent token caching feature. Such credentials include the property [tokenCachePersistenceOptions](https://learn.microsoft.com/javascript/api/@azure/identity/tokencachepersistenceoptions) in the constructor options which can be used to enable this feature.
 
 The following example showcases how to enable persistence caching by first enabling the `@azure/identity-cache-persistence` plugin with `useIdentityPlugin(cachePersistencePlugin)`, and then passing the `tokenCachePersistenceOptions` through the constructor of the `DeviceCodeCredential`:
 
@@ -491,7 +622,7 @@ Identity v2 enables:
 - Support for multi-tenant authentication on all credentials except `ManagedIdentityCredential`.
   - At the moment, applications needing multi-tenancy support will need to call to the credentials' `getToken` directly, sending the new `tenantId` property.
   - A sample with more context will be provided in a future date.
-  - To disable it, set the environment variable `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH`. For more about multitenancy, see [Identity management in multitenant apps](https://docs.microsoft.com/azure/architecture/multitenant-identity/).
+  - To disable it, set the environment variable `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH`. For more about multitenancy, see [Identity management in multitenant apps](https://learn.microsoft.com/azure/architecture/multitenant-identity/).
 
 #### New features in InteractiveBrowserCredential and DeviceCodeCredential
 

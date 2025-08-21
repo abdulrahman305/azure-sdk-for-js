@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to List secrets for a container app
  *
  * @summary List secrets for a container app
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerApps_ListSecrets.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_ListSecrets.json
  */
-async function listContainerAppsSecrets() {
+async function listContainerAppsSecrets(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345";
@@ -35,8 +33,8 @@ async function listContainerAppsSecrets() {
   console.log(result);
 }
 
-async function main() {
-  listContainerAppsSecrets();
+async function main(): Promise<void> {
+  await listContainerAppsSecrets();
 }
 
 main().catch(console.error);

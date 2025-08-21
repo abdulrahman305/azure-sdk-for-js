@@ -2,11 +2,12 @@
 // Licensed under the MIT License.
 
 import { createRecorder, createModelClient } from "../utils/recordedClient.js";
-import { Recorder } from "@azure-tools/test-recorder";
+import type { Recorder } from "@azure-tools/test-recorder";
 import { assert, beforeEach, afterEach, it, describe } from "vitest";
-import { ModelClient, isUnexpected, ChatCompletionsOutput } from "../../../src/index.js";
-import fs from 'fs';
-import path from 'path';
+import type { ModelClient, ChatCompletionsOutput } from "../../../src/index.js";
+import { isUnexpected } from "../../../src/index.js";
+import fs from "node:fs";
+import path from "node:path";
 
 function getImageDataUrl(imageFile: string, imageFormat: string): string {
   try {
@@ -16,8 +17,8 @@ function getImageDataUrl(imageFile: string, imageFormat: string): string {
     return `data:image/${imageFormat};base64,${base64Image}`;
   } catch (error) {
     console.error(`Could not read '${imageFile}'.`);
-    console.error('Set the correct path to the image file before running this sample.');
-    process.exit(1);
+    console.error("Set the correct path to the image file before running this sample.");
+    throw error;
   }
 }
 
@@ -34,19 +35,24 @@ describe("image file test suite", () => {
     await recorder.stop();
   });
 
-  it("chat with image file test", async function () {
-
+  it("chat with image file test", async () => {
     const response = await client.path("/chat/completions").post({
       body: {
-        messages: [{
-          role: "user", content: [{
-            type: "image_url",
-            image_url: {
-              url: getImageDataUrl("sample.png", "png"),
-            }
-          }]
-        }, { role: "user", content: "describe the image" }],
-      }
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "image_url",
+                image_url: {
+                  url: getImageDataUrl("sample.png", "png"),
+                },
+              },
+            ],
+          },
+          { role: "user", content: "describe the image" },
+        ],
+      },
     });
 
     assert.isFalse(isUnexpected(response));

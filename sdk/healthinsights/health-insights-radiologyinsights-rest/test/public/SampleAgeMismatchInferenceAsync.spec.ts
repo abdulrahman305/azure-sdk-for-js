@@ -1,18 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Recorder } from "@azure-tools/test-recorder";
-import { assert } from "chai";
-import { Context } from "mocha";
-import {
-  AzureHealthInsightsClient,
-  ClinicalDocumentTypeEnum,
-  getLongRunningPoller,
-} from "../../src";
-import { createRecorder, createTestClient } from "./utils/recordedClient";
+import type { Recorder } from "@azure-tools/test-recorder";
+import type { AzureHealthInsightsClient } from "../../src/index.js";
+import { getLongRunningPoller } from "../../src/index.js";
+import { createRecorder, createTestClient } from "./utils/recordedClient.js";
+import { describe, it, assert, beforeEach, afterEach } from "vitest";
 
 const codingData = {
-  system: "Http://hl7.org/fhir/ValueSet/cpt-all",
+  system: "http://www.ama-assn.org/go/cpt",
   code: "USPELVIS",
   display: "US PELVIS COMPLETE",
 };
@@ -23,7 +19,7 @@ const code = {
 
 const patientInfo = {
   sex: "female",
-  birthDate: new Date("1959-11-11T19:00:00+00:00"),
+  birthDate: "1959-11-11T19:00:00+00:00",
 };
 
 const encounterData = {
@@ -78,14 +74,14 @@ These results have been discussed with Dr. Jones at 3 PM on November 5 2020.`,
 
 const patientDocumentData = {
   type: "note",
-  clinicalType: ClinicalDocumentTypeEnum.RadiologyReport,
+  clinicalType: "radiologyReport",
   id: "docid1",
   language: "en",
   authors: [authorData],
   specialtyType: "radiology",
   administrativeMetadata: administrativeMetadata,
   content: content,
-  createdAt: new Date("2021-05-31T16:00:00.000Z"),
+  createdAt: "2021-05-31T16:00:00.000Z",
   orderedProceduresAsCsv: "US PELVIS COMPLETE",
 };
 
@@ -108,6 +104,9 @@ const inferenceTypes = [
   "followupRecommendation",
   "followupCommunication",
   "radiologyProcedure",
+  "scoringAndAssessment",
+  "guidance",
+  "qualityMeasure",
 ];
 
 const followupRecommendationOptions = {
@@ -194,16 +193,16 @@ describe("Age Mismatch Inference Test", () => {
   let recorder: Recorder;
   let client: AzureHealthInsightsClient;
 
-  beforeEach(async function (this: Context) {
-    recorder = await createRecorder(this);
+  beforeEach(async (ctx) => {
+    recorder = await createRecorder(ctx);
     client = await createTestClient(recorder);
   });
 
-  afterEach(async function () {
+  afterEach(async () => {
     await recorder.stop();
   });
 
-  it("age mismatch inference test", async function () {
+  it("age mismatch inference test", async () => {
     const result = await client
       .path("/radiology-insights/jobs/{id}", "jobId-17138794618263")
       .put(param);

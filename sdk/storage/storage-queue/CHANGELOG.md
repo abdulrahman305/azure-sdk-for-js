@@ -1,6 +1,6 @@
 # Release History
 
-## 12.24.0-beta.2 (Unreleased)
+## 12.28.0 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,47 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.27.0 (2025-07-22)
+
+### Features Added
+
+- Includes all features released in 12.27.0-beta.1.
+
+## 12.28.0-beta.1 (2025-06-16)
+
+### Features Added
+
+- Added support for service version 2025-11-05.
+- Added more useful error message when the SDK encounters an x-ms-version mis-match issue.
+
+## 12.27.0-beta.1 (2025-05-20)
+
+### Features Added
+
+- Added support for service version 2025-07-05.
+
+## 12.26.0 (2025-03-18)
+
+### Features Added
+
+- Added support for service version 2025-05-05.
+
+## 12.25.0 (2024-11-13)
+
+### Features Added
+
+- Added support for service version 2025-01-05.
+
+## 12.24.0 (2024-09-22)
+
+### Features Added
+
+- Includes all features released in 12.24.0-beta.1.
+
+### Other Changes
+
+- Upgraded dependency on `@azure/core-xml` to version `1.4.3`.
 
 ## 12.24.0-beta.1 (2024-08-09)
 
@@ -92,7 +133,7 @@
 
 ## 12.11.0 (2022-10-14)
 
-### Features 
+### Features
 
 - Added support for service version 2021-10-04.
 
@@ -308,7 +349,7 @@
 - A new option `keepAliveOptions` added to parameter of `newPipeline()` which controls keep-alive configurations. Keep-alive is enabled by default.
 - Pass through `options.abortSignal` to the optional `abortSignal` attribute in option bags instead of using `AbortSignal.none` as the default value when `options.abortSignal` is not specified.
 - Basic HTTP proxy authentication support is added. Proxy settings can be passed in the options while creating a new client. Example - [typescript/proxyAuth.ts](https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/storage/storage-queue/samples/v12/typescript/src/proxyAuth.ts)
-- Connection strings for explicit storage endpoints are supported. - [Configure Azure Storage connection strings](https://docs.microsoft.com/azure/storage/common/storage-configure-connection-string#create-a-connection-string-for-an-explicit-storage-endpoint)
+- Connection strings for explicit storage endpoints are supported. - [Configure Azure Storage connection strings](https://learn.microsoft.com/azure/storage/common/storage-configure-connection-string#create-a-connection-string-for-an-explicit-storage-endpoint)
 
 ## 10.3.0 (2019-09-09)
 
@@ -336,7 +377,7 @@
 - Updated API version to 2018-11-09.
 - Updated HTTP client from axios to node-fetch in Node.js runtime.
 - A new option `keepAliveOptions` added to parameter of `StorageURL.newPipeline()` which controls keep-alive configurations. Keep-alive is enabled by default.
-- Updated Azure Storage Service API version to [2018-11-09](https://docs.microsoft.com/rest/api/storageservices/version-2018-11-09).
+- Updated Azure Storage Service API version to [2018-11-09](https://learn.microsoft.com/rest/api/storageservices/version-2018-11-09).
 
 ## 12.0.0-preview.1 (2019-07-03)
 

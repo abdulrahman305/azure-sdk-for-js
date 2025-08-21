@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Gets the status of service.
  *
  * @summary Gets the status of service.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBDataTransferServiceGet.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBDataTransferServiceGet.json
  */
 async function dataTransferServiceGet() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -33,7 +31,7 @@ async function dataTransferServiceGet() {
  * This sample demonstrates how to Gets the status of service.
  *
  * @summary Gets the status of service.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBGraphAPIComputeServiceGet.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBGraphAPIComputeServiceGet.json
  */
 async function graphApiComputeServiceGet() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -50,7 +48,7 @@ async function graphApiComputeServiceGet() {
  * This sample demonstrates how to Gets the status of service.
  *
  * @summary Gets the status of service.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBMaterializedViewsBuilderServiceGet.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBMaterializedViewsBuilderServiceGet.json
  */
 async function materializedViewsBuilderServiceGet() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -67,7 +65,7 @@ async function materializedViewsBuilderServiceGet() {
  * This sample demonstrates how to Gets the status of service.
  *
  * @summary Gets the status of service.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/services/sqldedicatedgateway/CosmosDBSqlDedicatedGatewayServiceGet.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/services/sqldedicatedgateway/CosmosDBSqlDedicatedGatewayServiceGet.json
  */
 async function sqlDedicatedGatewayServiceGet() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -81,10 +79,10 @@ async function sqlDedicatedGatewayServiceGet() {
 }
 
 async function main() {
-  dataTransferServiceGet();
-  graphApiComputeServiceGet();
-  materializedViewsBuilderServiceGet();
-  sqlDedicatedGatewayServiceGet();
+  await dataTransferServiceGet();
+  await graphApiComputeServiceGet();
+  await materializedViewsBuilderServiceGet();
+  await sqlDedicatedGatewayServiceGet();
 }
 
 main().catch(console.error);

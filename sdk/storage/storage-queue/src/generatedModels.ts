@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { WithResponse } from "./utils/utils.common";
-import {
+import type { WithResponse } from "./utils/utils.common.js";
+import type {
   ListQueuesSegmentResponse,
   MessageIdDeleteHeaders,
   MessageIdUpdateHeaders,
@@ -18,7 +18,7 @@ import {
   ServiceGetStatisticsHeaders,
   ServiceListQueuesSegmentHeaders,
   ServiceSetPropertiesHeaders,
-} from "./generated/src";
+} from "./generated/src/index.js";
 
 export {
   AccessPolicy,
@@ -52,7 +52,7 @@ export {
   ServiceListQueuesSegmentHeaders,
   ServiceSetPropertiesHeaders,
   SignedIdentifier as SignedIdentifierModel,
-} from "./generated/src/models";
+} from "./generated/src/models/index.js";
 
 /** Contains response data for the getProperties operation. */
 export type ServiceGetPropertiesResponse = WithResponse<

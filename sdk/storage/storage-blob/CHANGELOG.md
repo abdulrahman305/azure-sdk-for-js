@@ -1,6 +1,6 @@
 # Release History
 
-## 12.25.0-beta.2 (Unreleased)
+## 12.29.0 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,64 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.28.0 (2025-07-22)
+
+### Features Added
+
+- Includes all features released in 12.28.0-beta.2.
+
+## 12.29.0-beta.1 (2025-06-16)
+
+### Features Added
+
+- Added support for service version 2025-11-05.
+- AppendBlobClient. appendBlockFromURL (), BlobClient.startCopyFromURL(), syncCopyFromURL(), BlockBlobClient.stageBlockFromURL() and PageBlobClient.uploadPagesFromURL() will now return CopySourceStatusCode, CopySourceErrorCode, and CopySourceErrorMessage as part of error responses.
+- Added more useful error message when the SDK encounters an x-ms-version mis-match issue.
+
+## 12.28.0-beta.2 (2025-05-20)
+
+### Features Added
+
+- Includes all features released in 12.28.0-beta.1.
+
+## 12.28.0-beta.1 (2025-05-20)
+
+### Features Added
+
+- Added support for service version 2025-07-05.
+- Added support for the `sourceShareTokenIntent` parameter to `AppendBlobClient.appendBlockFromURL()`, `BlockBlobClient.stageBlockFromURL()`, `BlockBlobClient.syncUploadFromURL()`, `BlobClient.syncCopyFromURL()`, `PageBlobClient.uploadPagesFromURL()`.
+
+## 12.27.0 (2025-03-18)
+
+### Features Added
+
+- Added support for service version 2025-05-05.
+
+## 12.26.0 (2024-11-13)
+
+### Features Added
+
+- Includes all features released in 12.26.0-beta.1.
+
+## 12.26.0-beta.1 (2024-10-15)
+
+### Features Added
+
+- Added support for service version 2025-01-05.
+- Added generateUserDelegationSasUrl() to BlobClient and ContainerClient.
+- Added BlobErrorCode.BlobAccessTierNotSupportedForAccountType enum value.
+
+## 12.25.0 (2024-09-22)
+
+### Features Added
+
+- Includes all features released in 12.25.0-beta.1.
+- Added support for customer provided key in BlockBlobClient.uploadStream().
+
+### Other Changes
+
+- Upgraded dependency on `@azure/core-xml` to version `1.4.3`.
 
 ## 12.25.0-beta.1 (2024-08-09)
 
@@ -354,7 +412,7 @@
 
 ## 12.1.1 (2020-03-12)
 
-- Bug fix - Blob SAS's `sr` field is now properly set when generating SAS for a blob using a stored policy with `signedpermissions`. For more details about Service SAS, please refer to [link](https://docs.microsoft.com/rest/api/storageservices/create-service-sas).
+- Bug fix - Blob SAS's `sr` field is now properly set when generating SAS for a blob using a stored policy with `signedpermissions`. For more details about Service SAS, please refer to [link](https://learn.microsoft.com/rest/api/storageservices/create-service-sas).
 - Fixed unexpected hang issue when uploading empty body. Fixed bug [6904](https://github.com/Azure/azure-sdk-for-js/issues/6904).
 
 ## 12.1.0 (2020-02-12)
@@ -551,7 +609,7 @@
 - A new option `keepAliveOptions` added to parameter of `newPipeline()` which controls keep-alive configurations. Keep-alive is enabled by default.
 - Pass through `options.abortSignal` to the optional `abortSignal` attribute in option bags instead of using `AbortSignal.none` as the default value when `options.abortSignal` is not specified.
 - Basic HTTP proxy authentication support is added. Proxy settings can be passed in the options while creating a new client. Example - [typescript/proxyAuth.ts](https://github.com/Azure/azure-sdk-for-js/blob/@azure/storage-blob_12.0.0-preview.3/sdk/storage/storage-blob/samples/typescript/proxyAuth.ts)
-- Connection strings for explicit storage endpoints are supported. - [Configure Azure Storage connection strings](https://docs.microsoft.com/azure/storage/common/storage-configure-connection-string#create-a-connection-string-for-an-explicit-storage-endpoint)
+- Connection strings for explicit storage endpoints are supported. - [Configure Azure Storage connection strings](https://learn.microsoft.com/azure/storage/common/storage-configure-connection-string#create-a-connection-string-for-an-explicit-storage-endpoint)
 
 ## 10.5.0 (2019-09-09)
 
@@ -581,7 +639,7 @@
 
 ## 10.4.0 (2019-07-30)
 
-- Updated Azure Storage Service API version to [2018-11-09](https://docs.microsoft.com/rest/api/storageservices/version-2018-11-09).
+- Updated Azure Storage Service API version to [2018-11-09](https://learn.microsoft.com/rest/api/storageservices/version-2018-11-09).
 - Improved comments for `BlockBlobURL.upload()`.
 - Exported `HttpRequestBody` type for who wants to implement a customized HTTP client.
 - Fixed a bug of `downloadBlobToBuffer()` and `downloadAzureFileToBuffer()` when provided offset is not 0.

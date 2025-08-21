@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
+import type {
   Document as GeneratedDocument,
   DocumentKeyValueElement as GeneratedDocumentKeyValueElement,
   DocumentLine as GeneratedDocumentLine,
@@ -13,8 +13,8 @@ import {
   DocumentWord as GeneratedDocumentWord,
   DocumentBarcode as GeneratedDocumentBarcode,
   DocumentFormula as GeneratedDocumentFormula,
-} from "../../src/generated";
-import {
+} from "../../src/generated/index.js";
+import type {
   Document,
   DocumentKeyValueElement,
   DocumentLine,
@@ -24,14 +24,13 @@ import {
   DocumentTable,
   DocumentTableCell,
   DocumentWord,
-  DocumentAnnotation,
   DocumentBarcode,
   DocumentFormula,
-} from "../../src/models/documentElements";
+} from "../../src/models/documentElements.js";
 
 // To avoid going out-of-sync with the generated types, we test the re-constructed interfaces are following the shapes in the generated interfaces in this test file.
 
-function checkAssign<T>(_model: T) {
+function checkAssign<T>(_model: T): void {
   /* intentionally empty */
 }
 
@@ -44,7 +43,6 @@ declare const documentTableCell: DocumentTableCell;
 declare const documentKeyValueElement: DocumentKeyValueElement;
 declare const document: Document;
 declare const documentPage: DocumentPage;
-declare const documentAnnotation: DocumentAnnotation;
 declare const documentBarcode: DocumentBarcode;
 declare const documentFormula: DocumentFormula;
 

@@ -1,12 +1,17 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import prompts, { PromptObject } from "prompts";
-import fs from "fs";
-import { Extensions, Languages, Messages } from "./constants";
-import { OverridePromptResponse, PackageManager, PlaywrightServiceInitConfig } from "./types";
-import { executeCommand, getFileReferenceForImport } from "./utils";
-import { getPackageManager } from "./packageManager";
+import type { PromptObject } from "prompts";
+import prompts from "prompts";
+import fs from "node:fs";
+import { Extensions, Languages, Messages } from "./constants.js";
+import type {
+  OverridePromptResponse,
+  PackageManager,
+  PlaywrightServiceInitConfig,
+} from "./types.js";
+import { executeCommand, getFileReferenceForImport } from "./utils.js";
+import { getPackageManager } from "./packageManager.js";
 
 const questions: PromptObject[] = [
   {
@@ -53,7 +58,6 @@ export class PlaywrightServiceInitialize {
   };
 
   private promptOnCancel = (): never => {
-    // eslint-disable-next-line n/no-process-exit
     process.exit(0);
   };
 
@@ -127,14 +131,7 @@ export default defineConfig(
     timeout: 30000,
     os: ServiceOS.LINUX,
   }),
-  {
-    /* 
-    Playwright Testing service reporter is added by default.
-    This will override any reporter options specified in the base playwright config.
-    If you are using more reporters, please update your configuration accordingly.
-    */
-    reporter: [['list'], ['@azure/microsoft-playwright-testing/reporter']],
-  }
+
 );
 `;
     return content;

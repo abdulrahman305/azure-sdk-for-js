@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Deletes an existing Azure Cosmos DB Cassandra table.
  *
  * @summary Deletes an existing Azure Cosmos DB Cassandra table.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBCassandraTableDelete.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBCassandraTableDelete.json
  */
 async function cosmosDbCassandraTableDelete() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -36,7 +34,7 @@ async function cosmosDbCassandraTableDelete() {
 }
 
 async function main() {
-  cosmosDbCassandraTableDelete();
+  await cosmosDbCassandraTableDelete();
 }
 
 main().catch(console.error);

@@ -1,15 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Recorder } from "@azure-tools/test-recorder";
-import { assert } from "chai";
-import { Context } from "mocha";
-import {
-  AzureHealthInsightsClient,
-  ClinicalDocumentTypeEnum,
-  getLongRunningPoller,
-} from "../../src";
-import { createRecorder, createTestClient } from "./utils/recordedClient";
+import type { Recorder } from "@azure-tools/test-recorder";
+import type { AzureHealthInsightsClient } from "../../src/index.js";
+import { getLongRunningPoller } from "../../src/index.js";
+import { createTestClient, createRecorder } from "./utils/recordedClient.js";
+import { describe, it, assert, beforeEach, afterEach } from "vitest";
 
 const codingData = {
   system: "http://www.nlm.nih.gov/research/umls",
@@ -18,7 +14,7 @@ const codingData = {
 };
 
 const codingData2 = {
-  system: "Http://hl7.org/fhir/ValueSet/cpt-all",
+  system: "http://www.ama-assn.org/go/cpt",
   code: "111111",
   display: "CT ABD/PELVIS",
 };
@@ -40,7 +36,7 @@ const clinicInfoData = {
 
 const patientInfo = {
   sex: "female",
-  birthDate: new Date("1959-11-11T19:00:00+00:00"),
+  birthDate: "1959-11-11T19:00:00+00:00",
   clinicalInfo: [clinicInfoData],
 };
 
@@ -76,7 +72,7 @@ The results were sent via Powerscribe to George Brown, PA.`,
 
 const patientDocumentData = {
   type: "note",
-  clinicalType: ClinicalDocumentTypeEnum.RadiologyReport,
+  clinicalType: "radiologyReport",
   id: "docid1",
   language: "en",
   authors: [authorData],
@@ -106,6 +102,9 @@ const inferenceTypes = [
   "followupRecommendation",
   "followupCommunication",
   "radiologyProcedure",
+  "scoringAndAssessment",
+  "guidance",
+  "qualityMeasure",
 ];
 
 const followupRecommendationOptions = {
@@ -147,16 +146,16 @@ describe("Radiology Insights Test", () => {
   let recorder: Recorder;
   let client: AzureHealthInsightsClient;
 
-  beforeEach(async function (this: Context) {
-    recorder = await createRecorder(this);
+  beforeEach(async (ctx) => {
+    recorder = await createRecorder(ctx);
     client = await createTestClient(recorder);
   });
 
-  afterEach(async function () {
+  afterEach(async () => {
     await recorder.stop();
   });
 
-  it("radiology Insights test", async function () {
+  it("radiology Insights test", async () => {
     const result = await client
       .path("/radiology-insights/jobs/{id}", "jobId-17138795314335")
       .put(param);

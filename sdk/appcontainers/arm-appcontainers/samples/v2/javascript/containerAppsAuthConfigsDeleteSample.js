@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Delete a Container App AuthConfig.
  *
  * @summary Delete a Container App AuthConfig.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/AuthConfigs_Delete.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/AuthConfigs_Delete.json
  */
 async function deleteContainerAppAuthConfig() {
   const subscriptionId =
@@ -35,7 +35,7 @@ async function deleteContainerAppAuthConfig() {
 }
 
 async function main() {
-  deleteContainerAppAuthConfig();
+  await deleteContainerAppAuthConfig();
 }
 
 main().catch(console.error);

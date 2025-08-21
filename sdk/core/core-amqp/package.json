@@ -1,7 +1,7 @@
 {
   "name": "@azure/core-amqp",
   "sdk-type": "client",
-  "version": "4.4.0-beta.2",
+  "version": "4.4.1",
   "description": "Common library for amqp based azure sdks like @azure/event-hubs.",
   "author": "Microsoft Corporation",
   "license": "MIT",
@@ -38,34 +38,29 @@
   ],
   "files": [
     "dist/",
+    "!dist/**/*.d.*ts.map",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "bundle": "tshy && dev-tool run bundle --polyfill-node false --inject-node-polyfills true --ignore-missing-node-builtins true",
-    "build:samples": "echo Obsolete",
-    "build:test": "echo skipped. actual commands inlined in browser test scripts",
-    "build": "npm run clean && tshy && dev-tool run extract-api",
-    "check-format": "dev-tool run vendored prettier --list-different --config ../../../.prettierrc.json --ignore-path ../../../.prettierignore \"src/**/*.ts\" \"test/**/*.ts\" \"*.{js,json}\"",
+    "build": "npm run clean && dev-tool run build-package && dev-tool run extract-api",
+    "build:samples": "echo skipped.",
+    "check-format": "prettier --list-different --config ../../../.prettierrc.json --ignore-path ../../../.prettierignore \"src/**/*.ts\" \"test/**/*.ts\" \"*.{js,json}\"",
     "clean": "rimraf --glob dist dist-* temp types coverage coverage-browser .nyc_output *.tgz *.log test*.xml",
     "execute:samples": "echo skipped",
-    "extract-api": "tshy && dev-tool run extract-api",
-    "format": "dev-tool run vendored prettier --write --config ../../../.prettierrc.json --ignore-path ../../../.prettierignore \"src/**/*.ts\" \"test/**/*.ts\" \"*.{js,json}\"",
-    "integration-test:browser": "echo skipped",
-    "integration-test:node": "echo skipped",
-    "integration-test": "npm run integration-test:node && npm run integration-test:browser",
-    "lint:fix": "eslint package.json api-extractor.json src test --fix --fix-type [problem,suggestion]",
-    "lint": "eslint package.json api-extractor.json src test",
+    "extract-api": "dev-tool run build-package && dev-tool run extract-api",
+    "format": "prettier --write --config ../../../.prettierrc.json --ignore-path ../../../.prettierignore \"src/**/*.ts\" \"test/**/*.ts\" \"*.{js,json}\"",
+    "lint": "eslint package.json src test",
+    "lint:fix": "eslint package.json src test --fix --fix-type [problem,suggestion]",
     "pack": "npm pack 2>&1",
-    "test:browser": "npm run clean && npm run unit-test:browser && npm run integration-test:browser",
-    "test:node": "npm run clean && tshy && npm run unit-test:node && npm run integration-test:node",
-    "test": "npm run clean && tshy && npm run unit-test:node && npm run bundle && npm run unit-test:browser && npm run integration-test",
-    "unit-test:browser": "npm run clean && tshy &&  dev-tool run build-test && dev-tool run test:vitest --no-test-proxy --browser",
-    "unit-test:node": "dev-tool run test:vitest --no-test-proxy",
-    "unit-test": "npm run unit-test:node && npm run unit-test:browser"
+    "test": "npm run test:node && npm run test:browser",
+    "test:browser": "npm run clean && dev-tool run build-package &&  dev-tool run build-test && dev-tool run test:vitest --no-test-proxy --browser",
+    "test:node": "dev-tool run test:vitest --no-test-proxy",
+    "test:node:esm": "dev-tool run test:vitest --esm",
+    "update-snippets": "dev-tool run update-snippets"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/core/core-amqp/README.md",
   "sideEffects": false,
@@ -83,26 +78,24 @@
     "process": "^0.11.10",
     "rhea": "^3.0.0",
     "rhea-promise": "^3.0.0",
-    "tslib": "^2.6.2"
+    "tslib": "^2.6.2",
+    "util": "^0.12.5"
   },
   "devDependencies": {
+    "@azure-tools/vite-plugin-browser-test-map": "^1.0.0",
     "@azure/dev-tool": "^1.0.0",
     "@azure/eslint-plugin-azure-sdk": "^3.0.0",
-    "@azure-tools/vite-plugin-browser-test-map": "^1.0.0",
-    "@microsoft/api-extractor": "^7.43.1",
     "@rollup/plugin-inject": "^5.0.5",
     "@types/debug": "^4.1.12",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.0.0",
     "@types/ws": "^8.5.10",
-    "@vitest/browser": "^2.0.5",
-    "@vitest/coverage-istanbul": "^2.0.5",
+    "@vitest/browser": "^3.0.9",
+    "@vitest/coverage-istanbul": "^3.0.9",
     "debug": "^4.3.4",
     "eslint": "^9.9.0",
     "playwright": "^1.43.1",
-    "rimraf": "^5.0.7",
-    "tshy": "^2.0.0",
-    "typescript": "~5.5.3",
-    "vitest": "^2.0.5",
+    "typescript": "~5.8.2",
+    "vitest": "^3.0.9",
     "ws": "^8.17.0"
   },
   "//metadata": {
@@ -121,7 +114,8 @@
       "browser",
       "react-native"
     ],
-    "selfLink": false
+    "selfLink": false,
+    "project": "../../../tsconfig.src.build.json"
   },
   "module": "./dist/esm/index.js"
 }

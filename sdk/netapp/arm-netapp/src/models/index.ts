@@ -12,6 +12,11 @@ import * as coreClient from "@azure/core-client";
 export interface OperationListResult {
   /** List of Storage operations supported by the Storage resource provider. */
   value?: Operation[];
+  /**
+   * URL to get the next set of operation list results (if there are any).
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly nextLink?: string;
 }
 
 /** Microsoft.NetApp REST API operation definition. */
@@ -173,6 +178,8 @@ export interface FilePathAvailabilityRequest {
   name: string;
   /** The Azure Resource URI for a delegated subnet. Must have the delegation Microsoft.NetApp/volumes */
   subnetId: string;
+  /** The Azure Resource logical availability zone which is used within zone mapping lookup for the subscription and region. The lookup will retrieve the physical zone where volume is placed. */
+  availabilityZone?: string;
 }
 
 /** Quota availability request content. */
@@ -185,10 +192,57 @@ export interface QuotaAvailabilityRequest {
   resourceGroup: string;
 }
 
+/** Usages result */
+export interface UsagesListResult {
+  /** A list of usages */
+  value?: UsageResult[];
+  /** URL to get the next set of results. */
+  nextLink?: string;
+}
+
+/** Usages entity model */
+export interface UsageResult {
+  /**
+   * The id of the usage.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly id?: string;
+  /**
+   * The name of the usage.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly name?: UsageName;
+  /**
+   * The current usage value for the subscription.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly currentValue?: number;
+  /**
+   * The limit of the usage.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly limit?: number;
+  /**
+   * The unit of the usage.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly unit?: string;
+}
+
+/** The name of the usage. */
+export interface UsageName {
+  /** The name of the usage. */
+  value?: string;
+  /** The localized name of the usage. */
+  localizedValue?: string;
+}
+
 /** List of Subscription Quota Items */
 export interface SubscriptionQuotaItemList {
   /** A list of SubscriptionQuotaItems */
   value?: SubscriptionQuotaItem[];
+  /** URL to get the next set of results. */
+  nextLink?: string;
 }
 
 /** Common fields that are returned in the response for all Azure Resource Manager resources */
@@ -344,7 +398,7 @@ export interface ActiveDirectory {
   backupOperators?: string[];
   /** Users to be added to the Built-in Administrators active directory group. A list of unique usernames without domain specifier */
   administrators?: string[];
-  /** kdc server IP addresses for the active directory machine. This optional parameter is used only while creating kerberos volume. */
+  /** kdc server IP address for the active directory machine. This optional parameter is used only while creating kerberos volume. */
   kdcIP?: string;
   /** Name of the active directory machine. This optional parameter is used only while creating kerberos volume */
   adName?: string;
@@ -417,6 +471,8 @@ export interface EncryptionIdentity {
   readonly principalId?: string;
   /** The ARM resource identifier of the user assigned identity used to authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match key of identity.userAssignedIdentities. */
   userAssignedIdentity?: string;
+  /** ClientId of the multi-tenant AAD Application. Used to access cross-tenant keyvaults. */
+  federatedClientId?: string;
 }
 
 /** Managed service identity (system assigned and/or user assigned identities) */
@@ -490,6 +546,53 @@ export interface NetAppAccountPatch {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly disableShowmount?: boolean;
+  /** Domain for NFSv4 user ID mapping. This property will be set for all NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes. */
+  nfsV4IDDomain?: string;
+  /**
+   * MultiAD Status for the account
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly multiAdStatus?: MultiAdStatus;
+}
+
+/** Encryption transition request */
+export interface EncryptionTransitionRequest {
+  /** Identifier for the virtual network */
+  virtualNetworkId: string;
+  /** Identifier of the private endpoint to reach the Azure Key Vault */
+  privateEndpointId: string;
+}
+
+/** Result of getKeyVaultStatus with information about how volumes under NetApp account are encrypted. */
+export interface GetKeyVaultStatusResponse {
+  /** The URI of the key vault/managed HSM that should be used for encryption. */
+  keyVaultUri?: string;
+  /** The name of the key that should be used for encryption. */
+  keyName?: string;
+  /** Azure resource ID of the key vault/managed HSM that should be used for encryption. */
+  keyVaultResourceId?: string;
+  /** Pairs of virtual network ID and private endpoint ID. Every virtual network that has volumes encrypted with customer-managed keys needs its own key vault private endpoint. */
+  keyVaultPrivateEndpoints?: KeyVaultPrivateEndpoint[];
+}
+
+/** Pairs of virtual network ID and private endpoint ID. Every virtual network that has volumes encrypted with customer-managed keys needs its own key vault private endpoint. */
+export interface KeyVaultPrivateEndpoint {
+  /** Identifier for the virtual network id */
+  virtualNetworkId?: string;
+  /** Identifier of the private endpoint to reach the Azure Key Vault */
+  privateEndpointId?: string;
+}
+
+/** Change key vault request */
+export interface ChangeKeyVault {
+  /** The URI of the key vault/managed HSM that should be used for encryption. */
+  keyVaultUri: string;
+  /** The name of the key that should be used for encryption. */
+  keyName: string;
+  /** Azure resource ID of the key vault/managed HSM that should be used for encryption. */
+  keyVaultResourceId?: string;
+  /** Pairs of virtual network ID and private endpoint ID. Every virtual network that has volumes encrypted with customer-managed keys needs its own key vault private endpoint. */
+  keyVaultPrivateEndpoints: KeyVaultPrivateEndpoint[];
 }
 
 /** List of capacity pool resources */
@@ -624,14 +727,46 @@ export interface ReplicationObject {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly replicationId?: string;
-  /** Indicates whether the local volume is the source or destination for the Volume Replication */
-  endpointType?: EndpointType;
+  /**
+   * Indicates whether the local volume is the source or destination for the Volume Replication
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly endpointType?: EndpointType;
   /** Schedule */
   replicationSchedule?: ReplicationSchedule;
-  /** The resource ID of the remote volume. */
-  remoteVolumeResourceId: string;
+  /** The resource ID of the remote volume. Required for cross region and cross zone replication */
+  remoteVolumeResourceId?: string;
+  /** The full path to a volume that is to be migrated into ANF. Required for Migration volumes */
+  remotePath?: RemotePath;
   /** The remote region for the other end of the Volume Replication. */
   remoteVolumeRegion?: string;
+  /**
+   * A list of destination replications
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly destinationReplications?: DestinationReplication[];
+}
+
+/** The full path to a volume that is to be migrated into ANF. Required for Migration volumes */
+export interface RemotePath {
+  /** The Path to a ONTAP Host */
+  externalHostName: string;
+  /** The name of a server on the ONTAP Host */
+  serverName: string;
+  /** The name of a volume on the server */
+  volumeName: string;
+}
+
+/** Destination replication properties */
+export interface DestinationReplication {
+  /** The resource ID of the remote volume */
+  resourceId?: string;
+  /** Indicates whether the replication is cross zone or cross region. */
+  replicationType?: ReplicationType;
+  /** The remote region for the destination volume. */
+  region?: string;
+  /** The remote zone for the destination volume. */
+  zone?: string;
 }
 
 /** Volume Snapshot Properties */
@@ -711,6 +846,8 @@ export interface VolumePatch {
    *  Never - No client-driven data is pulled from cool tier to standard storage.
    */
   coolAccessRetrievalPolicy?: CoolAccessRetrievalPolicy;
+  /** coolAccessTieringPolicy determines which cold data blocks are moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks in both the Snapshot copies and the active file system to the cool tier tier. This policy is the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not associated with the active file system to the cool tier. */
+  coolAccessTieringPolicy?: CoolAccessTieringPolicy;
   /** If enabled (true) the volume will contain a read-only snapshot directory which provides access to each of the volume's snapshots. */
   snapshotDirectoryVisible?: boolean;
   /** Enables access-based enumeration share property for SMB Shares. Only applicable for SMB/DualProtocol volume */
@@ -812,6 +949,24 @@ export interface Replication {
 export interface AuthorizeRequest {
   /** Resource id of the remote volume */
   remoteVolumeResourceId?: string;
+}
+
+/** Source Cluster properties for a cluster peer request */
+export interface PeerClusterForVolumeMigrationRequest {
+  /** A list of IC-LIF IPs that can be used to connect to the On-prem cluster */
+  peerIpAddresses: string[];
+}
+
+/** Information about cluster peering process */
+export interface ClusterPeerCommandResponse {
+  /** A command that needs to be run on the external ONTAP to accept cluster peering.  Will only be present if <code>clusterPeeringStatus</code> is <code>pending</code> */
+  peerAcceptCommand?: string;
+}
+
+/** Information about svm peering process */
+export interface SvmPeerCommandResponse {
+  /** A command that needs to be run on the external ONTAP to accept svm peering.  Will only be present if <code>svmPeeringStatus</code> is <code>pending</code> */
+  svmPeeringCommand?: string;
 }
 
 /** Pool change request */
@@ -980,7 +1135,7 @@ export interface BackupPolicyPatch {
   /** Resource tags */
   tags?: { [propertyName: string]: string };
   /**
-   * Backup Policy Resource ID
+   * Backup Policy GUID ID
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly backupPolicyId?: string;
@@ -1164,8 +1319,13 @@ export interface VolumeGroupVolumeProperties {
   readonly baremetalTenantId?: string;
   /** The Azure Resource URI for a delegated subnet. Must have the delegation Microsoft.NetApp/volumes */
   subnetId: string;
-  /** Network features available to the volume, or current state of update. */
+  /** The original value of the network features type available to the volume at the time it was created. */
   networkFeatures?: NetworkFeatures;
+  /**
+   * The effective value of the network features type available to the volume, or current effective state of update.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly effectiveNetworkFeatures?: NetworkFeatures;
   /**
    * Network Sibling Set ID for the the group of volumes sharing networking resources.
    * NOTE: This property will not be serialized. It can only be populated by the server.
@@ -1185,8 +1345,11 @@ export interface VolumeGroupVolumeProperties {
   volumeType?: string;
   /** DataProtection type volumes include an object containing details of the replication */
   dataProtection?: VolumePropertiesDataProtection;
-  /** Restoring */
-  isRestoring?: boolean;
+  /**
+   * Restoring
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly isRestoring?: boolean;
   /** If enabled (true) the volume will contain a read-only snapshot directory which provides access to each of the volume's snapshots (defaults to true). */
   snapshotDirectoryVisible?: boolean;
   /** Describe if a volume is KerberosEnabled. To be use with swagger version 2020-05-01 or later */
@@ -1225,6 +1388,8 @@ export interface VolumeGroupVolumeProperties {
    *  Never - No client-driven data is pulled from cool tier to standard storage.
    */
   coolAccessRetrievalPolicy?: CoolAccessRetrievalPolicy;
+  /** coolAccessTieringPolicy determines which cold data blocks are moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks in both the Snapshot copies and the active file system to the cool tier tier. This policy is the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not associated with the active file system to the cool tier. */
+  coolAccessTieringPolicy?: CoolAccessTieringPolicy;
   /** UNIX permissions for NFS volume accepted in octal 4 digit format. First digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third selects permissions for other users in the same group. the fourth for other users not in the group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other users. */
   unixPermissions?: string;
   /**
@@ -1582,7 +1747,7 @@ export interface CloudErrorBody {
 }
 
 /** The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location */
-export interface ProxyResource extends Resource {}
+export interface ProxyResource extends Resource { }
 
 /** The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location' */
 export interface TrackedResource extends Resource {
@@ -1663,6 +1828,16 @@ export interface Backup extends ProxyResource {
    */
   readonly creationDate?: Date;
   /**
+   * The snapshot creation date of the backup
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly snapshotCreationDate?: Date;
+  /**
+   * The completion date of the backup
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly completionDate?: Date;
+  /**
    * Azure lifecycle management
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
@@ -1695,6 +1870,11 @@ export interface Backup extends ProxyResource {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly backupPolicyResourceId?: string;
+  /**
+   * Specifies if the backup is for a large volume.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly isLargeVolume?: boolean;
 }
 
 /** NetApp account resource */
@@ -1720,6 +1900,13 @@ export interface NetAppAccount extends TrackedResource {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly disableShowmount?: boolean;
+  /** Domain for NFSv4 user ID mapping. This property will be set for all NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes. */
+  nfsV4IDDomain?: string;
+  /**
+   * MultiAD Status for the account
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly multiAdStatus?: MultiAdStatus;
 }
 
 /** Capacity pool resource */
@@ -1803,8 +1990,13 @@ export interface Volume extends TrackedResource {
   readonly baremetalTenantId?: string;
   /** The Azure Resource URI for a delegated subnet. Must have the delegation Microsoft.NetApp/volumes */
   subnetId: string;
-  /** Network features available to the volume, or current state of update. */
+  /** The original value of the network features type available to the volume at the time it was created. */
   networkFeatures?: NetworkFeatures;
+  /**
+   * The effective value of the network features type available to the volume, or current effective state of update.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly effectiveNetworkFeatures?: NetworkFeatures;
   /**
    * Network Sibling Set ID for the the group of volumes sharing networking resources.
    * NOTE: This property will not be serialized. It can only be populated by the server.
@@ -1824,8 +2016,11 @@ export interface Volume extends TrackedResource {
   volumeType?: string;
   /** DataProtection type volumes include an object containing details of the replication */
   dataProtection?: VolumePropertiesDataProtection;
-  /** Restoring */
-  isRestoring?: boolean;
+  /**
+   * Restoring
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly isRestoring?: boolean;
   /** If enabled (true) the volume will contain a read-only snapshot directory which provides access to each of the volume's snapshots (defaults to true). */
   snapshotDirectoryVisible?: boolean;
   /** Describe if a volume is KerberosEnabled. To be use with swagger version 2020-05-01 or later */
@@ -1864,6 +2059,8 @@ export interface Volume extends TrackedResource {
    *  Never - No client-driven data is pulled from cool tier to standard storage.
    */
   coolAccessRetrievalPolicy?: CoolAccessRetrievalPolicy;
+  /** coolAccessTieringPolicy determines which cold data blocks are moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks in both the Snapshot copies and the active file system to the cool tier tier. This policy is the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not associated with the active file system to the cool tier. */
+  coolAccessTieringPolicy?: CoolAccessTieringPolicy;
   /** UNIX permissions for NFS volume accepted in octal 4 digit format. First digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third selects permissions for other users in the same group. the fourth for other users not in the group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other users. */
   unixPermissions?: string;
   /**
@@ -1965,7 +2162,7 @@ export interface BackupPolicy extends TrackedResource {
    */
   readonly etag?: string;
   /**
-   * Backup Policy Resource ID
+   * Backup Policy GUID ID
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly backupPolicyId?: string;
@@ -2023,6 +2220,21 @@ export interface NetAppResourceUpdateNetworkSiblingSetHeaders {
   location?: string;
 }
 
+/** Defines headers for Accounts_transitionToCmk operation. */
+export interface AccountsTransitionToCmkHeaders {
+  location?: string;
+}
+
+/** Defines headers for Accounts_getChangeKeyVaultInformation operation. */
+export interface AccountsGetChangeKeyVaultInformationHeaders {
+  location?: string;
+}
+
+/** Defines headers for Accounts_changeKeyVault operation. */
+export interface AccountsChangeKeyVaultHeaders {
+  location?: string;
+}
+
 /** Defines headers for Volumes_populateAvailabilityZone operation. */
 export interface VolumesPopulateAvailabilityZoneHeaders {
   location?: string;
@@ -2040,6 +2252,26 @@ export interface VolumesBreakFileLocksHeaders {
 
 /** Defines headers for Volumes_listGetGroupIdListForLdapUser operation. */
 export interface VolumesListGetGroupIdListForLdapUserHeaders {
+  location?: string;
+}
+
+/** Defines headers for Volumes_peerExternalCluster operation. */
+export interface VolumesPeerExternalClusterHeaders {
+  location?: string;
+}
+
+/** Defines headers for Volumes_authorizeExternalReplication operation. */
+export interface VolumesAuthorizeExternalReplicationHeaders {
+  location?: string;
+}
+
+/** Defines headers for Volumes_finalizeExternalReplication operation. */
+export interface VolumesFinalizeExternalReplicationHeaders {
+  location?: string;
+}
+
+/** Defines headers for Volumes_performReplicationTransfer operation. */
+export interface VolumesPerformReplicationTransferHeaders {
   location?: string;
 }
 
@@ -2339,6 +2571,24 @@ export enum KnownKeyVaultStatus {
  */
 export type KeyVaultStatus = string;
 
+/** Known values of {@link MultiAdStatus} that the service accepts. */
+export enum KnownMultiAdStatus {
+  /** Account is MultiAD disabled, Means its a SharedAD or SingleAD account. */
+  Disabled = "Disabled",
+  /** Account is MultiAD enabled */
+  Enabled = "Enabled",
+}
+
+/**
+ * Defines values for MultiAdStatus. \
+ * {@link KnownMultiAdStatus} can be used interchangeably with MultiAdStatus,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **Disabled**: Account is MultiAD disabled, Means its a SharedAD or SingleAD account. \
+ * **Enabled**: Account is MultiAD enabled
+ */
+export type MultiAdStatus = string;
+
 /** Known values of {@link ManagedServiceIdentityType} that the service accepts. */
 export enum KnownManagedServiceIdentityType {
   /** None */
@@ -2371,7 +2621,7 @@ export enum KnownServiceLevel {
   Premium = "Premium",
   /** Ultra service level */
   Ultra = "Ultra",
-  /** Zone redundant storage service level */
+  /** Zone redundant storage service level. This will be deprecated soon. */
   StandardZRS = "StandardZRS",
 }
 
@@ -2383,7 +2633,7 @@ export enum KnownServiceLevel {
  * **Standard**: Standard service level \
  * **Premium**: Premium service level \
  * **Ultra**: Ultra service level \
- * **StandardZRS**: Zone redundant storage service level
+ * **StandardZRS**: Zone redundant storage service level. This will be deprecated soon.
  */
 export type ServiceLevel = string;
 
@@ -2504,6 +2754,24 @@ export enum KnownReplicationSchedule {
  */
 export type ReplicationSchedule = string;
 
+/** Known values of {@link ReplicationType} that the service accepts. */
+export enum KnownReplicationType {
+  /** Cross region replication */
+  CrossRegionReplication = "CrossRegionReplication",
+  /** Cross zone replication */
+  CrossZoneReplication = "CrossZoneReplication",
+}
+
+/**
+ * Defines values for ReplicationType. \
+ * {@link KnownReplicationType} can be used interchangeably with ReplicationType,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **CrossRegionReplication**: Cross region replication \
+ * **CrossZoneReplication**: Cross zone replication
+ */
+export type ReplicationType = string;
+
 /** Known values of {@link SecurityStyle} that the service accepts. */
 export enum KnownSecurityStyle {
   /** Ntfs */
@@ -2596,6 +2864,24 @@ export enum KnownCoolAccessRetrievalPolicy {
  * **Never**
  */
 export type CoolAccessRetrievalPolicy = string;
+
+/** Known values of {@link CoolAccessTieringPolicy} that the service accepts. */
+export enum KnownCoolAccessTieringPolicy {
+  /** Auto */
+  Auto = "Auto",
+  /** SnapshotOnly */
+  SnapshotOnly = "SnapshotOnly",
+}
+
+/**
+ * Defines values for CoolAccessTieringPolicy. \
+ * {@link KnownCoolAccessTieringPolicy} can be used interchangeably with CoolAccessTieringPolicy,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **Auto** \
+ * **SnapshotOnly**
+ */
+export type CoolAccessTieringPolicy = string;
 
 /** Known values of {@link FileAccessLogs} that the service accepts. */
 export enum KnownFileAccessLogs {
@@ -2767,14 +3053,21 @@ export type ProvisioningState =
 
 /** Optional parameters. */
 export interface OperationsListOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the list operation. */
 export type OperationsListResponse = OperationListResult;
 
 /** Optional parameters. */
+export interface OperationsListNextOptionalParams
+  extends coreClient.OperationOptions { }
+
+/** Contains response data for the listNext operation. */
+export type OperationsListNextResponse = OperationListResult;
+
+/** Optional parameters. */
 export interface NetAppResourceCheckNameAvailabilityOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the checkNameAvailability operation. */
 export type NetAppResourceCheckNameAvailabilityResponse =
@@ -2782,7 +3075,10 @@ export type NetAppResourceCheckNameAvailabilityResponse =
 
 /** Optional parameters. */
 export interface NetAppResourceCheckFilePathAvailabilityOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions {
+  /** The Azure Resource logical availability zone which is used within zone mapping lookup for the subscription and region. The lookup will retrieve the physical zone where volume is placed. */
+  availabilityZone?: string;
+}
 
 /** Contains response data for the checkFilePathAvailability operation. */
 export type NetAppResourceCheckFilePathAvailabilityResponse =
@@ -2790,7 +3086,7 @@ export type NetAppResourceCheckFilePathAvailabilityResponse =
 
 /** Optional parameters. */
 export interface NetAppResourceCheckQuotaAvailabilityOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the checkQuotaAvailability operation. */
 export type NetAppResourceCheckQuotaAvailabilityResponse =
@@ -2798,14 +3094,14 @@ export type NetAppResourceCheckQuotaAvailabilityResponse =
 
 /** Optional parameters. */
 export interface NetAppResourceQueryRegionInfoOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the queryRegionInfo operation. */
 export type NetAppResourceQueryRegionInfoResponse = RegionInfo;
 
 /** Optional parameters. */
 export interface NetAppResourceQueryNetworkSiblingSetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the queryNetworkSiblingSet operation. */
 export type NetAppResourceQueryNetworkSiblingSetResponse = NetworkSiblingSet;
@@ -2823,57 +3119,86 @@ export interface NetAppResourceUpdateNetworkSiblingSetOptionalParams
 export type NetAppResourceUpdateNetworkSiblingSetResponse = NetworkSiblingSet;
 
 /** Optional parameters. */
+export interface NetAppResourceUsagesListOptionalParams
+  extends coreClient.OperationOptions { }
+
+/** Contains response data for the list operation. */
+export type NetAppResourceUsagesListResponse = UsagesListResult;
+
+/** Optional parameters. */
+export interface NetAppResourceUsagesGetOptionalParams
+  extends coreClient.OperationOptions { }
+
+/** Contains response data for the get operation. */
+export type NetAppResourceUsagesGetResponse = UsageResult;
+
+/** Optional parameters. */
+export interface NetAppResourceUsagesListNextOptionalParams
+  extends coreClient.OperationOptions { }
+
+/** Contains response data for the listNext operation. */
+export type NetAppResourceUsagesListNextResponse = UsagesListResult;
+
+/** Optional parameters. */
 export interface NetAppResourceQuotaLimitsListOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the list operation. */
 export type NetAppResourceQuotaLimitsListResponse = SubscriptionQuotaItemList;
 
 /** Optional parameters. */
 export interface NetAppResourceQuotaLimitsGetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type NetAppResourceQuotaLimitsGetResponse = SubscriptionQuotaItem;
 
 /** Optional parameters. */
+export interface NetAppResourceQuotaLimitsListNextOptionalParams
+  extends coreClient.OperationOptions { }
+
+/** Contains response data for the listNext operation. */
+export type NetAppResourceQuotaLimitsListNextResponse =
+  SubscriptionQuotaItemList;
+
+/** Optional parameters. */
 export interface NetAppResourceRegionInfosListOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the list operation. */
 export type NetAppResourceRegionInfosListResponse = RegionInfosList;
 
 /** Optional parameters. */
 export interface NetAppResourceRegionInfosGetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type NetAppResourceRegionInfosGetResponse = RegionInfoResource;
 
 /** Optional parameters. */
 export interface NetAppResourceRegionInfosListNextOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listNext operation. */
 export type NetAppResourceRegionInfosListNextResponse = RegionInfosList;
 
 /** Optional parameters. */
 export interface AccountsListBySubscriptionOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listBySubscription operation. */
 export type AccountsListBySubscriptionResponse = NetAppAccountList;
 
 /** Optional parameters. */
 export interface AccountsListOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the list operation. */
 export type AccountsListResponse = NetAppAccountList;
 
 /** Optional parameters. */
 export interface AccountsGetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type AccountsGetResponse = NetAppAccount;
@@ -2921,27 +3246,68 @@ export interface AccountsRenewCredentialsOptionalParams
 }
 
 /** Optional parameters. */
+export interface AccountsTransitionToCmkOptionalParams
+  extends coreClient.OperationOptions {
+  /** The required parameters to perform encryption transition. */
+  body?: EncryptionTransitionRequest;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the transitionToCmk operation. */
+export type AccountsTransitionToCmkResponse = AccountsTransitionToCmkHeaders;
+
+/** Optional parameters. */
+export interface AccountsGetChangeKeyVaultInformationOptionalParams
+  extends coreClient.OperationOptions {
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the getChangeKeyVaultInformation operation. */
+export type AccountsGetChangeKeyVaultInformationResponse =
+  GetKeyVaultStatusResponse;
+
+/** Optional parameters. */
+export interface AccountsChangeKeyVaultOptionalParams
+  extends coreClient.OperationOptions {
+  /** The required parameters to perform encryption migration. */
+  body?: ChangeKeyVault;
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the changeKeyVault operation. */
+export type AccountsChangeKeyVaultResponse = AccountsChangeKeyVaultHeaders;
+
+/** Optional parameters. */
 export interface AccountsListBySubscriptionNextOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listBySubscriptionNext operation. */
 export type AccountsListBySubscriptionNextResponse = NetAppAccountList;
 
 /** Optional parameters. */
 export interface AccountsListNextOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listNext operation. */
 export type AccountsListNextResponse = NetAppAccountList;
 
 /** Optional parameters. */
-export interface PoolsListOptionalParams extends coreClient.OperationOptions {}
+export interface PoolsListOptionalParams extends coreClient.OperationOptions { }
 
 /** Contains response data for the list operation. */
 export type PoolsListResponse = CapacityPoolList;
 
 /** Optional parameters. */
-export interface PoolsGetOptionalParams extends coreClient.OperationOptions {}
+export interface PoolsGetOptionalParams extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type PoolsGetResponse = CapacityPool;
@@ -2979,20 +3345,20 @@ export interface PoolsDeleteOptionalParams extends coreClient.OperationOptions {
 
 /** Optional parameters. */
 export interface PoolsListNextOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listNext operation. */
 export type PoolsListNextResponse = CapacityPoolList;
 
 /** Optional parameters. */
 export interface VolumesListOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the list operation. */
 export type VolumesListResponse = VolumeList;
 
 /** Optional parameters. */
-export interface VolumesGetOptionalParams extends coreClient.OperationOptions {}
+export interface VolumesGetOptionalParams extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type VolumesGetResponse = Volume;
@@ -3111,14 +3477,14 @@ export interface VolumesReestablishReplicationOptionalParams
 
 /** Optional parameters. */
 export interface VolumesReplicationStatusOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the replicationStatus operation. */
 export type VolumesReplicationStatusResponse = ReplicationStatus;
 
 /** Optional parameters. */
 export interface VolumesListReplicationsOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listReplications operation. */
 export type VolumesListReplicationsResponse = ListReplications;
@@ -3160,6 +3526,57 @@ export interface VolumesReInitializeReplicationOptionalParams
 }
 
 /** Optional parameters. */
+export interface VolumesPeerExternalClusterOptionalParams
+  extends coreClient.OperationOptions {
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the peerExternalCluster operation. */
+export type VolumesPeerExternalClusterResponse = ClusterPeerCommandResponse;
+
+/** Optional parameters. */
+export interface VolumesAuthorizeExternalReplicationOptionalParams
+  extends coreClient.OperationOptions {
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the authorizeExternalReplication operation. */
+export type VolumesAuthorizeExternalReplicationResponse =
+  SvmPeerCommandResponse;
+
+/** Optional parameters. */
+export interface VolumesFinalizeExternalReplicationOptionalParams
+  extends coreClient.OperationOptions {
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the finalizeExternalReplication operation. */
+export type VolumesFinalizeExternalReplicationResponse =
+  VolumesFinalizeExternalReplicationHeaders;
+
+/** Optional parameters. */
+export interface VolumesPerformReplicationTransferOptionalParams
+  extends coreClient.OperationOptions {
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the performReplicationTransfer operation. */
+export type VolumesPerformReplicationTransferResponse =
+  VolumesPerformReplicationTransferHeaders;
+
+/** Optional parameters. */
 export interface VolumesPoolChangeOptionalParams
   extends coreClient.OperationOptions {
   /** Delay to wait until next poll, in milliseconds. */
@@ -3199,21 +3616,21 @@ export interface VolumesRevertRelocationOptionalParams
 
 /** Optional parameters. */
 export interface VolumesListNextOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listNext operation. */
 export type VolumesListNextResponse = VolumeList;
 
 /** Optional parameters. */
 export interface SnapshotsListOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the list operation. */
 export type SnapshotsListResponse = SnapshotsList;
 
 /** Optional parameters. */
 export interface SnapshotsGetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type SnapshotsGetResponse = Snapshot;
@@ -3262,21 +3679,21 @@ export interface SnapshotsRestoreFilesOptionalParams
 
 /** Optional parameters. */
 export interface SnapshotPoliciesListOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the list operation. */
 export type SnapshotPoliciesListResponse = SnapshotPoliciesList;
 
 /** Optional parameters. */
 export interface SnapshotPoliciesGetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type SnapshotPoliciesGetResponse = SnapshotPolicy;
 
 /** Optional parameters. */
 export interface SnapshotPoliciesCreateOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the create operation. */
 export type SnapshotPoliciesCreateResponse = SnapshotPolicy;
@@ -3304,21 +3721,21 @@ export interface SnapshotPoliciesDeleteOptionalParams
 
 /** Optional parameters. */
 export interface SnapshotPoliciesListVolumesOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listVolumes operation. */
 export type SnapshotPoliciesListVolumesResponse = SnapshotPolicyVolumeList;
 
 /** Optional parameters. */
 export interface BackupPoliciesListOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the list operation. */
 export type BackupPoliciesListResponse = BackupPoliciesList;
 
 /** Optional parameters. */
 export interface BackupPoliciesGetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type BackupPoliciesGetResponse = BackupPolicy;
@@ -3358,14 +3775,14 @@ export interface BackupPoliciesDeleteOptionalParams
 
 /** Optional parameters. */
 export interface VolumeQuotaRulesListByVolumeOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listByVolume operation. */
 export type VolumeQuotaRulesListByVolumeResponse = VolumeQuotaRulesList;
 
 /** Optional parameters. */
 export interface VolumeQuotaRulesGetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type VolumeQuotaRulesGetResponse = VolumeQuotaRule;
@@ -3405,14 +3822,14 @@ export interface VolumeQuotaRulesDeleteOptionalParams
 
 /** Optional parameters. */
 export interface VolumeGroupsListByNetAppAccountOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listByNetAppAccount operation. */
 export type VolumeGroupsListByNetAppAccountResponse = VolumeGroupList;
 
 /** Optional parameters. */
 export interface VolumeGroupsGetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type VolumeGroupsGetResponse = VolumeGroupDetails;
@@ -3440,14 +3857,14 @@ export interface VolumeGroupsDeleteOptionalParams
 
 /** Optional parameters. */
 export interface SubvolumesListByVolumeOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listByVolume operation. */
 export type SubvolumesListByVolumeResponse = SubvolumesList;
 
 /** Optional parameters. */
 export interface SubvolumesGetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type SubvolumesGetResponse = SubvolumeInfo;
@@ -3499,21 +3916,21 @@ export type SubvolumesGetMetadataResponse = SubvolumeModel;
 
 /** Optional parameters. */
 export interface SubvolumesListByVolumeNextOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listByVolumeNext operation. */
 export type SubvolumesListByVolumeNextResponse = SubvolumesList;
 
 /** Optional parameters. */
 export interface BackupsGetLatestStatusOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the getLatestStatus operation. */
 export type BackupsGetLatestStatusResponse = BackupStatus;
 
 /** Optional parameters. */
 export interface BackupsGetVolumeLatestRestoreStatusOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the getVolumeLatestRestoreStatus operation. */
 export type BackupsGetVolumeLatestRestoreStatusResponse = RestoreStatus;
@@ -3529,7 +3946,7 @@ export interface BackupsListByVaultOptionalParams
 export type BackupsListByVaultResponse = BackupsList;
 
 /** Optional parameters. */
-export interface BackupsGetOptionalParams extends coreClient.OperationOptions {}
+export interface BackupsGetOptionalParams extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type BackupsGetResponse = Backup;
@@ -3574,21 +3991,21 @@ export type BackupsDeleteResponse = BackupsDeleteHeaders;
 
 /** Optional parameters. */
 export interface BackupsListByVaultNextOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listByVaultNext operation. */
 export type BackupsListByVaultNextResponse = BackupsList;
 
 /** Optional parameters. */
 export interface BackupVaultsListByNetAppAccountOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listByNetAppAccount operation. */
 export type BackupVaultsListByNetAppAccountResponse = BackupVaultsList;
 
 /** Optional parameters. */
 export interface BackupVaultsGetOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the get operation. */
 export type BackupVaultsGetResponse = BackupVault;
@@ -3631,7 +4048,7 @@ export type BackupVaultsDeleteResponse = BackupVaultsDeleteHeaders;
 
 /** Optional parameters. */
 export interface BackupVaultsListByNetAppAccountNextOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions { }
 
 /** Contains response data for the listByNetAppAccountNext operation. */
 export type BackupVaultsListByNetAppAccountNextResponse = BackupVaultsList;

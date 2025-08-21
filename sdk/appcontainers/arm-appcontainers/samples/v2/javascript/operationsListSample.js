@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Lists all of the available RP operations.
  *
  * @summary Lists all of the available RP operations.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Operations_List.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Operations_List.json
  */
 async function listAllOperations() {
   const subscriptionId =
@@ -24,14 +24,14 @@ async function listAllOperations() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.operations.list()) {
+  for await (const item of client.operations.list()) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  listAllOperations();
+  await listAllOperations();
 }
 
 main().catch(console.error);

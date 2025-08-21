@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 import { describe, it, assert, beforeEach, afterEach } from "vitest";
+import type { NotificationHubsClientContext } from "../../src/api/index.js";
 import {
-  NotificationHubsClientContext,
   createOrUpdateRegistration,
   createRegistrationId,
   deleteRegistration,
@@ -21,7 +21,6 @@ describe("createRegistrationId()", () => {
 
   beforeEach(async (ctx) => {
     recorder = new Recorder(ctx);
-    await recorder.setMatcher("BodilessMatcher");
     context = await createRecordedClientContext(recorder);
 
     registrationId = await createRegistrationId(context);

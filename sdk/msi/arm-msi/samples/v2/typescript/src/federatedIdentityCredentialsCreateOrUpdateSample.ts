@@ -6,24 +6,20 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import {
   FederatedIdentityCredential,
-  ManagedServiceIdentityClient
+  ManagedServiceIdentityClient,
 } from "@azure/arm-msi";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Create or update a federated identity credential under the specified user assigned identity.
  *
  * @summary Create or update a federated identity credential under the specified user assigned identity.
- * x-ms-original-file: specification/msi/resource-manager/Microsoft.ManagedIdentity/stable/2023-01-31/examples/FederatedIdentityCredentialCreate.json
+ * x-ms-original-file: specification/msi/resource-manager/Microsoft.ManagedIdentity/stable/2024-11-30/examples/FederatedIdentityCredentialCreate.json
  */
-async function federatedIdentityCredentialCreate() {
+async function federatedIdentityCredentialCreate(): Promise<void> {
   const subscriptionId =
     process.env["MSI_SUBSCRIPTION_ID"] ||
     "c267c0e7-0a73-4789-9e17-d26aeb0904e5";
@@ -33,7 +29,7 @@ async function federatedIdentityCredentialCreate() {
   const parameters: FederatedIdentityCredential = {
     audiences: ["api://AzureADTokenExchange"],
     issuer: "https://oidc.prod-aks.azure.com/TenantGUID/IssuerGUID",
-    subject: "system:serviceaccount:ns:svcaccount"
+    subject: "system:serviceaccount:ns:svcaccount",
   };
   const credential = new DefaultAzureCredential();
   const client = new ManagedServiceIdentityClient(credential, subscriptionId);
@@ -41,13 +37,13 @@ async function federatedIdentityCredentialCreate() {
     resourceGroupName,
     resourceName,
     federatedIdentityCredentialResourceName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
-async function main() {
-  federatedIdentityCredentialCreate();
+async function main(): Promise<void> {
+  await federatedIdentityCredentialCreate();
 }
 
 main().catch(console.error);

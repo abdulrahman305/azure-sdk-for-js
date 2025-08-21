@@ -1,14 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-import { AzureLogger, createClientLogger } from "@azure/logger";
-import { Constants } from "../common";
-import { ClientSideMetrics, QueryMetrics } from "../queryMetrics";
-import { FeedOptions, Response } from "../request";
-import { getInitialHeader } from "./headerUtils";
-import { ExecutionContext } from "./index";
-import { DiagnosticNodeInternal, DiagnosticNodeType } from "../diagnostics/DiagnosticNodeInternal";
-import { addDignosticChild } from "../utils/diagnostics";
-import { CosmosDbDiagnosticLevel } from "../diagnostics/CosmosDbDiagnosticLevel";
+import type { AzureLogger } from "@azure/logger";
+import { createClientLogger } from "@azure/logger";
+import { Constants } from "../common/index.js";
+import { ClientSideMetrics, QueryMetrics } from "../queryMetrics/index.js";
+import type { FeedOptions, Response } from "../request/index.js";
+import { getInitialHeader } from "./headerUtils.js";
+import type { ExecutionContext } from "./index.js";
+import type { DiagnosticNodeInternal } from "../diagnostics/DiagnosticNodeInternal.js";
+import { DiagnosticNodeType } from "../diagnostics/DiagnosticNodeInternal.js";
+import { addDiagnosticChild } from "../utils/diagnostics.js";
+import { CosmosDbDiagnosticLevel } from "../diagnostics/CosmosDbDiagnosticLevel.js";
 
 const logger: AzureLogger = createClientLogger("ClientContext");
 /** @hidden */
@@ -126,7 +128,7 @@ export class DefaultQueryExecutionContext implements ExecutionContext {
    * Fetches the next batch of the feed and pass them as an array to a callback
    */
   public async fetchMore(diagnosticNode: DiagnosticNodeInternal): Promise<Response<any>> {
-    return addDignosticChild(
+    return addDiagnosticChild(
       async (childDiagnosticNode: DiagnosticNodeInternal) => {
         if (this.currentPartitionIndex >= this.fetchFunctions.length) {
           return {

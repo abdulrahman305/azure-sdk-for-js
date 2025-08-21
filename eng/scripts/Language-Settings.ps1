@@ -6,8 +6,13 @@ $packagePattern = "*.tgz"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/js-packages.csv"
 $GithubUri = "https://github.com/Azure/azure-sdk-for-js"
 $PackageRepositoryUri = "https://www.npmjs.com/package"
+$ReducedDependencyLookup = @{
+  'test-utils' = @('@azure-tests/perf-storage-blob')
+  'identity'   = @('@azure-tests/perf-storage-blob')
+}
 
 . "$PSScriptRoot/docs/Docs-ToC.ps1"
+. "$PSScriptRoot/docs/Docs-Onboarding.ps1"
 
 function Confirm-NodeInstallation {
   if (!(Get-Command npm -ErrorAction SilentlyContinue)) {
@@ -24,24 +29,110 @@ function Get-javascript-EmitterAdditionalOptions([string]$projectDirectory) {
   return "--option @azure-tools/typespec-ts.emitter-output-dir=$projectDirectory/"
 }
 
-function Get-javascript-PackageInfoFromRepo ($pkgPath, $serviceDirectory) {
-  $projectPath = Join-Path $pkgPath "package.json"
-  if (Test-Path $projectPath) {
-    $projectJson = Get-Content $projectPath | ConvertFrom-Json
-    $jsStylePkgName = $projectJson.name.Replace("@", "").Replace("/", "-")
+function Get-javascript-AdditionalValidationPackagesFromPackageSet {
+  param(
+    [Parameter(Mandatory = $true)]
+    $LocatedPackages,
+    [Parameter(Mandatory = $true)]
+    $diffObj,
+    [Parameter(Mandatory = $true)]
+    $AllPkgProps
+  )
+  $existingPackages = @($LocatedPackages | ForEach-Object { $_.Name })
+  $additionalDetectedPackages = @()
+  $uniqueResultSet = @()
 
-    $pkgProp = [PackageProps]::new($projectJson.name, $projectJson.version, $pkgPath, $serviceDirectory)
-    if ($projectJson.psobject.properties.name -contains 'sdk-type') {
-      $pkgProp.SdkType = $projectJson.psobject.properties['sdk-type'].value
+  # we don't currently have a way to trigger a package that doesn't exist in an artifact set
+  # so we can't trigger @azure-tests/perf-storage-blob based on changes to sdk/test-utils/ using any common tooling
+  # for now we will handle this in this function.
+  foreach ($changedService in $changedServices) {
+    if ($ReducedDependencyLookup.ContainsKey($changedService)) {
+      $additionalPackages = $ReducedDependencyLookup[$changedService] `
+      | ForEach-Object { $me = $_; $AllPkgProps | Where-Object { $_.Name -eq $me } | Select-Object -First 1 }
+
+      # we don't need to worry about duplicates here, we'll handle that later
+      $additionalDetectedPackages += $additionalPackages
     }
-    else {
-      $pkgProp.SdkType = "unknown"
-    }
-    $pkgProp.IsNewSdk = ($pkgProp.SdkType -eq "client") -or ($pkgProp.SdkType -eq "mgmt")
-    $pkgProp.ArtifactName = $jsStylePkgName
-    return $pkgProp
   }
-  return $null
+
+  foreach ($pkg in $additionalDetectedPackages) {
+    $alreadyIncluded = $uniqueResultSet | ForEach-Object { $_.Name }
+    if ($existingPackages -notcontains $pkg.Name -and $alreadyIncluded -notcontains $pkg.Name) {
+      $pkg.IncludedForValidation = $true
+      $uniqueResultSet += $pkg
+    }
+  }
+
+  Write-Host "Returning additional packages for validation: $($uniqueResultSet.Count)"
+  foreach ($pkg in $uniqueResultSet) {
+    Write-Host "  - $($pkg.Name)"
+  }
+
+  return $uniqueResultSet
+}
+
+function Get-javascript-PackageInfoFromRepo ($pkgPath, $serviceDirectory) {
+  $projectPath = (Join-Path $pkgPath "package.json")
+  $packageProps = @()
+
+  if (-not (Test-Path $projectPath) -and $pkgPath.Contains("perf-test")) {
+    $subdirectories = Get-ChildItem -Path $pkgPath -Directory | Where-Object {
+      return Test-Path -Path (Join-Path $_.FullName "package.json")
+    }
+
+    # Filter subdirectories to those containing a `package.json`
+    $projectPaths = $subdirectories | ForEach-Object {
+      return Join-Path $_.FullName "package.json"
+    }
+  }
+  else {
+    $projectPaths = @($projectPath)
+  }
+
+  foreach ($projectPath in $projectPaths) {
+    if (Test-Path $projectPath) {
+      $projectJson = Get-Content $projectPath | ConvertFrom-Json
+      $projectDirectory = Split-Path $projectPath
+
+      $jsStylePkgName = $projectJson.name.Replace("@", "").Replace("/", "-")
+
+      $pkgProp = [PackageProps]::new($projectJson.name, $projectJson.version, $projectDirectory, $serviceDirectory)
+      if ($projectJson.psobject.properties.name -contains 'sdk-type') {
+        $pkgProp.SdkType = $projectJson.psobject.properties['sdk-type'].value
+      }
+      else {
+        $pkgProp.SdkType = "unknown"
+      }
+      $pkgProp.IsNewSdk = ($pkgProp.SdkType -eq "client") -or ($pkgProp.SdkType -eq "mgmt")
+      $pkgProp.ArtifactName = $jsStylePkgName
+
+
+      if ($ReducedDependencyLookup.ContainsKey($pkgProp.ServiceDirectory)) {
+        $pkgProp.AdditionalValidationPackages = $ReducedDependencyLookup[$pkgProp.ServiceDirectory]
+      }
+
+      # the constructor for the package properties object attempts to initialize CI artifacts on instantiation
+      # of the class. however, due to the fact that we set the ArtifactName _after_ the constructor is called,
+      # we need to call it again here to ensure the CI artifacts are properly initialized
+      $pkgProp.InitializeCIArtifacts()
+
+      $packageProps += $pkgProp
+    }
+  }
+
+  return $packageProps
+}
+
+function Get-PackageInfoNameOverride {
+  param(
+    [Parameter(Mandatory = $true)]
+    [PackageProps] $PkgProps
+  )
+  if ($PkgProps.ArtifactName) {
+    return $PkgProps.ArtifactName
+  }
+  LogError "In Get-PackageInfoNameOverride-PkgProps, PkgProps with name $($PkgProps.Name) did not contain an ArtifactName"
+  exit 1
 }
 
 # Returns the npm publish status of a package id and version.
@@ -60,49 +151,101 @@ function IsNPMPackageVersionPublished ($pkgId, $pkgVersion) {
   return $npmVersion -eq $pkgVersion
 }
 
-# make certain to always take the package json closest to the top
-function ResolvePkgJson($workFolder) {
-  $pathsWithComplexity = @()
-  foreach ($file in (Get-ChildItem -Path $workFolder -Recurse -Include "package.json")) {
-    $complexity = ($file.FullName -Split { $_ -eq "/" -or $_ -eq "\" }).Length
-    $pathsWithComplexity += New-Object PSObject -Property @{
-      Path       = $file
-      Complexity = $complexity
+function Get-PackageJsonContentFromPackage($package, $workingDirectory) {
+  $extractedPackageDir = Join-Path $workingDirectory (Split-Path $package -LeafBase)
+  New-Item -Type Directory $extractedPackageDir -Force | Out-Null
+  
+  Write-Host "tar -xzf $package -C $extractedPackageDir"
+  tar -xzf $package -C $extractedPackageDir
+  if ($LASTEXITCODE -ne 0) {
+    Write-Host "Failed to extract package $package. Please check the package file."
+    return $null
+  }
+
+  $packageDirectory = Join-Path $extractedPackageDir "package"
+  $packageJSONContent = Get-Content (Join-Path $packageDirectory "package.json") | ConvertFrom-Json
+
+  # Add the package property to the json object for consumers
+  $packageJSONContent | Add-Member -NotePropertyName "PackageDirectory" -NotePropertyValue $packageDirectory
+  $packageJSONContent | Add-Member -NotePropertyName "PackageRootDirectory" -NotePropertyValue $extractedPackageDir
+
+  return $packageJSONContent
+}
+function NormalizePackageContent($dirName, $version) {
+  function ReplaceText($oldText, $newText, $filePath) {
+    $content = Get-Content -Path $filePath -Raw
+    $newContent = $content -replace $oldText, $newText
+    if ($newContent -ne $content) {
+      Set-Content -Path $filePath -Value $newContent -NoNewLine
+      Write-Verbose "ReplaceText [$oldText] [$newText] [$filePath]"
     }
   }
 
-  return ($pathsWithComplexity | Sort-Object -Property Complexity)[0].Path
+  foreach ($md in $(Get-ChildItem $dirName -r -i *.md)) {
+    ReplaceText "https://github.com/Azure/azure-sdk-for-js/tree/[^/]*" "" $md.Fullname
+  }
+  foreach ($file in $(Get-ChildItem $dirName -r -i *.js, *.ts, *.json)) {
+    ReplaceText $version "VERSION_REMOVED" $file.Fullname
+  }
+}
+
+function ContainsProductCodeDiff($currentDevPackage, $lastDevPackage, $workingDirectory) {
+  $diffFile = Join-Path $workingDirectory "packagechanges.diff"
+  git diff --output=$diffFile --exit-code $lastDevPackage $currentDevPackage
+  if ($LASTEXITCODE -ne 0) {
+    Write-Host "There were changes to the package ($diffFile):"
+    Get-Content -Path $diffFile | Out-Host
+    $global:LASTEXITCODE = 0 # Reset exit code to 0 so that the script can continue
+    return $true
+  }
+  return $false
+}
+
+function HasPackageSourceCodeChanges($package, $workingDirectory) {
+  $packageBefore = Get-PackageJsonContentFromPackage -package $package -workingDirectory $workingDirectory
+  $name = $packageBefore.name
+
+  $packageAfterName = npm pack $name@dev --pack --pack-destination $workingDirectory 2> $workingDirectory/error.txt
+  if ($LastExitCode -ne 0) {
+    Get-Content -Path $workingDirectory/error.txt | Out-Host
+    Write-Host "Failed to retrieve package $name@dev.. assuming there is source code changes."
+    $global:LASTEXITCODE = 0 # Reset exit code to 0 so that the script can continue
+    return $true
+  }  
+  $packageAfter = Get-PackageJsonContentFromPackage -package (Join-Path $workingDirectory $packageAfterName) -workingDirectory $workingDirectory
+
+  if (!$packageAfter -or !$packageBefore -or !(Test-Path $packageBefore.PackageRootDirectory) -or !(Test-Path $packageAfter.PackageRootDirectory)) {
+    Write-Host "Failed to retrieve package content for $name@dev or extract the $package content. Assuming there are source code changes."
+    return $true
+  }
+
+  NormalizePackageContent $packageBefore.PackageRootDirectory $packageBefore.version
+  NormalizePackageContent $packageAfter.PackageRootDirectory  $packageAfter.version
+    
+  $hasChanges = ContainsProductCodeDiff $packageBefore.PackageRootDirectory $packageAfter.PackageRootDirectory $workingDirectory
+
+  return $hasChanges
 }
 
 # Parse out package publishing information given a .tgz npm artifact
 function Get-javascript-PackageInfoFromPackageFile ($pkg, $workingDirectory) {
-  $workFolder = "$workingDirectory$($pkg.Basename)"
-  $origFolder = Get-Location
   $releaseNotes = ""
   $readmeContent = ""
 
-  New-Item -ItemType Directory -Force -Path $workFolder
-  Set-Location $workFolder
-
-  tar -xzf $pkg
-
-  $packageJSON = ResolvePkgJson -workFolder $workFolder | Get-Content | ConvertFrom-Json
+  $packageJSON = Get-PackageJsonContentFromPackage $pkg $workingDirectory
   $pkgId = $packageJSON.name
   $docsReadMeName = $pkgId -replace "^@azure/" , ""
   $pkgVersion = $packageJSON.version
 
-  $changeLogLoc = @(Get-ChildItem -Path $workFolder -Recurse -Include "CHANGELOG.md")[0]
-  if ($changeLogLoc) {
-    $releaseNotes = Get-ChangeLogEntryAsString -ChangeLogLocation $changeLogLoc -VersionString $pkgVersion
+  $changeLogPath = Join-Path $packageJson.PackageDirectory "CHANGELOG.md"
+  if (Test-Path $changeLogPath) {
+    $releaseNotes = Get-ChangeLogEntryAsString -ChangeLogLocation $changeLogPath -VersionString $pkgVersion
   }
 
-  $readmeContentLoc = @(Get-ChildItem -Path $workFolder -Recurse -Include "README.md") | Select-Object -Last 1
-  if ($readmeContentLoc) {
-    $readmeContent = Get-Content -Raw $readmeContentLoc
+  $readmePath = Join-Path $packageJson.PackageDirectory "README.md"
+  if (Test-Path $readmePath) {
+    $readmeContent = Get-Content -Raw $readmePath
   }
-
-  Set-Location $origFolder
-  Remove-Item $workFolder -Force -Recurse -ErrorAction SilentlyContinue
 
   $resultObj = New-Object PSObject -Property @{
     PackageId      = $pkgId
@@ -238,8 +381,10 @@ function SetPackageVersion ($PackageName, $Version, $ReleaseDate, $ReplaceLatest
   if ($null -eq $ReleaseDate) {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
-  Push-Location "$EngDir/tools/versioning"
+  Push-Location "$EngDir/tools/eng-package-utils"
   Confirm-NodeInstallation
+  npm install
+  Push-Location "$EngDir/tools/versioning"
   npm install
   $artifactName = $PackageName.Replace("@", "").Replace("/", "-")
   node ./set-version.js --artifact-name $artifactName --new-version $Version --release-date $ReleaseDate `
@@ -248,7 +393,7 @@ function SetPackageVersion ($PackageName, $Version, $ReleaseDate, $ReplaceLatest
 }
 
 # PackageName: Pass full package name e.g. @azure/abort-controller
-# You can obtain full pacakge name using the 'Get-PkgProperties' function in 'eng\common\scripts\Package-Properties.Ps1'
+# You can obtain full package name using the 'Get-PkgProperties' function in 'eng\common\scripts\Package-Properties.Ps1'
 function GetExistingPackageVersions ($PackageName, $GroupId = $null) {
   try {
     $existingVersion = Invoke-RestMethod -Method GET -Uri "http://registry.npmjs.com/${PackageName}"
@@ -260,42 +405,6 @@ function GetExistingPackageVersions ($PackageName, $GroupId = $null) {
     }
     return $null
   }
-}
-
-# Defined in common.ps1 as:
-# $ValidateDocsMsPackagesFn = "Validate-${Language}-DocMsPackages"
-function Validate-javascript-DocMsPackages ($PackageInfo, $PackageInfos, $DocRepoLocation, $DocValidationImageId) {
-  if (!$PackageInfos) {
-    $PackageInfos = @($PackageInfo)
-  }
-
-  $allSucceeded = $true
-  $failedPackages = @()
-
-  foreach ($packageInfo in $PackageInfos) {
-    $outputLocation = New-Item `
-      -ItemType Directory `
-      -Path (Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName()))
-
-    Write-Host "type2docfx `"$($packageInfo.Name)@$($packageInfo.Version)`" $outputLocation"
-    $output = & type2docfx "$($packageInfo.Name)@$($packageInfo.Version)" $outputLocation 2>&1
-    if ($LASTEXITCODE) {
-      $allSucceeded = $false
-      $failedPackages += $packageInfo.Name
-      Write-Host "Package $($packageInfo.Name)@$($packageInfo.Version) failed validation"
-      $output | Write-Host
-    }
-  }
-
-  # Show failed packages at the end of the run
-  if ($failedPackages.Count -gt 0) {
-    Write-Host "Failed package: $($failedPackages.Count)"
-    foreach ($failedPackage in $failedPackages) {
-      Write-Host "Failed package: $failedPackage"
-    }
-  }
-
-  return $allSucceeded
 }
 
 function Update-javascript-GeneratedSdks([string]$PackageDirectoriesFile) {

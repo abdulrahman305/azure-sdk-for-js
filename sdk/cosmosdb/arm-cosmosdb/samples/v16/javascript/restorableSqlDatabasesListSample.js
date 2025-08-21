@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Show the event feed of all mutations done on all the Azure Cosmos DB SQL databases under the restorable account.  This helps in scenario where database was accidentally deleted to get the deletion time.  This API requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission
  *
  * @summary Show the event feed of all mutations done on all the Azure Cosmos DB SQL databases under the restorable account.  This helps in scenario where database was accidentally deleted to get the deletion time.  This API requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBRestorableSqlDatabaseList.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBRestorableSqlDatabaseList.json
  */
 async function cosmosDbRestorableSqlDatabaseList() {
   const subscriptionId =
@@ -26,14 +24,14 @@ async function cosmosDbRestorableSqlDatabaseList() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.restorableSqlDatabases.list(location, instanceId)) {
+  for await (const item of client.restorableSqlDatabases.list(location, instanceId)) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  cosmosDbRestorableSqlDatabaseList();
+  await cosmosDbRestorableSqlDatabaseList();
 }
 
 main().catch(console.error);

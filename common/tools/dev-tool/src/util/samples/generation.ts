@@ -2,11 +2,13 @@
 // Licensed under the MIT License.
 
 import fs from "fs-extra";
+import { stat as statFile } from "fs/promises";
 import path from "node:path";
+import semver from "semver";
 import { copy, dir, file, FileTreeFactory, lazy, safeClean, temp } from "../fileTree";
 import { findMatchingFiles } from "../findMatchingFiles";
 import { createPrinter } from "../printer";
-import { ProjectInfo, resolveRoot } from "../resolveProject";
+import { ProjectInfo, bindRequireFunction, resolveRoot } from "../resolveProject";
 import {
   getSampleConfiguration,
   MIN_SUPPORTED_NODE_VERSION,
@@ -23,6 +25,9 @@ import { processSources } from "./processor";
 import devToolPackageJson from "../../../package.json";
 import instantiateSampleReadme from "../../templates/sampleReadme.md";
 import { resolveModule } from "./transforms";
+import { Config, resolveConfig } from "../resolveTsConfig";
+import { CompilerOptions } from "typescript";
+import { loadPnpmWorkspaceCatalogs, resolveCatalogVersion } from "../pnpm";
 
 const log = createPrinter("generator");
 
@@ -75,6 +80,24 @@ async function collect<T>(i: AsyncIterableIterator<T>): Promise<T[]> {
   return out;
 }
 
+function isValidNpmVersionSpecifier(specifier: string) {
+  return (
+    semver.valid(
+      specifier.startsWith("^") || specifier.startsWith("~") ? specifier.substring(1) : specifier,
+    ) || ["latest", "dev", "next"].includes(specifier)
+  );
+}
+
+function resolveDependencyVersion(name: string, specifier: string): string {
+  if (isValidNpmVersionSpecifier(specifier)) {
+    return specifier;
+  } else if (specifier === "workspace:^") {
+    return "latest";
+  } else {
+    return resolveCatalogVersion(name, specifier);
+  }
+}
+
 /**
  * Extracts the sample generation meta-information from the sample sources and
  * configuration in package.json.
@@ -88,15 +111,22 @@ export async function makeSampleGenerationInfo(
   topLevelDirectory: string,
   onError: () => void,
 ): Promise<SampleGenerationInfo> {
+  await loadPnpmWorkspaceCatalogs();
+
   const sampleSources = await collect(
     findMatchingFiles(sampleSourcesPath, (name) => name.endsWith(".ts") && !name.endsWith(".d.ts")),
   );
 
   const sampleConfiguration = getSampleConfiguration(projectInfo.packageJson);
 
-  const baseName = projectInfo.name.split("/").slice(-1)[0];
-
-  log.debug("Determined project baseName:", baseName);
+  let scope, baseName: string | undefined;
+  [scope, baseName] = projectInfo.name.split("/");
+  if (baseName === undefined) {
+    log.debug(`unscoped package name: ${projectInfo.name}`);
+    baseName = scope;
+    scope = undefined;
+  }
+  log.debug(`Determined project scope: ${scope}, baseName: ${baseName}`);
 
   // A helper to handle configuration errors.
   function fail(...values: unknown[]): never {
@@ -105,15 +135,7 @@ export async function makeSampleGenerationInfo(
     return undefined as never;
   }
 
-  const requireInScope = (moduleSpecifier: string) => {
-    try {
-      return require(
-        path.join(projectInfo.path, "node_modules", moduleSpecifier.split("/").join(path.sep)),
-      );
-    } catch {
-      return require(moduleSpecifier);
-    }
-  };
+  const requireInScope = bindRequireFunction(projectInfo);
 
   const moduleInfos = await processSources(
     sampleSourcesPath,
@@ -137,13 +159,14 @@ export async function makeSampleGenerationInfo(
       "There is probably a more specific product that applies to this package! Reach out for help with the docs platform.",
     );
     log.warn(
-      'If you do not want to publish samples to docs.microsoft.com, set `"disableDocsMs": true` in the sample configuration.',
+      'If you do not want to publish samples to learn.microsoft.com, set `"disableDocsMs": true` in the sample configuration.',
     );
     onError();
   }
 
   return {
     ...sampleConfiguration,
+    scope,
     baseName,
     packageKeywords:
       projectInfo.packageJson.keywords ??
@@ -205,7 +228,8 @@ export async function makeSampleGenerationInfo(
                 );
               }
 
-              current[dependency] = dependencyVersion;
+              current[dependency] = resolveDependencyVersion(dependency, dependencyVersion);
+
               // It would be really weird to depend on `@types/*` in a source file but if we did
               // it'd be handled above.
               if (dependency.indexOf("@types/") !== 0) {
@@ -216,7 +240,10 @@ export async function makeSampleGenerationInfo(
                   packageJson.dependencies[typeDependency];
 
                 if (typeDependencyVersion) {
-                  typesDependencies[typeDependency] = typeDependencyVersion;
+                  typesDependencies[typeDependency] = resolveDependencyVersion(
+                    typeDependency,
+                    typeDependencyVersion,
+                  );
                 }
               }
             }
@@ -270,6 +297,63 @@ export async function createReadme(
   });
 }
 
+// Helper for writing JSON files with a terminating newline
+function jsonify(value: unknown) {
+  let output = JSON.stringify(value, undefined, 2);
+  if (!output.endsWith("\n")) {
+    output += "\n";
+  }
+  return output;
+}
+
+/**
+ * Checks if a file exists.
+ * @param filePath - The path to the file
+ * @returns Whether the file exists
+ */
+async function fileExists(filePath: string) {
+  try {
+    await statFile(filePath);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * Creates a tsconfig file for the samples.
+ * @param projectInfo - The project information
+ * @returns The contents of a tsconfig file for the samples
+ */
+export async function createTsconfig(projectInfo: ProjectInfo): Promise<string> {
+  const tsconfigFilePath = path.join(projectInfo.path, "tsconfig.samples.json");
+  if (!(await fileExists(tsconfigFilePath))) {
+    return jsonify(DEFAULT_TYPESCRIPT_CONFIG);
+  }
+  type SerializableConfig = Omit<Config, "compilerOptions"> & {
+    compilerOptions: Omit<CompilerOptions, "moduleResolution" | "module"> & {
+      moduleResolution?: string;
+      module?: string;
+    };
+  };
+  const tsconfig = (await resolveConfig(tsconfigFilePath)) as SerializableConfig;
+  delete tsconfig.compilerOptions.paths;
+  delete tsconfig.exclude;
+  delete tsconfig.compilerOptions.composite;
+  delete tsconfig.compilerOptions.noEmit;
+  delete tsconfig.compilerOptions.declaration;
+  delete tsconfig.compilerOptions.declarationMap;
+  delete tsconfig.compilerOptions.inlineSources;
+  delete tsconfig.compilerOptions.sourceMap;
+  tsconfig.include = ["./src"];
+  tsconfig.compilerOptions.outDir = "./dist";
+  tsconfig.compilerOptions.resolveJsonModule = true;
+
+  tsconfig.compilerOptions.moduleResolution = "node10"; // ts.ModuleResolutionKind.Node10
+  tsconfig.compilerOptions.module = "commonjs"; // ts.ModuleKind.CommonJS
+  return jsonify(tsconfig);
+}
+
 /**
  * Create a filesystem tree factory representing a camera-ready samples
  * tree.
@@ -281,6 +365,9 @@ export async function createReadme(
 export async function makeSamplesFactory(
   projectInfo: ProjectInfo,
   sourcePath?: string,
+  options?: {
+    force: boolean;
+  },
 ): Promise<FileTreeFactory> {
   let hadError = false;
 
@@ -312,15 +399,6 @@ export async function makeSamplesFactory(
     throw new Error("Instantiation of sample metadata information failed with errors.");
   }
 
-  // Helper for writing JSON files with a terminating newline
-  const jsonify = (value: unknown) => {
-    let output = JSON.stringify(value, undefined, 2);
-    if (!output.endsWith("\n")) {
-      output += "\n";
-    }
-    return output;
-  };
-
   /**
    * Helper to remove azsdk- directives from the resulting module code.
    */
@@ -341,6 +419,7 @@ export async function makeSamplesFactory(
   }
 
   // We use a tempdir at the outer layer to avoid creating dirty trees
+  const actionIfDestinationDirty = options?.force ? "warn" : "throw";
   return dir(
     versionFolder,
     safeClean(
@@ -353,7 +432,7 @@ export async function makeSamplesFactory(
               ),
               file("package.json", () => jsonify(createPackageJson(info, OutputKind.TypeScript))),
               // All of the tsconfigs we use for samples should be the same.
-              file("tsconfig.json", () => jsonify(DEFAULT_TYPESCRIPT_CONFIG)),
+              file("tsconfig.json", () => createTsconfig(projectInfo)),
               copy("sample.env", path.join(projectInfo.path, "sample.env")),
               // We copy the samples sources in to the `src` folder on the typescript side
               dir("src", [
@@ -390,6 +469,7 @@ export async function makeSamplesFactory(
           ]),
         ),
       ),
+      { actionIfDirty: actionIfDestinationDirty },
     ),
   );
 }

@@ -110,6 +110,36 @@ export const SmsSendOptions: coreClient.CompositeMapper = {
           name: "Number",
         },
       },
+      messagingConnect: {
+        serializedName: "messagingConnect",
+        type: {
+          name: "Composite",
+          className: "MessagingConnectOptions",
+        },
+      },
+    },
+  },
+};
+
+export const MessagingConnectOptions: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "MessagingConnectOptions",
+    modelProperties: {
+      apiKey: {
+        serializedName: "apiKey",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      partner: {
+        serializedName: "partner",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
     },
   },
 };
@@ -170,6 +200,121 @@ export const SmsSendResponseItem: coreClient.CompositeMapper = {
       successful: {
         serializedName: "successful",
         required: true,
+        type: {
+          name: "Boolean",
+        },
+      },
+      errorMessage: {
+        serializedName: "errorMessage",
+        type: {
+          name: "String",
+        },
+      },
+    },
+  },
+};
+
+export const OptOutRequest: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "OptOutRequest",
+    modelProperties: {
+      from: {
+        constraints: {
+          MinLength: 1,
+        },
+        serializedName: "from",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      recipients: {
+        constraints: {
+          MinItems: 1,
+          MaxItems: 100,
+        },
+        serializedName: "recipients",
+        required: true,
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "OptOutRecipient",
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const OptOutRecipient: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "OptOutRecipient",
+    modelProperties: {
+      to: {
+        constraints: {
+          MinLength: 1,
+        },
+        serializedName: "to",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+    },
+  },
+};
+
+export const OptOutResponse: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "OptOutResponse",
+    modelProperties: {
+      value: {
+        serializedName: "value",
+        required: true,
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "OptOutResponseItem",
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const OptOutResponseItem: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "OptOutResponseItem",
+    modelProperties: {
+      to: {
+        constraints: {
+          MinLength: 1,
+        },
+        serializedName: "to",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      httpStatusCode: {
+        serializedName: "httpStatusCode",
+        required: true,
+        type: {
+          name: "Number",
+        },
+      },
+      isOptedOut: {
+        serializedName: "isOptedOut",
         type: {
           name: "Boolean",
         },

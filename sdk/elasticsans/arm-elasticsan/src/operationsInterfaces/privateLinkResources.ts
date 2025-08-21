@@ -8,8 +8,8 @@
 
 import {
   PrivateLinkResourcesListByElasticSanOptionalParams,
-  PrivateLinkResourcesListByElasticSanResponse
-} from "../models";
+  PrivateLinkResourcesListByElasticSanResponse,
+} from "../models/index.js";
 
 /** Interface representing a PrivateLinkResources. */
 export interface PrivateLinkResources {
@@ -22,6 +22,6 @@ export interface PrivateLinkResources {
   listByElasticSan(
     resourceGroupName: string,
     elasticSanName: string,
-    options?: PrivateLinkResourcesListByElasticSanOptionalParams
+    options?: PrivateLinkResourcesListByElasticSanOptionalParams,
   ): Promise<PrivateLinkResourcesListByElasticSanResponse>;
 }

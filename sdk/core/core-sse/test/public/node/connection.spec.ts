@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { createSseStream } from "../../../src/index.js";
-import { Client, getClient } from "@azure-rest/core-client";
+import { createSseStream, NodeJSReadableStream } from "../../../src/index.js";
+import { type Client, getClient } from "@azure-rest/core-client";
 import { assert, beforeAll, beforeEach, afterEach, describe, it } from "vitest";
-import { port } from "../../server/config.mts";
-import { IncomingMessage } from "http";
-import { matrix } from "@azure-tools/test-utils";
+import { port } from "../../server/config.mjs";
+import { matrix } from "@azure-tools/test-utils-vitest";
+import { isRestError } from "@azure/core-rest-pipeline";
 
 const contentType = "text/event-stream";
 function getEndpoint(): string {
@@ -17,7 +17,7 @@ async function sendRequest(
   client: Client,
   path: string,
   abortSignal?: AbortSignal,
-): Promise<IncomingMessage> {
+): Promise<NodeJSReadableStream> {
   const res = await client
     .pathUnchecked(path)
     .get({ accept: contentType, abortSignal })
@@ -30,9 +30,9 @@ async function sendRequest(
   }
   const receivedContentType = res.headers["content-type"];
   if (!receivedContentType.includes(contentType)) {
-    throw new Error(`Expected a text/event-stream content but received\"${receivedContentType}\"`);
+    throw new Error(`Expected a text/event-stream content but received"${receivedContentType}"`);
   }
-  return res.body as IncomingMessage;
+  return res.body;
 }
 
 describe("[Node] Connections", () => {
@@ -70,10 +70,13 @@ describe("[Node] Connections", () => {
         });
 
         it("loop until stream ends and then break", async function () {
-          let stream: IncomingMessage;
+          let stream: NodeJSReadableStream;
           try {
             stream = await sendRequest(client, path);
           } catch (e) {
+            if (!isRestError(e)) {
+              throw e;
+            }
             assert.equal(path, "/events/no-fin/1");
             assert.equal(e.code, "ECONNRESET");
             return;
@@ -84,23 +87,26 @@ describe("[Node] Connections", () => {
               ran = true;
               if (sse.data === "[DONE]") {
                 if (path.includes("no-fin")) {
-                  assert.isNull(stream.socket);
+                  assert.isNull((stream as any).socket);
                 }
                 break;
               }
             }
           } catch (e) {
             assert.equal(path, "/events/no-fin/3");
-            assert.equal(e.code, "ECONNRESET");
+            assert.equal((e as any).code, "ECONNRESET");
           }
         });
 
         it("break early from loop", async function () {
-          let stream: IncomingMessage;
+          let stream: NodeJSReadableStream;
           try {
             // sometimes the server gets into a bad state and doesn't respond so we need to timeout
             stream = await sendRequest(client, path, AbortSignal.timeout(25000));
           } catch (e) {
+            if (!isRestError(e)) {
+              throw e;
+            }
             assert.equal(path, "/events/no-fin/1");
             if (e.code) {
               assert.equal(e.code, "ECONNRESET");

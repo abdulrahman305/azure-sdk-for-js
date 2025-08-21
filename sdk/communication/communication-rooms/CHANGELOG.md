@@ -1,5 +1,27 @@
 # Release History
 
+## 1.2.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.2.0 (2025-03-13)
+
+### Features Added
+
+- General Availability version of Rooms Collaborator role
+
+## 1.1.1 (2024-11-22)
+
+### Bugs Fixed
+
+- Bug fix for 'addOrUpdateParticipants' and 'removeParticipants' methods to wait for the operation to complete before returning
+
 ## 1.1.0 (2024-04-15)
 
 ### Other Changes

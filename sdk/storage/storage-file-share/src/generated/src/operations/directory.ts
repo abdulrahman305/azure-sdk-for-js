@@ -6,11 +6,11 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-import { Directory } from "../operationsInterfaces";
+import { Directory } from "../operationsInterfaces/index.js";
 import * as coreClient from "@azure/core-client";
-import * as Mappers from "../models/mappers";
-import * as Parameters from "../models/parameters";
-import { StorageClient } from "../storageClient";
+import * as Mappers from "../models/mappers.js";
+import * as Parameters from "../models/parameters.js";
+import { StorageClient } from "../storageClient.js";
 import {
   DirectoryCreateOptionalParams,
   DirectoryCreateResponse,
@@ -29,8 +29,8 @@ import {
   DirectoryForceCloseHandlesOptionalParams,
   DirectoryForceCloseHandlesResponse,
   DirectoryRenameOptionalParams,
-  DirectoryRenameResponse
-} from "../models";
+  DirectoryRenameResponse,
+} from "../models/index.js";
 
 /** Class containing Directory operations. */
 export class DirectoryImpl implements Directory {
@@ -46,18 +46,12 @@ export class DirectoryImpl implements Directory {
 
   /**
    * Creates a new directory under the specified share or parent directory.
-   * @param fileAttributes If specified, the provided file attributes shall be set. Default value:
-   *                       ‘Archive’ for file and ‘Directory’ for directory. ‘None’ can also be specified as default.
    * @param options The options parameters.
    */
   create(
-    fileAttributes: string,
-    options?: DirectoryCreateOptionalParams
+    options?: DirectoryCreateOptionalParams,
   ): Promise<DirectoryCreateResponse> {
-    return this.client.sendOperationRequest(
-      { fileAttributes, options },
-      createOperationSpec
-    );
+    return this.client.sendOperationRequest({ options }, createOperationSpec);
   }
 
   /**
@@ -67,11 +61,11 @@ export class DirectoryImpl implements Directory {
    * @param options The options parameters.
    */
   getProperties(
-    options?: DirectoryGetPropertiesOptionalParams
+    options?: DirectoryGetPropertiesOptionalParams,
   ): Promise<DirectoryGetPropertiesResponse> {
     return this.client.sendOperationRequest(
       { options },
-      getPropertiesOperationSpec
+      getPropertiesOperationSpec,
     );
   }
 
@@ -81,24 +75,21 @@ export class DirectoryImpl implements Directory {
    * @param options The options parameters.
    */
   delete(
-    options?: DirectoryDeleteOptionalParams
+    options?: DirectoryDeleteOptionalParams,
   ): Promise<DirectoryDeleteResponse> {
     return this.client.sendOperationRequest({ options }, deleteOperationSpec);
   }
 
   /**
    * Sets properties on the directory.
-   * @param fileAttributes If specified, the provided file attributes shall be set. Default value:
-   *                       ‘Archive’ for file and ‘Directory’ for directory. ‘None’ can also be specified as default.
    * @param options The options parameters.
    */
   setProperties(
-    fileAttributes: string,
-    options?: DirectorySetPropertiesOptionalParams
+    options?: DirectorySetPropertiesOptionalParams,
   ): Promise<DirectorySetPropertiesResponse> {
     return this.client.sendOperationRequest(
-      { fileAttributes, options },
-      setPropertiesOperationSpec
+      { options },
+      setPropertiesOperationSpec,
     );
   }
 
@@ -107,11 +98,11 @@ export class DirectoryImpl implements Directory {
    * @param options The options parameters.
    */
   setMetadata(
-    options?: DirectorySetMetadataOptionalParams
+    options?: DirectorySetMetadataOptionalParams,
   ): Promise<DirectorySetMetadataResponse> {
     return this.client.sendOperationRequest(
       { options },
-      setMetadataOperationSpec
+      setMetadataOperationSpec,
     );
   }
 
@@ -121,11 +112,11 @@ export class DirectoryImpl implements Directory {
    * @param options The options parameters.
    */
   listFilesAndDirectoriesSegment(
-    options?: DirectoryListFilesAndDirectoriesSegmentOptionalParams
+    options?: DirectoryListFilesAndDirectoriesSegmentOptionalParams,
   ): Promise<DirectoryListFilesAndDirectoriesSegmentResponse> {
     return this.client.sendOperationRequest(
       { options },
-      listFilesAndDirectoriesSegmentOperationSpec
+      listFilesAndDirectoriesSegmentOperationSpec,
     );
   }
 
@@ -134,11 +125,11 @@ export class DirectoryImpl implements Directory {
    * @param options The options parameters.
    */
   listHandles(
-    options?: DirectoryListHandlesOptionalParams
+    options?: DirectoryListHandlesOptionalParams,
   ): Promise<DirectoryListHandlesResponse> {
     return this.client.sendOperationRequest(
       { options },
-      listHandlesOperationSpec
+      listHandlesOperationSpec,
     );
   }
 
@@ -150,11 +141,11 @@ export class DirectoryImpl implements Directory {
    */
   forceCloseHandles(
     handleId: string,
-    options?: DirectoryForceCloseHandlesOptionalParams
+    options?: DirectoryForceCloseHandlesOptionalParams,
   ): Promise<DirectoryForceCloseHandlesResponse> {
     return this.client.sendOperationRequest(
       { handleId, options },
-      forceCloseHandlesOperationSpec
+      forceCloseHandlesOperationSpec,
     );
   }
 
@@ -165,11 +156,11 @@ export class DirectoryImpl implements Directory {
    */
   rename(
     renameSource: string,
-    options?: DirectoryRenameOptionalParams
+    options?: DirectoryRenameOptionalParams,
   ): Promise<DirectoryRenameResponse> {
     return this.client.sendOperationRequest(
       { renameSource, options },
-      renameOperationSpec
+      renameOperationSpec,
     );
   }
 }
@@ -181,12 +172,12 @@ const createOperationSpec: coreClient.OperationSpec = {
   httpMethod: "PUT",
   responses: {
     201: {
-      headersMapper: Mappers.DirectoryCreateHeaders
+      headersMapper: Mappers.DirectoryCreateHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.DirectoryCreateExceptionHeaders
-    }
+      headersMapper: Mappers.DirectoryCreateExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds, Parameters.restype2],
   urlParameters: [Parameters.url],
@@ -202,49 +193,52 @@ const createOperationSpec: coreClient.OperationSpec = {
     Parameters.fileAttributes,
     Parameters.fileCreatedOn,
     Parameters.fileLastWriteOn,
-    Parameters.fileChangeOn
+    Parameters.fileChangeOn,
+    Parameters.owner,
+    Parameters.group,
+    Parameters.fileMode,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const getPropertiesOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}",
   httpMethod: "GET",
   responses: {
     200: {
-      headersMapper: Mappers.DirectoryGetPropertiesHeaders
+      headersMapper: Mappers.DirectoryGetPropertiesHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.DirectoryGetPropertiesExceptionHeaders
-    }
+      headersMapper: Mappers.DirectoryGetPropertiesExceptionHeaders,
+    },
   },
   queryParameters: [
     Parameters.timeoutInSeconds,
     Parameters.shareSnapshot,
-    Parameters.restype2
+    Parameters.restype2,
   ],
   urlParameters: [Parameters.url],
   headerParameters: [
     Parameters.version,
     Parameters.fileRequestIntent,
     Parameters.accept1,
-    Parameters.allowTrailingDot
+    Parameters.allowTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const deleteOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}",
   httpMethod: "DELETE",
   responses: {
     202: {
-      headersMapper: Mappers.DirectoryDeleteHeaders
+      headersMapper: Mappers.DirectoryDeleteHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.DirectoryDeleteExceptionHeaders
-    }
+      headersMapper: Mappers.DirectoryDeleteExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds, Parameters.restype2],
   urlParameters: [Parameters.url],
@@ -252,27 +246,27 @@ const deleteOperationSpec: coreClient.OperationSpec = {
     Parameters.version,
     Parameters.fileRequestIntent,
     Parameters.accept1,
-    Parameters.allowTrailingDot
+    Parameters.allowTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const setPropertiesOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}",
   httpMethod: "PUT",
   responses: {
     200: {
-      headersMapper: Mappers.DirectorySetPropertiesHeaders
+      headersMapper: Mappers.DirectorySetPropertiesHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.DirectorySetPropertiesExceptionHeaders
-    }
+      headersMapper: Mappers.DirectorySetPropertiesExceptionHeaders,
+    },
   },
   queryParameters: [
     Parameters.comp,
     Parameters.timeoutInSeconds,
-    Parameters.restype2
+    Parameters.restype2,
   ],
   urlParameters: [Parameters.url],
   headerParameters: [
@@ -286,27 +280,30 @@ const setPropertiesOperationSpec: coreClient.OperationSpec = {
     Parameters.fileAttributes,
     Parameters.fileCreatedOn,
     Parameters.fileLastWriteOn,
-    Parameters.fileChangeOn
+    Parameters.fileChangeOn,
+    Parameters.owner,
+    Parameters.group,
+    Parameters.fileMode,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const setMetadataOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}",
   httpMethod: "PUT",
   responses: {
     200: {
-      headersMapper: Mappers.DirectorySetMetadataHeaders
+      headersMapper: Mappers.DirectorySetMetadataHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.DirectorySetMetadataExceptionHeaders
-    }
+      headersMapper: Mappers.DirectorySetMetadataExceptionHeaders,
+    },
   },
   queryParameters: [
     Parameters.timeoutInSeconds,
     Parameters.comp5,
-    Parameters.restype2
+    Parameters.restype2,
   ],
   urlParameters: [Parameters.url],
   headerParameters: [
@@ -314,10 +311,10 @@ const setMetadataOperationSpec: coreClient.OperationSpec = {
     Parameters.fileRequestIntent,
     Parameters.accept1,
     Parameters.metadata,
-    Parameters.allowTrailingDot
+    Parameters.allowTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const listFilesAndDirectoriesSegmentOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}",
@@ -325,13 +322,13 @@ const listFilesAndDirectoriesSegmentOperationSpec: coreClient.OperationSpec = {
   responses: {
     200: {
       bodyMapper: Mappers.ListFilesAndDirectoriesSegmentResponse,
-      headersMapper: Mappers.DirectoryListFilesAndDirectoriesSegmentHeaders
+      headersMapper: Mappers.DirectoryListFilesAndDirectoriesSegmentHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
       headersMapper:
-        Mappers.DirectoryListFilesAndDirectoriesSegmentExceptionHeaders
-    }
+        Mappers.DirectoryListFilesAndDirectoriesSegmentExceptionHeaders,
+    },
   },
   queryParameters: [
     Parameters.timeoutInSeconds,
@@ -341,7 +338,7 @@ const listFilesAndDirectoriesSegmentOperationSpec: coreClient.OperationSpec = {
     Parameters.maxResults,
     Parameters.shareSnapshot,
     Parameters.restype2,
-    Parameters.include1
+    Parameters.include1,
   ],
   urlParameters: [Parameters.url],
   headerParameters: [
@@ -349,10 +346,10 @@ const listFilesAndDirectoriesSegmentOperationSpec: coreClient.OperationSpec = {
     Parameters.fileRequestIntent,
     Parameters.accept1,
     Parameters.allowTrailingDot,
-    Parameters.includeExtendedInfo
+    Parameters.includeExtendedInfo,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const listHandlesOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}",
@@ -360,48 +357,19 @@ const listHandlesOperationSpec: coreClient.OperationSpec = {
   responses: {
     200: {
       bodyMapper: Mappers.ListHandlesResponse,
-      headersMapper: Mappers.DirectoryListHandlesHeaders
+      headersMapper: Mappers.DirectoryListHandlesHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.DirectoryListHandlesExceptionHeaders
-    }
+      headersMapper: Mappers.DirectoryListHandlesExceptionHeaders,
+    },
   },
   queryParameters: [
     Parameters.timeoutInSeconds,
     Parameters.marker,
     Parameters.maxResults,
     Parameters.shareSnapshot,
-    Parameters.comp9
-  ],
-  urlParameters: [Parameters.url],
-  headerParameters: [
-    Parameters.version,
-    Parameters.fileRequestIntent,
-    Parameters.accept1,
-    Parameters.allowTrailingDot,
-    Parameters.recursive
-  ],
-  isXML: true,
-  serializer: xmlSerializer
-};
-const forceCloseHandlesOperationSpec: coreClient.OperationSpec = {
-  path: "/{shareName}/{directory}",
-  httpMethod: "PUT",
-  responses: {
-    200: {
-      headersMapper: Mappers.DirectoryForceCloseHandlesHeaders
-    },
-    default: {
-      bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.DirectoryForceCloseHandlesExceptionHeaders
-    }
-  },
-  queryParameters: [
-    Parameters.timeoutInSeconds,
-    Parameters.marker,
-    Parameters.shareSnapshot,
-    Parameters.comp10
+    Parameters.comp9,
   ],
   urlParameters: [Parameters.url],
   headerParameters: [
@@ -410,27 +378,56 @@ const forceCloseHandlesOperationSpec: coreClient.OperationSpec = {
     Parameters.accept1,
     Parameters.allowTrailingDot,
     Parameters.recursive,
-    Parameters.handleId
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
+};
+const forceCloseHandlesOperationSpec: coreClient.OperationSpec = {
+  path: "/{shareName}/{directory}",
+  httpMethod: "PUT",
+  responses: {
+    200: {
+      headersMapper: Mappers.DirectoryForceCloseHandlesHeaders,
+    },
+    default: {
+      bodyMapper: Mappers.StorageError,
+      headersMapper: Mappers.DirectoryForceCloseHandlesExceptionHeaders,
+    },
+  },
+  queryParameters: [
+    Parameters.timeoutInSeconds,
+    Parameters.marker,
+    Parameters.shareSnapshot,
+    Parameters.comp10,
+  ],
+  urlParameters: [Parameters.url],
+  headerParameters: [
+    Parameters.version,
+    Parameters.fileRequestIntent,
+    Parameters.accept1,
+    Parameters.allowTrailingDot,
+    Parameters.recursive,
+    Parameters.handleId,
+  ],
+  isXML: true,
+  serializer: xmlSerializer,
 };
 const renameOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}",
   httpMethod: "PUT",
   responses: {
     200: {
-      headersMapper: Mappers.DirectoryRenameHeaders
+      headersMapper: Mappers.DirectoryRenameHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.DirectoryRenameExceptionHeaders
-    }
+      headersMapper: Mappers.DirectoryRenameExceptionHeaders,
+    },
   },
   queryParameters: [
     Parameters.timeoutInSeconds,
     Parameters.restype2,
-    Parameters.comp11
+    Parameters.comp11,
   ],
   urlParameters: [Parameters.url],
   headerParameters: [
@@ -451,8 +448,8 @@ const renameOperationSpec: coreClient.OperationSpec = {
     Parameters.fileCreationTime,
     Parameters.fileLastWriteTime,
     Parameters.fileChangeTime,
-    Parameters.allowSourceTrailingDot
+    Parameters.allowSourceTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };

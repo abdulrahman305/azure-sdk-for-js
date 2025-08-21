@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.6 (Unreleased)
+## 1.0.6 (2025-02-26)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Add support for MQTT event handling
 
 ## 1.0.5 (2023-06-28)
 

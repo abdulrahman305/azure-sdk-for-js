@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import os from "os";
+import os from "node:os";
 import {
   SEMRESATTRS_DEVICE_ID,
   SEMRESATTRS_DEVICE_MODEL_NAME,
@@ -16,15 +16,6 @@ import {
   DBSYSTEMVALUES_SQLITE,
   DBSYSTEMVALUES_OTHER_SQL,
   DBSYSTEMVALUES_HSQLDB,
-  DBSYSTEMVALUES_H2,
-  SEMATTRS_HTTP_METHOD,
-  SEMATTRS_HTTP_URL,
-  SEMATTRS_HTTP_SCHEME,
-  SEMATTRS_HTTP_TARGET,
-  SEMATTRS_HTTP_HOST,
-  SEMATTRS_NET_PEER_PORT,
-  SEMATTRS_NET_PEER_NAME,
-  SEMATTRS_NET_PEER_IP,
   SEMATTRS_PEER_SERVICE,
   SEMRESATTRS_SERVICE_NAME,
   SEMRESATTRS_SERVICE_NAMESPACE,
@@ -34,17 +25,30 @@ import {
   SEMRESATTRS_K8S_JOB_NAME,
   SEMRESATTRS_K8S_CRONJOB_NAME,
   SEMRESATTRS_K8S_DAEMONSET_NAME,
-  SEMRESATTRS_TELEMETRY_SDK_VERSION,
-  SEMRESATTRS_TELEMETRY_SDK_LANGUAGE,
-  SEMRESATTRS_TELEMETRY_SDK_NAME,
+  ATTR_TELEMETRY_SDK_VERSION,
+  ATTR_TELEMETRY_SDK_LANGUAGE,
+  ATTR_TELEMETRY_SDK_NAME,
+  DBSYSTEMVALUES_H2,
 } from "@opentelemetry/semantic-conventions";
-import { Tags } from "../types";
-import { getInstance } from "../platform";
-import { KnownContextTagKeys, TelemetryItem as Envelope, MetricsData } from "../generated";
-import { Resource } from "@opentelemetry/resources";
-import { Attributes, HrTime } from "@opentelemetry/api";
+import { experimentalOpenTelemetryValues, type Tags } from "../types.js";
+import { getInstance } from "../platform/index.js";
+import type { TelemetryItem as Envelope, MetricsData } from "../generated/index.js";
+import { KnownContextTagKeys } from "../generated/index.js";
+import type { Resource } from "@opentelemetry/resources";
+import type { Attributes, HrTime } from "@opentelemetry/api";
 import { hrTimeToNanoseconds } from "@opentelemetry/core";
-import { AnyValue } from "@opentelemetry/api-logs";
+import type { AnyValue } from "@opentelemetry/api-logs";
+import { ENV_OPENTELEMETRY_RESOURCE_METRIC_DISABLED } from "../Declarations/Constants.js";
+import {
+  getHttpHost,
+  getHttpMethod,
+  getHttpScheme,
+  getHttpTarget,
+  getHttpUrl,
+  getNetPeerName,
+  getNetPeerPort,
+  getPeerIp,
+} from "./spanUtils.js";
 
 export function hrTimeToDate(hrTime: HrTime): Date {
   return new Date(hrTimeToNanoseconds(hrTime) / 1000000);
@@ -156,26 +160,26 @@ export function getUrl(attributes: Attributes): string {
   if (!attributes) {
     return "";
   }
-  const httpMethod = attributes[SEMATTRS_HTTP_METHOD];
+  const httpMethod = getHttpMethod(attributes);
   if (httpMethod) {
-    const httpUrl = attributes[SEMATTRS_HTTP_URL];
+    const httpUrl = getHttpUrl(attributes);
     if (httpUrl) {
       return String(httpUrl);
     } else {
-      const httpScheme = attributes[SEMATTRS_HTTP_SCHEME];
-      const httpTarget = attributes[SEMATTRS_HTTP_TARGET];
+      const httpScheme = getHttpScheme(attributes);
+      const httpTarget = getHttpTarget(attributes);
       if (httpScheme && httpTarget) {
-        const httpHost = attributes[SEMATTRS_HTTP_HOST];
+        const httpHost = getHttpHost(attributes);
         if (httpHost) {
           return `${httpScheme}://${httpHost}${httpTarget}`;
         } else {
-          const netPeerPort = attributes[SEMATTRS_NET_PEER_PORT];
+          const netPeerPort = getNetPeerPort(attributes);
           if (netPeerPort) {
-            const netPeerName = attributes[SEMATTRS_NET_PEER_NAME];
+            const netPeerName = getNetPeerName(attributes);
             if (netPeerName) {
               return `${httpScheme}://${netPeerName}:${netPeerPort}${httpTarget}`;
             } else {
-              const netPeerIp = attributes[SEMATTRS_NET_PEER_IP];
+              const netPeerIp = getPeerIp(attributes);
               if (netPeerIp) {
                 return `${httpScheme}://${netPeerIp}:${netPeerPort}${httpTarget}`;
               }
@@ -193,10 +197,10 @@ export function getDependencyTarget(attributes: Attributes): string {
     return "";
   }
   const peerService = attributes[SEMATTRS_PEER_SERVICE];
-  const httpHost = attributes[SEMATTRS_HTTP_HOST];
-  const httpUrl = attributes[SEMATTRS_HTTP_URL];
-  const netPeerName = attributes[SEMATTRS_NET_PEER_NAME];
-  const netPeerIp = attributes[SEMATTRS_NET_PEER_IP];
+  const httpHost = getHttpHost(attributes);
+  const httpUrl = getHttpUrl(attributes);
+  const netPeerName = getNetPeerName(attributes);
+  const netPeerIp = getPeerIp(attributes);
   if (peerService) {
     return String(peerService);
   } else if (httpHost) {
@@ -223,9 +227,9 @@ export function createResourceMetricEnvelope(
       if (
         !(
           key.startsWith("_MS.") ||
-          key === SEMRESATTRS_TELEMETRY_SDK_VERSION ||
-          key === SEMRESATTRS_TELEMETRY_SDK_LANGUAGE ||
-          key === SEMRESATTRS_TELEMETRY_SDK_NAME
+          key === ATTR_TELEMETRY_SDK_VERSION ||
+          key === ATTR_TELEMETRY_SDK_LANGUAGE ||
+          key === ATTR_TELEMETRY_SDK_NAME
         )
       ) {
         resourceAttributes[key] = resource.attributes[key] as string;
@@ -258,12 +262,18 @@ export function createResourceMetricEnvelope(
 
 export function serializeAttribute(value: AnyValue): string {
   if (typeof value === "object") {
-    if (value instanceof Uint8Array) {
+    if (value instanceof Error) {
+      try {
+        return JSON.stringify(value, Object.getOwnPropertyNames(value));
+      } catch (err: unknown) {
+        // Failed to serialize, return string cast
+        return String(value);
+      }
+    } else if (value instanceof Uint8Array) {
       return String(value);
     } else {
       try {
-        // Should handle Error objects as well
-        return JSON.stringify(value, Object.getOwnPropertyNames(value));
+        return JSON.stringify(value);
       } catch (err: unknown) {
         // Failed to serialize, return string cast
         return String(value);
@@ -275,5 +285,9 @@ export function serializeAttribute(value: AnyValue): string {
 }
 
 export function shouldCreateResourceMetric(): boolean {
-  return !(process.env.ENV_OPENTELEMETRY_RESOURCE_METRIC_DISABLED?.toLowerCase() === "true");
+  return !(process.env[ENV_OPENTELEMETRY_RESOURCE_METRIC_DISABLED]?.toLowerCase() === "true");
+}
+
+export function isSyntheticSource(attributes: Attributes): boolean {
+  return !!attributes[experimentalOpenTelemetryValues.SYNTHETIC_TYPE];
 }

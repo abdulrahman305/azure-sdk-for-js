@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 import { AbortError } from "@azure/abort-controller";
-import { TransferProgressEvent } from "@azure/core-rest-pipeline";
-import { Readable } from "stream";
+import type { TransferProgressEvent } from "@azure/core-rest-pipeline";
+import { Readable } from "node:stream";
 
 export type ReadableStreamGetter = (offset: number) => Promise<NodeJS.ReadableStream>;
 

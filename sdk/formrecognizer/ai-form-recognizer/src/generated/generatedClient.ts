@@ -17,13 +17,13 @@ import {
   DocumentModelsImpl,
   MiscellaneousImpl,
   DocumentClassifiersImpl
-} from "./operations";
+} from "./operations/index.js";
 import {
   DocumentModels,
   Miscellaneous,
   DocumentClassifiers
-} from "./operationsInterfaces";
-import { StringIndexType, GeneratedClientOptionalParams } from "./models";
+} from "./operationsInterfaces/index.js";
+import { StringIndexType, GeneratedClientOptionalParams } from "./models/index.js";
 
 export class GeneratedClient extends coreClient.ServiceClient {
   endpoint: string;
@@ -49,7 +49,7 @@ export class GeneratedClient extends coreClient.ServiceClient {
       requestContentType: "application/json; charset=utf-8"
     };
 
-    const packageDetails = `azsdk-js-ai-form-recognizer/5.0.0`;
+    const packageDetails = `azsdk-js-ai-form-recognizer/5.1.0`;
     const userAgentPrefix =
       options.userAgentOptions && options.userAgentOptions.userAgentPrefix
         ? `${options.userAgentOptions.userAgentPrefix} ${packageDetails}`

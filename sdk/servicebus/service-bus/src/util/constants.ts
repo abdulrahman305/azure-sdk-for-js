@@ -6,7 +6,7 @@
  */
 export const packageJsonInfo = {
   name: "@azure/service-bus",
-  version: "7.10.0",
+  version: "7.10.0-beta.3",
 };
 
 /**
@@ -323,7 +323,7 @@ export const ATOM_METADATA_MARKER = "_";
 
 /**
  * Known HTTP status codes as documented and referenced in ATOM based management API feature
- * https://docs.microsoft.com/dotnet/api/system.net.httpstatuscode?view=netframework-4.8
+ * https://learn.microsoft.com/dotnet/api/system.net.httpstatuscode?view=netframework-4.8
  * @internal
  */
 export const HttpResponseCodes = {

@@ -15,9 +15,12 @@ import {
   License as LicenseMapper,
   LicenseUpdate as LicenseUpdateMapper,
   MachineInstallPatchesParameters as MachineInstallPatchesParametersMapper,
+  LicenseProfile as LicenseProfileMapper,
+  LicenseProfileUpdate as LicenseProfileUpdateMapper,
   MachineExtension as MachineExtensionMapper,
   MachineExtensionUpdate as MachineExtensionUpdateMapper,
   MachineExtensionUpgrade as MachineExtensionUpgradeMapper,
+  SetupExtensionRequest as SetupExtensionRequestMapper,
   MachineRunCommand as MachineRunCommandMapper,
   Gateway as GatewayMapper,
   GatewayUpdate as GatewayUpdateMapper,
@@ -25,7 +28,7 @@ import {
   HybridComputePrivateLinkScope as HybridComputePrivateLinkScopeMapper,
   TagsResource as TagsResourceMapper,
   PrivateEndpointConnection as PrivateEndpointConnectionMapper,
-} from "../models/mappers";
+} from "../models/mappers.js";
 
 export const contentType: OperationParameter = {
   parameterPath: ["options", "contentType"],
@@ -71,7 +74,7 @@ export const $host: OperationURLParameter = {
 export const apiVersion: OperationQueryParameter = {
   parameterPath: "apiVersion",
   mapper: {
-    defaultValue: "2024-05-20-preview",
+    defaultValue: "2025-02-19-preview",
     isConstant: true,
     serializedName: "api-version",
     type: {
@@ -193,6 +196,52 @@ export const installPatchesInput: OperationParameter = {
   mapper: MachineInstallPatchesParametersMapper,
 };
 
+export const expand1: OperationQueryParameter = {
+  parameterPath: ["options", "expand"],
+  mapper: {
+    serializedName: "$expand",
+    type: {
+      name: "String",
+    },
+  },
+};
+
+export const parameters2: OperationParameter = {
+  parameterPath: "parameters",
+  mapper: LicenseProfileMapper,
+};
+
+export const machineName1: OperationURLParameter = {
+  parameterPath: "machineName",
+  mapper: {
+    constraints: {
+      Pattern: new RegExp("[a-zA-Z0-9-_\\.]+"),
+    },
+    serializedName: "machineName",
+    required: true,
+    type: {
+      name: "String",
+    },
+  },
+};
+
+export const licenseProfileName: OperationURLParameter = {
+  parameterPath: "licenseProfileName",
+  mapper: {
+    defaultValue: "default",
+    isConstant: true,
+    serializedName: "licenseProfileName",
+    type: {
+      name: "String",
+    },
+  },
+};
+
+export const parameters3: OperationParameter = {
+  parameterPath: "parameters",
+  mapper: LicenseProfileUpdateMapper,
+};
+
 export const extensionParameters: OperationParameter = {
   parameterPath: "extensionParameters",
   mapper: MachineExtensionMapper,
@@ -217,6 +266,11 @@ export const extensionParameters1: OperationParameter = {
 export const extensionUpgradeParameters: OperationParameter = {
   parameterPath: "extensionUpgradeParameters",
   mapper: MachineExtensionUpgradeMapper,
+};
+
+export const extensions: OperationParameter = {
+  parameterPath: "extensions",
+  mapper: SetupExtensionRequestMapper,
 };
 
 export const location: OperationURLParameter = {
@@ -263,23 +317,23 @@ export const version: OperationURLParameter = {
   },
 };
 
-export const runCommandProperties: OperationParameter = {
-  parameterPath: "runCommandProperties",
-  mapper: MachineRunCommandMapper,
-};
-
-export const machineName1: OperationURLParameter = {
-  parameterPath: "machineName",
+export const location1: OperationURLParameter = {
+  parameterPath: "location",
   mapper: {
     constraints: {
-      Pattern: new RegExp("[a-zA-Z0-9-_\\.]+"),
+      MinLength: 1,
     },
-    serializedName: "machineName",
+    serializedName: "location",
     required: true,
     type: {
       name: "String",
     },
   },
+};
+
+export const runCommandProperties: OperationParameter = {
+  parameterPath: "runCommandProperties",
+  mapper: MachineRunCommandMapper,
 };
 
 export const runCommandName: OperationURLParameter = {
@@ -296,7 +350,7 @@ export const runCommandName: OperationURLParameter = {
   },
 };
 
-export const parameters2: OperationParameter = {
+export const parameters4: OperationParameter = {
   parameterPath: "parameters",
   mapper: GatewayMapper,
 };
@@ -315,7 +369,7 @@ export const gatewayName: OperationURLParameter = {
   },
 };
 
-export const parameters3: OperationParameter = {
+export const parameters5: OperationParameter = {
   parameterPath: "parameters",
   mapper: GatewayUpdateMapper,
 };
@@ -376,7 +430,7 @@ export const settingsResourceName: OperationURLParameter = {
   },
 };
 
-export const parameters4: OperationParameter = {
+export const parameters6: OperationParameter = {
   parameterPath: "parameters",
   mapper: SettingsMapper,
 };
@@ -395,7 +449,7 @@ export const scopeName: OperationURLParameter = {
   },
 };
 
-export const parameters5: OperationParameter = {
+export const parameters7: OperationParameter = {
   parameterPath: "parameters",
   mapper: HybridComputePrivateLinkScopeMapper,
 };
@@ -403,20 +457,6 @@ export const parameters5: OperationParameter = {
 export const privateLinkScopeTags: OperationParameter = {
   parameterPath: "privateLinkScopeTags",
   mapper: TagsResourceMapper,
-};
-
-export const location1: OperationURLParameter = {
-  parameterPath: "location",
-  mapper: {
-    constraints: {
-      MinLength: 1,
-    },
-    serializedName: "location",
-    required: true,
-    type: {
-      name: "String",
-    },
-  },
 };
 
 export const privateLinkScopeId: OperationURLParameter = {
@@ -434,6 +474,7 @@ export const machineName2: OperationURLParameter = {
   parameterPath: "machineName",
   mapper: {
     constraints: {
+      Pattern: new RegExp("^[a-zA-Z0-9-_\\.]{1,54}$"),
       MinLength: 1,
     },
     serializedName: "machineName",
@@ -466,7 +507,7 @@ export const privateEndpointConnectionName: OperationURLParameter = {
   },
 };
 
-export const parameters6: OperationParameter = {
+export const parameters8: OperationParameter = {
   parameterPath: "parameters",
   mapper: PrivateEndpointConnectionMapper,
 };

@@ -12,13 +12,13 @@ import {
   createRule,
   getVerifiers,
   stripPath,
-} from "../utils";
+} from "../utils/index.js";
 
 /**
  * definition of LTS Node versions
  * * needs updating as definitions change
  */
-export const LTS = ">=18.0.0";
+export const LTS = ">=20.0.0";
 export type Options = [
   {
     nodeVersionOverride?: string;

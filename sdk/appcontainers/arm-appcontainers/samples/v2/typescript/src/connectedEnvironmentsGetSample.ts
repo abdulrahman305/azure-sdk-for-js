@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Get the properties of an connectedEnvironment.
  *
  * @summary Get the properties of an connectedEnvironment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironments_Get.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironments_Get.json
  */
-async function getConnectedEnvironmentByConnectedEnvironmentName() {
+async function getConnectedEnvironmentByConnectedEnvironmentName(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345";
@@ -36,8 +34,8 @@ async function getConnectedEnvironmentByConnectedEnvironmentName() {
   console.log(result);
 }
 
-async function main() {
-  getConnectedEnvironmentByConnectedEnvironmentName();
+async function main(): Promise<void> {
+  await getConnectedEnvironmentByConnectedEnvironmentName();
 }
 
 main().catch(console.error);

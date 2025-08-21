@@ -6,19 +6,20 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import { DataMigrationManagementClient } from "@azure/arm-datamigration";
 import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
 
 /**
- * This sample demonstrates how to The tasks resource is a nested, proxy-only resource representing work performed by a DMS instance. The DELETE method deletes a task, canceling it first if it's running.
+ * This sample demonstrates how to The tasks resource is a nested, proxy-only resource representing work performed by a DMS (classic) instance. The DELETE method deletes a task, canceling it first if it's running.
  *
- * @summary The tasks resource is a nested, proxy-only resource representing work performed by a DMS instance. The DELETE method deletes a task, canceling it first if it's running.
- * x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/preview/2021-10-30-preview/examples/Tasks_Delete.json
+ * @summary The tasks resource is a nested, proxy-only resource representing work performed by a DMS (classic) instance. The DELETE method deletes a task, canceling it first if it's running.
+ * x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/preview/2025-03-15-preview/examples/Tasks_Delete.json
  */
-async function tasksDelete() {
-  const subscriptionId = "fc04246f-04c5-437e-ac5e-206a19e7193f";
+async function tasksDelete(): Promise<void> {
+  const subscriptionId =
+    process.env["DATAMIGRATION_SUBSCRIPTION_ID"] ||
+    "fc04246f-04c5-437e-ac5e-206a19e7193f";
   const groupName = "DmsSdkRg";
   const serviceName = "DmsSdkService";
   const projectName = "DmsSdkProject";
@@ -29,9 +30,13 @@ async function tasksDelete() {
     groupName,
     serviceName,
     projectName,
-    taskName
+    taskName,
   );
   console.log(result);
 }
 
-tasksDelete().catch(console.error);
+async function main(): Promise<void> {
+  await tasksDelete();
+}
+
+main().catch(console.error);

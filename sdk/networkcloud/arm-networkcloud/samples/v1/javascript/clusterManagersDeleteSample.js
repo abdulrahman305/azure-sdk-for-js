@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Delete the provided cluster manager.
  *
  * @summary Delete the provided cluster manager.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/ClusterManagers_Delete.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/ClusterManagers_Delete.json
  */
 async function deleteClusterManager() {
   const subscriptionId =
@@ -27,13 +25,13 @@ async function deleteClusterManager() {
   const client = new NetworkCloud(credential, subscriptionId);
   const result = await client.clusterManagers.beginDeleteAndWait(
     resourceGroupName,
-    clusterManagerName
+    clusterManagerName,
   );
   console.log(result);
 }
 
 async function main() {
-  deleteClusterManager();
+  await deleteClusterManager();
 }
 
 main().catch(console.error);

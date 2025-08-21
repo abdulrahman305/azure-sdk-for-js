@@ -1,15 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-import { ClientContext } from "../ClientContext";
-import { HTTPMethod, OperationType, ResourceType } from "../common";
-import { Agent } from "../CosmosClientOptions";
-import { ConnectionPolicy, PartitionKey } from "../documents";
-import { GlobalEndpointManager } from "../globalEndpointManager";
-import { PluginConfig } from "../plugins/Plugin";
-import { CosmosHeaders } from "../queryExecutionContext/CosmosHeaders";
-import { FeedOptions } from "./FeedOptions";
-import { RequestOptions } from "./RequestOptions";
-import { HttpClient, Pipeline } from "@azure/core-rest-pipeline";
+import type { ClientContext } from "../ClientContext.js";
+import type { HTTPMethod, OperationType, ResourceType } from "../common/index.js";
+import type { Agent } from "../CosmosClientOptions.js";
+import type { ConnectionPolicy, PartitionKey } from "../documents/index.js";
+import type { GlobalEndpointManager } from "../globalEndpointManager.js";
+import type { GlobalPartitionEndpointManager } from "../globalPartitionEndpointManager.js";
+import type { PluginConfig } from "../plugins/Plugin.js";
+import type { CosmosHeaders } from "../queryExecutionContext/CosmosHeaders.js";
+import type { FeedOptions } from "./FeedOptions.js";
+import type { RequestOptions } from "./RequestOptions.js";
+import type { HttpClient, Pipeline } from "@azure/core-rest-pipeline";
 
 /**
  * @hidden
@@ -34,4 +35,8 @@ export interface RequestContext {
   partitionKey?: PartitionKey;
   pipeline?: Pipeline;
   httpClient?: HttpClient;
+  /**
+   * Global partition endpoint manager instance.
+   */
+  globalPartitionEndpointManager?: GlobalPartitionEndpointManager;
 }

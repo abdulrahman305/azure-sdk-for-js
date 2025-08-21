@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Patch properties of baseboard management controller key set for the provided cluster, or update the tags associated with it. Properties and tag updates can be done independently.
  *
  * @summary Patch properties of baseboard management controller key set for the provided cluster, or update the tags associated with it. Properties and tag updates can be done independently.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/BmcKeySets_Patch.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/BmcKeySets_Patch.json
  */
 async function patchBaseboardManagementControllerKeySetOfCluster() {
   const subscriptionId =
@@ -35,6 +33,7 @@ async function patchBaseboardManagementControllerKeySetOfCluster() {
           keyData:
             "ssh-rsa AAtsE3njSONzDYRIZv/WLjVuMfrUSByHp+jfaaOLHTIIB4fJvo6dQUZxE20w2iDHV3tEkmnTo84eba97VMueQD6OzJPEyWZMRpz8UYWOd0IXeRqiFu1lawNblZhwNT/ojNZfpB3af/YDzwQCZgTcTRyNNhL4o/blKUmug0daSsSXISTRnIDpcf5qytjs1Xo+yYyJMvzLL59mhAyb3p/cD+Y3/s3WhAx+l0XOKpzXnblrv9d3q4c2tWmm/SyFqthaqd0= admin@vm",
         },
+        userPrincipalName: "userABC@contoso.com",
       },
       {
         description: "Needs access for troubleshooting as a part of the support team",
@@ -43,6 +42,7 @@ async function patchBaseboardManagementControllerKeySetOfCluster() {
           keyData:
             "ssh-rsa AAtsE3njSONzDYRIZv/WLjVuMfrUSByHp+jfaaOLHTIIB4fJvo6dQUZxE20w2iDHV3tEkmnTo84eba97VMueQD6OzJPEyWZMRpz8UYWOd0IXeRqiFu1lawNblZhwNT/ojNZfpB3af/YDzwQCZgTcTRyNNhL4o/blKUmug0daSsSXISTRnIDpcf5qytjs1Xo+yYyJMvzLL59mhAyb3p/cD+Y3/s3WhAx+l0XOKpzXnblrv9d3q4c2tWmm/SyFqthaqd0= admin@vm",
         },
+        userPrincipalName: "userABC@contoso.com",
       },
     ],
   };
@@ -53,13 +53,13 @@ async function patchBaseboardManagementControllerKeySetOfCluster() {
     resourceGroupName,
     clusterName,
     bmcKeySetName,
-    options
+    options,
   );
   console.log(result);
 }
 
 async function main() {
-  patchBaseboardManagementControllerKeySetOfCluster();
+  await patchBaseboardManagementControllerKeySetOfCluster();
 }
 
 main().catch(console.error);

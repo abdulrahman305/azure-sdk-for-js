@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the diagnostics data for a Container App Job.
  *
  * @summary Get the diagnostics data for a Container App Job.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Job_GetDetector.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Job_GetDetector.json
  */
 async function getDiagnosticDataForAContainerAppJob() {
   const subscriptionId =
@@ -32,7 +32,7 @@ async function getDiagnosticDataForAContainerAppJob() {
 }
 
 async function main() {
-  getDiagnosticDataForAContainerAppJob();
+  await getDiagnosticDataForAContainerAppJob();
 }
 
 main().catch(console.error);

@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Creates or updates an Azure Cosmos DB Mongo Role Definition.
  *
  * @summary Creates or updates an Azure Cosmos DB Mongo Role Definition.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBMongoDBRoleDefinitionCreateUpdate.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBMongoDBRoleDefinitionCreateUpdate.json
  */
 async function cosmosDbMongoDbroleDefinitionCreateUpdate() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "mySubscriptionId";
@@ -46,7 +44,7 @@ async function cosmosDbMongoDbroleDefinitionCreateUpdate() {
 }
 
 async function main() {
-  cosmosDbMongoDbroleDefinitionCreateUpdate();
+  await cosmosDbMongoDbroleDefinitionCreateUpdate();
 }
 
 main().catch(console.error);

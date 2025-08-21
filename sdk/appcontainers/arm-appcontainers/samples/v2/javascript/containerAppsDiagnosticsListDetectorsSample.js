@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the list of diagnostics for a given Container App.
  *
  * @summary Get the list of diagnostics for a given Container App.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerAppsDiagnostics_List.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerAppsDiagnostics_List.json
  */
 async function getTheListOfAvailableDiagnosticsForAGivenContainerApp() {
   const subscriptionId =
@@ -27,7 +27,7 @@ async function getTheListOfAvailableDiagnosticsForAGivenContainerApp() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.containerAppsDiagnostics.listDetectors(
+  for await (const item of client.containerAppsDiagnostics.listDetectors(
     resourceGroupName,
     containerAppName,
   )) {
@@ -37,7 +37,7 @@ async function getTheListOfAvailableDiagnosticsForAGivenContainerApp() {
 }
 
 async function main() {
-  getTheListOfAvailableDiagnosticsForAGivenContainerApp();
+  await getTheListOfAvailableDiagnosticsForAGivenContainerApp();
 }
 
 main().catch(console.error);

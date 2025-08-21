@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
-  CreateJob200Response,
-  CreateJob201Response,
-  CreateJobDefaultResponse,
-  CreateJobLogicalResponse,
+import type {
   GetJob200Response,
   GetJobDefaultResponse,
-} from "./responses";
+  CreateJob200Response,
+  CreateJob201Response,
+  CreateJobLogicalResponse,
+  CreateJobDefaultResponse,
+} from "./responses.js";
 
 const responseMap: Record<string, string[]> = {
   "GET /radiology-insights/jobs/{id}": ["200"],

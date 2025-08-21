@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
+import type {
   HttpClient,
   LogPolicyOptions,
   Pipeline,
@@ -13,12 +13,12 @@ import {
   RequestBodyType,
   TransferProgressEvent,
 } from "@azure/core-rest-pipeline";
-import { RawHttpHeadersInput } from "@azure/core-rest-pipeline";
-import { AbortSignalLike } from "@azure/abort-controller";
-import { OperationTracingOptions } from "@azure/core-tracing";
+import type { RawHttpHeadersInput } from "@azure/core-rest-pipeline";
+import type { AbortSignalLike } from "@azure/abort-controller";
+import type { OperationTracingOptions } from "@azure/core-tracing";
 
 /**
- * Shape of the default request parameters, this may be overriden by the specific
+ * Shape of the default request parameters, this may be overridden by the specific
  * request types to provide strong types
  */
 export type RequestParameters = {
@@ -199,12 +199,14 @@ export interface Client {
   pipeline: Pipeline;
   /**
    * This method will be used to send request that would check the path to provide
-   * strong types. When used by the codegen this type gets overriden with the generated
+   * strong types. When used by the codegen this type gets overridden with the generated
    * types. For example:
-   * ```typescript
-   * export type MyClient = Client & {
-   *    path: Routes;
-   * }
+   * ```typescript snippet:PathExample
+   * import { Client } from "@azure-rest/core-client";
+   *
+   * type MyClient = Client & {
+   *   path: Routes;
+   * };
    * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -216,13 +218,25 @@ export interface Client {
 }
 
 /**
+ * A Node.js Readable stream that also has a `destroy` method.
+ */
+export interface NodeJSReadableStream extends NodeJS.ReadableStream {
+  /**
+   * Destroy the stream. Optionally emit an 'error' event, and emit a
+   * 'close' event (unless emitClose is set to false). After this call,
+   * internal resources will be released.
+   */
+  destroy(error?: Error): void;
+}
+
+/**
  * Http Response which body is a NodeJS stream object
  */
 export type HttpNodeStreamResponse = HttpResponse & {
   /**
    * Streamable body
    */
-  body?: NodeJS.ReadableStream;
+  body?: NodeJSReadableStream;
 };
 
 /**
@@ -240,7 +254,14 @@ export type HttpBrowserStreamResponse = HttpResponse & {
  * a raw stream
  */
 export type StreamableMethod<TResponse = PathUncheckedResponse> = PromiseLike<TResponse> & {
+  /**
+   * Returns the response body as a NodeJS stream. Only available in Node-like environments.
+   */
   asNodeStream: () => Promise<HttpNodeStreamResponse>;
+  /**
+   * Returns the response body as a browser (Web) stream. Only available in the browser. If you require a Web Stream of the response in Node, consider using the
+   * `Readable.toWeb` Node API on the result of `asNodeStream`.
+   */
   asBrowserStream: () => Promise<HttpBrowserStreamResponse>;
 };
 
@@ -396,7 +417,10 @@ export type PathParameters<
     // additional parameters we can call RouteParameters recursively on the Tail to match the remaining parts,
     // in case the Tail has more parameters, it will return a tuple with the parameters found in tail.
     // We spread the second path params to end up with a single dimension tuple at the end.
-    [pathParameter: string, ...pathParameters: PathParameters<Tail>]
+    [
+      pathParameter: string | number | PathParameterWithOptions,
+      ...pathParameters: PathParameters<Tail>,
+    ]
   : // When the path doesn't match the template, it means that we have no path parameters so we return
     // an empty tuple.
     [];
@@ -427,4 +451,20 @@ export interface InnerError {
   code: string;
   /** Inner error. */
   innererror?: InnerError;
+}
+
+/**
+ * An object that can be passed as a path parameter, allowing for additional options to be set relating to how the parameter is encoded.
+ */
+export interface PathParameterWithOptions {
+  /**
+   * The value of the parameter.
+   */
+  value: string | number;
+
+  /**
+   * Whether to allow for reserved characters in the value. If set to true, special characters such as '/' in the parameter's value will not be URL encoded.
+   * Defaults to false.
+   */
+  allowReserved?: boolean;
 }

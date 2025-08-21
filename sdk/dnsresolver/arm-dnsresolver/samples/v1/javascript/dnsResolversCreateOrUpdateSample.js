@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Creates or updates a DNS resolver.
  *
  * @summary Creates or updates a DNS resolver.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/DnsResolver_Put.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/DnsResolver_Put.json
  */
 async function upsertDnsResolver() {
   const subscriptionId =
@@ -35,13 +33,13 @@ async function upsertDnsResolver() {
   const result = await client.dnsResolvers.beginCreateOrUpdateAndWait(
     resourceGroupName,
     dnsResolverName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
 async function main() {
-  upsertDnsResolver();
+  await upsertDnsResolver();
 }
 
 main().catch(console.error);

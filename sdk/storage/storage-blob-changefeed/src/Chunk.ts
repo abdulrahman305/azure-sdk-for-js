@@ -1,12 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AvroReader } from "../../storage-internal-avro/src";
-import { BlobChangeFeedEvent } from "./models/BlobChangeFeedEvent";
-import { CommonOptions } from "@azure/storage-blob";
-import { AbortSignalLike } from "@azure/abort-controller";
-import { AvroParseOptions } from "../../storage-internal-avro/src/AvroReader";
-import { rawEventToBlobChangeFeedEvent } from "./utils/utils.common";
+import type { AvroReader, AvroParseOptions } from "@azure/storage-internal-avro";
+import type { BlobChangeFeedEvent } from "./models/BlobChangeFeedEvent.js";
+import type { CommonOptions } from "@azure/storage-blob";
+import type { AbortSignalLike } from "@azure/abort-controller";
+import { rawEventToBlobChangeFeedEvent } from "./utils/utils.common.js";
 
 /**
  * Options to configure {@link Chunk.getChange} operation.

@@ -1,12 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
-  createDefaultHttpClient,
-  createPipelineRequest,
-  HttpMethods,
-} from "@azure/core-rest-pipeline";
+import type { HttpMethods } from "@azure/core-rest-pipeline";
+import { createDefaultHttpClient, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { diag } from "@opentelemetry/api";
+import type { VirtualMachineInfo } from "./types.js";
 import {
   AIMS_API_VERSION,
   AIMS_FORMAT,
@@ -15,11 +13,8 @@ import {
   EU_ENDPOINTS,
   NON_EU_CONNECTION_STRING,
   StatsbeatResourceProvider,
-  VirtualMachineInfo,
-} from "./types";
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const os = require("os");
+} from "./types.js";
+import os from "node:os";
 
 export class StatsbeatMetrics {
   protected resourceProvider: string = StatsbeatResourceProvider.unknown;
@@ -34,7 +29,7 @@ export class StatsbeatMetrics {
       // AKS
       this.resourceProvider = StatsbeatResourceProvider.aks;
       this.resourceIdentifier = process.env.AKS_ARM_NAMESPACE_ID;
-    } else if (process.env.WEBSITE_SITE_NAME) {
+    } else if (process.env.WEBSITE_SITE_NAME && !process.env.FUNCTIONS_WORKER_RUNTIME) {
       // Web apps
       this.resourceProvider = StatsbeatResourceProvider.appsvc;
       this.resourceIdentifier = process.env.WEBSITE_SITE_NAME;

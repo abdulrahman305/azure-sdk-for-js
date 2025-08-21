@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create or update a Container App.
  *
  * @summary Create or update a Container App.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerApps_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_CreateOrUpdate.json
  */
 async function createOrUpdateContainerApp() {
   const subscriptionId =
@@ -34,6 +34,14 @@ async function createOrUpdateContainerApp() {
         httpReadBufferSize: 30,
         logLevel: "debug",
       },
+      identitySettings: [
+        {
+          identity:
+            "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity",
+          lifecycle: "All",
+        },
+        { identity: "system", lifecycle: "Init" },
+      ],
       ingress: {
         additionalPortMappings: [
           { external: true, targetPort: 1234 },
@@ -88,10 +96,18 @@ async function createOrUpdateContainerApp() {
         ],
       },
       maxInactiveRevisions: 10,
+      runtime: { java: { enableMetrics: true } },
       service: { type: "redis" },
     },
     environmentId:
       "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube",
+    identity: {
+      type: "SystemAssigned,UserAssigned",
+      userAssignedIdentities: {
+        "/subscriptions/34adfa4fCedf4dc0Ba29B6d1a69ab345/resourcegroups/rg/providers/MicrosoftManagedIdentity/userAssignedIdentities/myidentity":
+          {},
+      },
+    },
     location: "East US",
     template: {
       containers: [
@@ -110,6 +126,18 @@ async function createOrUpdateContainerApp() {
               periodSeconds: 3,
             },
           ],
+          volumeMounts: [
+            {
+              mountPath: "/mnt/path1",
+              subPath: "subPath1",
+              volumeName: "azurefile",
+            },
+            {
+              mountPath: "/mnt/path2",
+              subPath: "subPath2",
+              volumeName: "nfsazurefile",
+            },
+          ],
         },
       ],
       initContainers: [
@@ -122,12 +150,36 @@ async function createOrUpdateContainerApp() {
         },
       ],
       scale: {
+        cooldownPeriod: 350,
         maxReplicas: 5,
         minReplicas: 1,
+        pollingInterval: 35,
         rules: [
           {
             name: "httpscalingrule",
             custom: { type: "http", metadata: { concurrentRequests: "50" } },
+          },
+          {
+            name: "servicebus",
+            custom: {
+              type: "azure-servicebus",
+              identity:
+                "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity",
+              metadata: {
+                messageCount: "5",
+                namespace: "mynamespace",
+                queueName: "myqueue",
+              },
+            },
+          },
+          {
+            name: "azure-queue",
+            azureQueue: {
+              accountName: "account1",
+              identity: "system",
+              queueLength: 1,
+              queueName: "queue1",
+            },
           },
         ],
       },
@@ -136,6 +188,14 @@ async function createOrUpdateContainerApp() {
           name: "redisService",
           serviceId:
             "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/containerApps/redisService",
+        },
+      ],
+      volumes: [
+        { name: "azurefile", storageName: "storage", storageType: "AzureFile" },
+        {
+          name: "nfsazurefile",
+          storageName: "nfsStorage",
+          storageType: "NfsAzureFile",
         },
       ],
     },
@@ -155,7 +215,7 @@ async function createOrUpdateContainerApp() {
  * This sample demonstrates how to Create or update a Container App.
  *
  * @summary Create or update a Container App.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerApps_ManagedBy_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_ManagedBy_CreateOrUpdate.json
  */
 async function createOrUpdateManagedByApp() {
   const subscriptionId =
@@ -193,8 +253,10 @@ async function createOrUpdateManagedByApp() {
         },
       ],
       scale: {
+        cooldownPeriod: 350,
         maxReplicas: 5,
         minReplicas: 1,
+        pollingInterval: 35,
         rules: [
           {
             name: "tcpscalingrule",
@@ -218,7 +280,7 @@ async function createOrUpdateManagedByApp() {
  * This sample demonstrates how to Create or update a Container App.
  *
  * @summary Create or update a Container App.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerApps_TcpApp_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_TcpApp_CreateOrUpdate.json
  */
 async function createOrUpdateTcpApp() {
   const subscriptionId =
@@ -254,8 +316,10 @@ async function createOrUpdateTcpApp() {
         },
       ],
       scale: {
+        cooldownPeriod: 350,
         maxReplicas: 5,
         minReplicas: 1,
+        pollingInterval: 35,
         rules: [
           {
             name: "tcpscalingrule",
@@ -276,9 +340,9 @@ async function createOrUpdateTcpApp() {
 }
 
 async function main() {
-  createOrUpdateContainerApp();
-  createOrUpdateManagedByApp();
-  createOrUpdateTcpApp();
+  await createOrUpdateContainerApp();
+  await createOrUpdateManagedByApp();
+  await createOrUpdateTcpApp();
 }
 
 main().catch(console.error);

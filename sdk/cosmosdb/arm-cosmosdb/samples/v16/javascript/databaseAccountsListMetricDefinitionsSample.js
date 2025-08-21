@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Retrieves metric definitions for the given database account.
  *
  * @summary Retrieves metric definitions for the given database account.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBDatabaseAccountGetMetricDefinitions.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBDatabaseAccountGetMetricDefinitions.json
  */
 async function cosmosDbDatabaseAccountGetMetricDefinitions() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -25,7 +23,7 @@ async function cosmosDbDatabaseAccountGetMetricDefinitions() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.databaseAccounts.listMetricDefinitions(
+  for await (const item of client.databaseAccounts.listMetricDefinitions(
     resourceGroupName,
     accountName,
   )) {
@@ -35,7 +33,7 @@ async function cosmosDbDatabaseAccountGetMetricDefinitions() {
 }
 
 async function main() {
-  cosmosDbDatabaseAccountGetMetricDefinitions();
+  await cosmosDbDatabaseAccountGetMetricDefinitions();
 }
 
 main().catch(console.error);

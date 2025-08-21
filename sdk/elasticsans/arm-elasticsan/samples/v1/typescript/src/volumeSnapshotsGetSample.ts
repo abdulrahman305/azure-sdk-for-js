@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ElasticSanManagement } from "@azure/arm-elasticsan";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Get a Volume Snapshot.
  *
  * @summary Get a Volume Snapshot.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/VolumeSnapshots_Get_MaximumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/VolumeSnapshots_Get_MaximumSet_Gen.json
  */
-async function volumeSnapshotsGetMaximumSetGen() {
+async function volumeSnapshotsGetMaximumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -34,7 +32,7 @@ async function volumeSnapshotsGetMaximumSetGen() {
     resourceGroupName,
     elasticSanName,
     volumeGroupName,
-    snapshotName
+    snapshotName,
   );
   console.log(result);
 }
@@ -43,9 +41,9 @@ async function volumeSnapshotsGetMaximumSetGen() {
  * This sample demonstrates how to Get a Volume Snapshot.
  *
  * @summary Get a Volume Snapshot.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/VolumeSnapshots_Get_MinimumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/VolumeSnapshots_Get_MinimumSet_Gen.json
  */
-async function volumeSnapshotsGetMinimumSetGen() {
+async function volumeSnapshotsGetMinimumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -59,12 +57,12 @@ async function volumeSnapshotsGetMinimumSetGen() {
     resourceGroupName,
     elasticSanName,
     volumeGroupName,
-    snapshotName
+    snapshotName,
   );
   console.log(result);
 }
 
-async function main() {
+async function main(): Promise<void> {
   volumeSnapshotsGetMaximumSetGen();
   volumeSnapshotsGetMinimumSetGen();
 }

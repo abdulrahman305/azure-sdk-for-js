@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetAppManagementClient } = require("@azure/arm-netapp");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Patch a quota rule
  *
  * @summary Patch a quota rule
- * x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2024-03-01/examples/VolumeQuotaRules_Update.json
+ * x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2025-03-01/examples/VolumeQuotaRules_Update.json
  */
 async function volumeQuotaRulesUpdate() {
   const subscriptionId =
@@ -41,7 +39,7 @@ async function volumeQuotaRulesUpdate() {
 }
 
 async function main() {
-  volumeQuotaRulesUpdate();
+  await volumeQuotaRulesUpdate();
 }
 
 main().catch(console.error);

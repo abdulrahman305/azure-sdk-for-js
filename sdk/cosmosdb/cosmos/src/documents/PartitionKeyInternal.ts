@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
+import type {
   NonePartitionKeyType,
   NullPartitionKeyType,
   PartitionKey,
   PrimitivePartitionKeyValue,
-} from "./PartitionKey";
+} from "./PartitionKey.js";
 
 /**
  * @hidden

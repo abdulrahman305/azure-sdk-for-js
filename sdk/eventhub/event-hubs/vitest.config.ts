@@ -3,17 +3,18 @@
 
 import { defineConfig, mergeConfig } from "vitest/config";
 import viteConfig from "../../../vitest.shared.config.ts";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default mergeConfig(
   viteConfig,
   defineConfig({
     test: {
-      testTimeout: 600000,
-      hookTimeout: 60000,
       fileParallelism: false,
-      include: ["test/**/*.spec.ts"],
-      exclude: ["./node_modules/**/*"],
-      globalSetup: ["./test/utils/setup.ts"],
+      globalSetup: [path.resolve(__dirname, "test/utils/setup.ts")],
       fakeTimers: {
         toFake: [
           "setTimeout",
@@ -26,5 +27,5 @@ export default mergeConfig(
         ],
       },
     },
-  })
+  }),
 );

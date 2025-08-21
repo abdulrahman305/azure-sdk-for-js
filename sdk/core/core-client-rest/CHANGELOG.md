@@ -1,6 +1,6 @@
 # Release History
 
-## 2.2.1 (Unreleased)
+## 2.5.1 (Unreleased)
 
 ### Features Added
 
@@ -10,11 +10,64 @@
 
 ### Other Changes
 
+## 2.5.0 (2025-07-10)
+
+### Other Changes
+
+- Update `engines` to `"node": ">=20.0.0"`. Please refer to our [support policy](https://github.com/Azure/azure-sdk-for-js/blob/main/SUPPORT.md) for more information on our supported Node.js versions.
+
+## 2.4.0 (2025-05-01)
+
+### Other Changes
+
+- Depend on `@typespec/ts-http-runtime`. [PR #33948](https://github.com/Azure/azure-sdk-for-js/pull/33948)
+
+## 2.3.5 (2025-04-07)
+
+### Features Added
+
+- `asNodeStream` now returns a `NodeJSReadableStream` which can be canceled by calling the `destroy` method.
+
+### Other Changes
+
+- Handling REST errors that don't have a response body.
+
+## 2.3.4 (2025-03-06)
+
+### Bugs Fixed
+
+- `asNodeStream` and `asBrowserStream` now throw when called in the incorrect environment instead of returning the wrong type of stream. PR [#33138](https://github.com/Azure/azure-sdk-for-js/pull/33138)
+
+## 2.3.3 (2025-02-06)
+
+### Bugs Fixed
+
+- Handle error responses with no body without causing a `TypeError`. PR [#32566](https://github.com/Azure/azure-sdk-for-js/pull/32566)
+- Content-Type header now defaults to `application/json` instead of `application/json; charset=UTF-8` to conform to the HTTP standard. PR [#32672](https://github.com/Azure/azure-sdk-for-js/pull/32672)
+
+## 2.3.2 (2025-01-10)
+
+### Bugs Fixed
+
+- Allow dashes (`-`) in path parameter identifiers. PR [#31731](https://github.com/Azure/azure-sdk-for-js/pull/31731)
+
+## 2.3.1 (2024-10-10)
+
+### Bugs Fixed
+
+- Allow `number` path parameters. PR [#31352](https://github.com/Azure/azure-sdk-for-js/pull/31352/files)
+
+## 2.3.0 (2024-10-03)
+
+### Features Added
+
+- Add support for `allowReserved` (in query and path parameters) and `explode` (in query parameters only). PR [#31058](https://github.com/Azure/azure-sdk-for-js/pull/31058/files)
+
 ## 2.2.0 (2024-07-11)
 
 ### Other Changes
 
-- Update serialization to not serialize Uint8Array if the content type is "application/json". 
+- Update serialization to not serialize Uint8Array if the content type is "application/json".
 
 ## 2.1.0 (2024-06-27)
 

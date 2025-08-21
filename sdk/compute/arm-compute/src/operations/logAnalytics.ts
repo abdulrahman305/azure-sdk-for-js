@@ -6,17 +6,17 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-import { LogAnalytics } from "../operationsInterfaces";
+import { LogAnalytics } from "../operationsInterfaces/index.js";
 import * as coreClient from "@azure/core-client";
-import * as Mappers from "../models/mappers";
-import * as Parameters from "../models/parameters";
-import { ComputeManagementClient } from "../computeManagementClient";
+import * as Mappers from "../models/mappers.js";
+import * as Parameters from "../models/parameters.js";
+import { ComputeManagementClient } from "../computeManagementClient.js";
 import {
   SimplePollerLike,
   OperationState,
   createHttpPoller,
 } from "@azure/core-lro";
-import { createLroSpec } from "../lroImpl";
+import { createLroSpec } from "../lroImpl.js";
 import {
   RequestRateByIntervalInput,
   LogAnalyticsExportRequestRateByIntervalOptionalParams,
@@ -24,7 +24,7 @@ import {
   ThrottledRequestsInput,
   LogAnalyticsExportThrottledRequestsOptionalParams,
   LogAnalyticsExportThrottledRequestsResponse,
-} from "../models";
+} from "../models/index.js";
 
 /** Class containing LogAnalytics operations. */
 export class LogAnalyticsImpl implements LogAnalytics {
@@ -41,7 +41,7 @@ export class LogAnalyticsImpl implements LogAnalytics {
   /**
    * Export logs that show Api requests made by this subscription in the given time window to show
    * throttling activities.
-   * @param location The location upon which virtual-machine-sizes is queried.
+   * @param location The name of Azure region.
    * @param parameters Parameters supplied to the LogAnalytics getRequestRateByInterval Api.
    * @param options The options parameters.
    */
@@ -113,7 +113,7 @@ export class LogAnalyticsImpl implements LogAnalytics {
   /**
    * Export logs that show Api requests made by this subscription in the given time window to show
    * throttling activities.
-   * @param location The location upon which virtual-machine-sizes is queried.
+   * @param location The name of Azure region.
    * @param parameters Parameters supplied to the LogAnalytics getRequestRateByInterval Api.
    * @param options The options parameters.
    */
@@ -132,8 +132,8 @@ export class LogAnalyticsImpl implements LogAnalytics {
 
   /**
    * Export logs that show total throttled Api requests for this subscription in the given time window.
-   * @param location The location upon which virtual-machine-sizes is queried.
-   * @param parameters Parameters supplied to the LogAnalytics getThrottledRequests Api.
+   * @param location The name of Azure region.
+   * @param parameters The request body
    * @param options The options parameters.
    */
   async beginExportThrottledRequests(
@@ -203,8 +203,8 @@ export class LogAnalyticsImpl implements LogAnalytics {
 
   /**
    * Export logs that show total throttled Api requests for this subscription in the given time window.
-   * @param location The location upon which virtual-machine-sizes is queried.
-   * @param parameters Parameters supplied to the LogAnalytics getThrottledRequests Api.
+   * @param location The name of Azure region.
+   * @param parameters The request body
    * @param options The options parameters.
    */
   async beginExportThrottledRequestsAndWait(
@@ -243,12 +243,12 @@ const exportRequestRateByIntervalOperationSpec: coreClient.OperationSpec = {
       bodyMapper: Mappers.CloudError,
     },
   },
-  requestBody: Parameters.parameters31,
+  requestBody: Parameters.parameters10,
   queryParameters: [Parameters.apiVersion],
   urlParameters: [
     Parameters.$host,
-    Parameters.location,
     Parameters.subscriptionId,
+    Parameters.location,
   ],
   headerParameters: [Parameters.accept, Parameters.contentType],
   mediaType: "json",
@@ -274,12 +274,12 @@ const exportThrottledRequestsOperationSpec: coreClient.OperationSpec = {
       bodyMapper: Mappers.CloudError,
     },
   },
-  requestBody: Parameters.parameters32,
+  requestBody: Parameters.parameters11,
   queryParameters: [Parameters.apiVersion],
   urlParameters: [
     Parameters.$host,
-    Parameters.location,
     Parameters.subscriptionId,
+    Parameters.location,
   ],
   headerParameters: [Parameters.accept, Parameters.contentType],
   mediaType: "json",

@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Stop a container app
  *
  * @summary Stop a container app
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerApps_Stop.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_Stop.json
  */
 async function stopContainerApp() {
   const subscriptionId =
@@ -30,7 +30,7 @@ async function stopContainerApp() {
 }
 
 async function main() {
-  stopContainerApp();
+  await stopContainerApp();
 }
 
 main().catch(console.error);

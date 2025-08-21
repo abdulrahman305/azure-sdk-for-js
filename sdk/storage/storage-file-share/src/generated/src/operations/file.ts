@@ -6,11 +6,11 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-import { File } from "../operationsInterfaces";
+import { File } from "../operationsInterfaces/index.js";
 import * as coreClient from "@azure/core-client";
-import * as Mappers from "../models/mappers";
-import * as Parameters from "../models/parameters";
-import { StorageClient } from "../storageClient";
+import * as Mappers from "../models/mappers.js";
+import * as Parameters from "../models/parameters.js";
+import { StorageClient } from "../storageClient.js";
 import {
   FileCreateOptionalParams,
   FileCreateResponse,
@@ -48,8 +48,14 @@ import {
   FileForceCloseHandlesOptionalParams,
   FileForceCloseHandlesResponse,
   FileRenameOptionalParams,
-  FileRenameResponse
-} from "../models";
+  FileRenameResponse,
+  FileCreateSymbolicLinkOptionalParams,
+  FileCreateSymbolicLinkResponse,
+  FileGetSymbolicLinkOptionalParams,
+  FileGetSymbolicLinkResponse,
+  FileCreateHardLinkOptionalParams,
+  FileCreateHardLinkResponse,
+} from "../models/index.js";
 
 /** Class containing File operations. */
 export class FileImpl implements File {
@@ -66,18 +72,15 @@ export class FileImpl implements File {
   /**
    * Creates a new file or replaces a file. Note it only initializes the file with no content.
    * @param fileContentLength Specifies the maximum size for the file, up to 4 TB.
-   * @param fileAttributes If specified, the provided file attributes shall be set. Default value:
-   *                       ‘Archive’ for file and ‘Directory’ for directory. ‘None’ can also be specified as default.
    * @param options The options parameters.
    */
   create(
     fileContentLength: number,
-    fileAttributes: string,
-    options?: FileCreateOptionalParams
+    options?: FileCreateOptionalParams,
   ): Promise<FileCreateResponse> {
     return this.client.sendOperationRequest(
-      { fileContentLength, fileAttributes, options },
-      createOperationSpec
+      { fileContentLength, options },
+      createOperationSpec,
     );
   }
 
@@ -86,7 +89,7 @@ export class FileImpl implements File {
    * @param options The options parameters.
    */
   download(
-    options?: FileDownloadOptionalParams
+    options?: FileDownloadOptionalParams,
   ): Promise<FileDownloadResponse> {
     return this.client.sendOperationRequest({ options }, downloadOperationSpec);
   }
@@ -97,11 +100,11 @@ export class FileImpl implements File {
    * @param options The options parameters.
    */
   getProperties(
-    options?: FileGetPropertiesOptionalParams
+    options?: FileGetPropertiesOptionalParams,
   ): Promise<FileGetPropertiesResponse> {
     return this.client.sendOperationRequest(
       { options },
-      getPropertiesOperationSpec
+      getPropertiesOperationSpec,
     );
   }
 
@@ -115,17 +118,14 @@ export class FileImpl implements File {
 
   /**
    * Sets HTTP headers on the file.
-   * @param fileAttributes If specified, the provided file attributes shall be set. Default value:
-   *                       ‘Archive’ for file and ‘Directory’ for directory. ‘None’ can also be specified as default.
    * @param options The options parameters.
    */
   setHttpHeaders(
-    fileAttributes: string,
-    options?: FileSetHttpHeadersOptionalParams
+    options?: FileSetHttpHeadersOptionalParams,
   ): Promise<FileSetHttpHeadersResponse> {
     return this.client.sendOperationRequest(
-      { fileAttributes, options },
-      setHttpHeadersOperationSpec
+      { options },
+      setHttpHeadersOperationSpec,
     );
   }
 
@@ -134,11 +134,11 @@ export class FileImpl implements File {
    * @param options The options parameters.
    */
   setMetadata(
-    options?: FileSetMetadataOptionalParams
+    options?: FileSetMetadataOptionalParams,
   ): Promise<FileSetMetadataResponse> {
     return this.client.sendOperationRequest(
       { options },
-      setMetadataOperationSpec
+      setMetadataOperationSpec,
     );
   }
 
@@ -148,11 +148,11 @@ export class FileImpl implements File {
    * @param options The options parameters.
    */
   acquireLease(
-    options?: FileAcquireLeaseOptionalParams
+    options?: FileAcquireLeaseOptionalParams,
   ): Promise<FileAcquireLeaseResponse> {
     return this.client.sendOperationRequest(
       { options },
-      acquireLeaseOperationSpec
+      acquireLeaseOperationSpec,
     );
   }
 
@@ -164,11 +164,11 @@ export class FileImpl implements File {
    */
   releaseLease(
     leaseId: string,
-    options?: FileReleaseLeaseOptionalParams
+    options?: FileReleaseLeaseOptionalParams,
   ): Promise<FileReleaseLeaseResponse> {
     return this.client.sendOperationRequest(
       { leaseId, options },
-      releaseLeaseOperationSpec
+      releaseLeaseOperationSpec,
     );
   }
 
@@ -180,11 +180,11 @@ export class FileImpl implements File {
    */
   changeLease(
     leaseId: string,
-    options?: FileChangeLeaseOptionalParams
+    options?: FileChangeLeaseOptionalParams,
   ): Promise<FileChangeLeaseResponse> {
     return this.client.sendOperationRequest(
       { leaseId, options },
-      changeLeaseOperationSpec
+      changeLeaseOperationSpec,
     );
   }
 
@@ -194,11 +194,11 @@ export class FileImpl implements File {
    * @param options The options parameters.
    */
   breakLease(
-    options?: FileBreakLeaseOptionalParams
+    options?: FileBreakLeaseOptionalParams,
   ): Promise<FileBreakLeaseResponse> {
     return this.client.sendOperationRequest(
       { options },
-      breakLeaseOperationSpec
+      breakLeaseOperationSpec,
     );
   }
 
@@ -222,11 +222,11 @@ export class FileImpl implements File {
     range: string,
     fileRangeWrite: FileRangeWriteType,
     contentLength: number,
-    options?: FileUploadRangeOptionalParams
+    options?: FileUploadRangeOptionalParams,
   ): Promise<FileUploadRangeResponse> {
     return this.client.sendOperationRequest(
       { range, fileRangeWrite, contentLength, options },
-      uploadRangeOperationSpec
+      uploadRangeOperationSpec,
     );
   }
 
@@ -247,11 +247,11 @@ export class FileImpl implements File {
     range: string,
     copySource: string,
     contentLength: number,
-    options?: FileUploadRangeFromURLOptionalParams
+    options?: FileUploadRangeFromURLOptionalParams,
   ): Promise<FileUploadRangeFromURLResponse> {
     return this.client.sendOperationRequest(
       { range, copySource, contentLength, options },
-      uploadRangeFromURLOperationSpec
+      uploadRangeFromURLOperationSpec,
     );
   }
 
@@ -260,11 +260,11 @@ export class FileImpl implements File {
    * @param options The options parameters.
    */
   getRangeList(
-    options?: FileGetRangeListOptionalParams
+    options?: FileGetRangeListOptionalParams,
   ): Promise<FileGetRangeListResponse> {
     return this.client.sendOperationRequest(
       { options },
-      getRangeListOperationSpec
+      getRangeListOperationSpec,
     );
   }
 
@@ -280,11 +280,11 @@ export class FileImpl implements File {
    */
   startCopy(
     copySource: string,
-    options?: FileStartCopyOptionalParams
+    options?: FileStartCopyOptionalParams,
   ): Promise<FileStartCopyResponse> {
     return this.client.sendOperationRequest(
       { copySource, options },
-      startCopyOperationSpec
+      startCopyOperationSpec,
     );
   }
 
@@ -297,11 +297,11 @@ export class FileImpl implements File {
    */
   abortCopy(
     copyId: string,
-    options?: FileAbortCopyOptionalParams
+    options?: FileAbortCopyOptionalParams,
   ): Promise<FileAbortCopyResponse> {
     return this.client.sendOperationRequest(
       { copyId, options },
-      abortCopyOperationSpec
+      abortCopyOperationSpec,
     );
   }
 
@@ -310,11 +310,11 @@ export class FileImpl implements File {
    * @param options The options parameters.
    */
   listHandles(
-    options?: FileListHandlesOptionalParams
+    options?: FileListHandlesOptionalParams,
   ): Promise<FileListHandlesResponse> {
     return this.client.sendOperationRequest(
       { options },
-      listHandlesOperationSpec
+      listHandlesOperationSpec,
     );
   }
 
@@ -326,11 +326,11 @@ export class FileImpl implements File {
    */
   forceCloseHandles(
     handleId: string,
-    options?: FileForceCloseHandlesOptionalParams
+    options?: FileForceCloseHandlesOptionalParams,
   ): Promise<FileForceCloseHandlesResponse> {
     return this.client.sendOperationRequest(
       { handleId, options },
-      forceCloseHandlesOperationSpec
+      forceCloseHandlesOperationSpec,
     );
   }
 
@@ -341,11 +341,55 @@ export class FileImpl implements File {
    */
   rename(
     renameSource: string,
-    options?: FileRenameOptionalParams
+    options?: FileRenameOptionalParams,
   ): Promise<FileRenameResponse> {
     return this.client.sendOperationRequest(
       { renameSource, options },
-      renameOperationSpec
+      renameOperationSpec,
+    );
+  }
+
+  /**
+   * Creates a symbolic link.
+   * @param linkText NFS only. Required. The path to the original file, the symbolic link is pointing to.
+   *                 The path is of type string which is not resolved and is stored as is. The path can be absolute path
+   *                 or the relative path depending on the content stored in the symbolic link file.
+   * @param options The options parameters.
+   */
+  createSymbolicLink(
+    linkText: string,
+    options?: FileCreateSymbolicLinkOptionalParams,
+  ): Promise<FileCreateSymbolicLinkResponse> {
+    return this.client.sendOperationRequest(
+      { linkText, options },
+      createSymbolicLinkOperationSpec,
+    );
+  }
+
+  /** @param options The options parameters. */
+  getSymbolicLink(
+    options?: FileGetSymbolicLinkOptionalParams,
+  ): Promise<FileGetSymbolicLinkResponse> {
+    return this.client.sendOperationRequest(
+      { options },
+      getSymbolicLinkOperationSpec,
+    );
+  }
+
+  /**
+   * Creates a hard link.
+   * @param targetFile NFS only. Required. Specifies the path of the target file to which the link will
+   *                   be created, up to 2 KiB in length. It should be full path of the target from the root.The target
+   *                   file must be in the same share and hence the same storage account.
+   * @param options The options parameters.
+   */
+  createHardLink(
+    targetFile: string,
+    options?: FileCreateHardLinkOptionalParams,
+  ): Promise<FileCreateHardLinkResponse> {
+    return this.client.sendOperationRequest(
+      { targetFile, options },
+      createHardLinkOperationSpec,
     );
   }
 }
@@ -357,12 +401,12 @@ const createOperationSpec: coreClient.OperationSpec = {
   httpMethod: "PUT",
   responses: {
     201: {
-      headersMapper: Mappers.FileCreateHeaders
+      headersMapper: Mappers.FileCreateHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileCreateExceptionHeaders
-    }
+      headersMapper: Mappers.FileCreateExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds],
   urlParameters: [Parameters.url],
@@ -380,6 +424,9 @@ const createOperationSpec: coreClient.OperationSpec = {
     Parameters.fileCreatedOn,
     Parameters.fileLastWriteOn,
     Parameters.fileChangeOn,
+    Parameters.owner,
+    Parameters.group,
+    Parameters.fileMode,
     Parameters.fileContentLength,
     Parameters.fileTypeConstant,
     Parameters.fileContentType,
@@ -387,10 +434,11 @@ const createOperationSpec: coreClient.OperationSpec = {
     Parameters.fileContentLanguage,
     Parameters.fileCacheControl,
     Parameters.fileContentMD5,
-    Parameters.fileContentDisposition
+    Parameters.fileContentDisposition,
+    Parameters.nfsFileType,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const downloadOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
@@ -399,21 +447,21 @@ const downloadOperationSpec: coreClient.OperationSpec = {
     200: {
       bodyMapper: {
         type: { name: "Stream" },
-        serializedName: "parsedResponse"
+        serializedName: "parsedResponse",
       },
-      headersMapper: Mappers.FileDownloadHeaders
+      headersMapper: Mappers.FileDownloadHeaders,
     },
     206: {
       bodyMapper: {
         type: { name: "Stream" },
-        serializedName: "parsedResponse"
+        serializedName: "parsedResponse",
       },
-      headersMapper: Mappers.FileDownloadHeaders
+      headersMapper: Mappers.FileDownloadHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileDownloadExceptionHeaders
-    }
+      headersMapper: Mappers.FileDownloadExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds],
   urlParameters: [Parameters.url],
@@ -424,22 +472,22 @@ const downloadOperationSpec: coreClient.OperationSpec = {
     Parameters.leaseId,
     Parameters.allowTrailingDot,
     Parameters.range,
-    Parameters.rangeGetContentMD5
+    Parameters.rangeGetContentMD5,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const getPropertiesOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "HEAD",
   responses: {
     200: {
-      headersMapper: Mappers.FileGetPropertiesHeaders
+      headersMapper: Mappers.FileGetPropertiesHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileGetPropertiesExceptionHeaders
-    }
+      headersMapper: Mappers.FileGetPropertiesExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds, Parameters.shareSnapshot],
   urlParameters: [Parameters.url],
@@ -448,22 +496,22 @@ const getPropertiesOperationSpec: coreClient.OperationSpec = {
     Parameters.fileRequestIntent,
     Parameters.accept1,
     Parameters.leaseId,
-    Parameters.allowTrailingDot
+    Parameters.allowTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const deleteOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "DELETE",
   responses: {
     202: {
-      headersMapper: Mappers.FileDeleteHeaders
+      headersMapper: Mappers.FileDeleteHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileDeleteExceptionHeaders
-    }
+      headersMapper: Mappers.FileDeleteExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds],
   urlParameters: [Parameters.url],
@@ -472,22 +520,22 @@ const deleteOperationSpec: coreClient.OperationSpec = {
     Parameters.fileRequestIntent,
     Parameters.accept1,
     Parameters.leaseId,
-    Parameters.allowTrailingDot
+    Parameters.allowTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const setHttpHeadersOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     200: {
-      headersMapper: Mappers.FileSetHttpHeadersHeaders
+      headersMapper: Mappers.FileSetHttpHeadersHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileSetHttpHeadersExceptionHeaders
-    }
+      headersMapper: Mappers.FileSetHttpHeadersExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.comp, Parameters.timeoutInSeconds],
   urlParameters: [Parameters.url],
@@ -504,28 +552,31 @@ const setHttpHeadersOperationSpec: coreClient.OperationSpec = {
     Parameters.fileCreatedOn,
     Parameters.fileLastWriteOn,
     Parameters.fileChangeOn,
+    Parameters.owner,
+    Parameters.group,
+    Parameters.fileMode,
     Parameters.fileContentType,
     Parameters.fileContentEncoding,
     Parameters.fileContentLanguage,
     Parameters.fileCacheControl,
     Parameters.fileContentMD5,
     Parameters.fileContentDisposition,
-    Parameters.fileContentLength1
+    Parameters.fileContentLength1,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const setMetadataOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     200: {
-      headersMapper: Mappers.FileSetMetadataHeaders
+      headersMapper: Mappers.FileSetMetadataHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileSetMetadataExceptionHeaders
-    }
+      headersMapper: Mappers.FileSetMetadataExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds, Parameters.comp5],
   urlParameters: [Parameters.url],
@@ -535,22 +586,22 @@ const setMetadataOperationSpec: coreClient.OperationSpec = {
     Parameters.accept1,
     Parameters.metadata,
     Parameters.leaseId,
-    Parameters.allowTrailingDot
+    Parameters.allowTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const acquireLeaseOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     201: {
-      headersMapper: Mappers.FileAcquireLeaseHeaders
+      headersMapper: Mappers.FileAcquireLeaseHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileAcquireLeaseExceptionHeaders
-    }
+      headersMapper: Mappers.FileAcquireLeaseExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds, Parameters.comp2],
   urlParameters: [Parameters.url],
@@ -562,22 +613,22 @@ const acquireLeaseOperationSpec: coreClient.OperationSpec = {
     Parameters.duration,
     Parameters.proposedLeaseId,
     Parameters.requestId,
-    Parameters.allowTrailingDot
+    Parameters.allowTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const releaseLeaseOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     200: {
-      headersMapper: Mappers.FileReleaseLeaseHeaders
+      headersMapper: Mappers.FileReleaseLeaseHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileReleaseLeaseExceptionHeaders
-    }
+      headersMapper: Mappers.FileReleaseLeaseExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds, Parameters.comp2],
   urlParameters: [Parameters.url],
@@ -588,22 +639,22 @@ const releaseLeaseOperationSpec: coreClient.OperationSpec = {
     Parameters.requestId,
     Parameters.action1,
     Parameters.leaseId1,
-    Parameters.allowTrailingDot
+    Parameters.allowTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const changeLeaseOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     200: {
-      headersMapper: Mappers.FileChangeLeaseHeaders
+      headersMapper: Mappers.FileChangeLeaseHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileChangeLeaseExceptionHeaders
-    }
+      headersMapper: Mappers.FileChangeLeaseExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds, Parameters.comp2],
   urlParameters: [Parameters.url],
@@ -615,22 +666,22 @@ const changeLeaseOperationSpec: coreClient.OperationSpec = {
     Parameters.requestId,
     Parameters.leaseId1,
     Parameters.action2,
-    Parameters.allowTrailingDot
+    Parameters.allowTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const breakLeaseOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     202: {
-      headersMapper: Mappers.FileBreakLeaseHeaders
+      headersMapper: Mappers.FileBreakLeaseHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileBreakLeaseExceptionHeaders
-    }
+      headersMapper: Mappers.FileBreakLeaseExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds, Parameters.comp2],
   urlParameters: [Parameters.url],
@@ -641,22 +692,22 @@ const breakLeaseOperationSpec: coreClient.OperationSpec = {
     Parameters.leaseId,
     Parameters.requestId,
     Parameters.action4,
-    Parameters.allowTrailingDot
+    Parameters.allowTrailingDot,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const uploadRangeOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     201: {
-      headersMapper: Mappers.FileUploadRangeHeaders
+      headersMapper: Mappers.FileUploadRangeHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileUploadRangeExceptionHeaders
-    }
+      headersMapper: Mappers.FileUploadRangeExceptionHeaders,
+    },
   },
   requestBody: Parameters.body,
   queryParameters: [Parameters.timeoutInSeconds, Parameters.comp12],
@@ -672,24 +723,24 @@ const uploadRangeOperationSpec: coreClient.OperationSpec = {
     Parameters.fileRangeWrite,
     Parameters.contentLength,
     Parameters.contentMD5,
-    Parameters.fileLastWrittenMode
+    Parameters.fileLastWrittenMode,
   ],
   isXML: true,
   contentType: "application/xml; charset=utf-8",
   mediaType: "binary",
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const uploadRangeFromURLOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     201: {
-      headersMapper: Mappers.FileUploadRangeFromURLHeaders
+      headersMapper: Mappers.FileUploadRangeFromURLHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileUploadRangeFromURLExceptionHeaders
-    }
+      headersMapper: Mappers.FileUploadRangeFromURLExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds, Parameters.comp12],
   urlParameters: [Parameters.url],
@@ -709,10 +760,10 @@ const uploadRangeFromURLOperationSpec: coreClient.OperationSpec = {
     Parameters.sourceContentCrc64,
     Parameters.sourceIfMatchCrc64,
     Parameters.sourceIfNoneMatchCrc64,
-    Parameters.copySourceAuthorization
+    Parameters.copySourceAuthorization,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const getRangeListOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
@@ -720,18 +771,18 @@ const getRangeListOperationSpec: coreClient.OperationSpec = {
   responses: {
     200: {
       bodyMapper: Mappers.ShareFileRangeList,
-      headersMapper: Mappers.FileGetRangeListHeaders
+      headersMapper: Mappers.FileGetRangeListHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileGetRangeListExceptionHeaders
-    }
+      headersMapper: Mappers.FileGetRangeListExceptionHeaders,
+    },
   },
   queryParameters: [
     Parameters.timeoutInSeconds,
     Parameters.shareSnapshot,
     Parameters.comp13,
-    Parameters.prevsharesnapshot
+    Parameters.prevsharesnapshot,
   ],
   urlParameters: [Parameters.url],
   headerParameters: [
@@ -741,22 +792,22 @@ const getRangeListOperationSpec: coreClient.OperationSpec = {
     Parameters.leaseId,
     Parameters.allowTrailingDot,
     Parameters.range,
-    Parameters.supportRename
+    Parameters.supportRename,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const startCopyOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     202: {
-      headersMapper: Mappers.FileStartCopyHeaders
+      headersMapper: Mappers.FileStartCopyHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileStartCopyExceptionHeaders
-    }
+      headersMapper: Mappers.FileStartCopyExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds],
   urlParameters: [Parameters.url],
@@ -766,9 +817,13 @@ const startCopyOperationSpec: coreClient.OperationSpec = {
     Parameters.accept1,
     Parameters.metadata,
     Parameters.leaseId,
+    Parameters.filePermissionFormat,
     Parameters.allowTrailingDot,
     Parameters.filePermission,
     Parameters.filePermissionKey1,
+    Parameters.owner,
+    Parameters.group,
+    Parameters.fileMode,
     Parameters.fileAttributes1,
     Parameters.fileCreationTime,
     Parameters.fileLastWriteTime,
@@ -777,27 +832,29 @@ const startCopyOperationSpec: coreClient.OperationSpec = {
     Parameters.copySource,
     Parameters.filePermissionCopyMode,
     Parameters.ignoreReadOnly1,
-    Parameters.setArchiveAttribute
+    Parameters.setArchiveAttribute,
+    Parameters.fileModeCopyMode,
+    Parameters.fileOwnerCopyMode,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const abortCopyOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     204: {
-      headersMapper: Mappers.FileAbortCopyHeaders
+      headersMapper: Mappers.FileAbortCopyHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileAbortCopyExceptionHeaders
-    }
+      headersMapper: Mappers.FileAbortCopyExceptionHeaders,
+    },
   },
   queryParameters: [
     Parameters.timeoutInSeconds,
     Parameters.comp14,
-    Parameters.copyId
+    Parameters.copyId,
   ],
   urlParameters: [Parameters.url],
   headerParameters: [
@@ -806,10 +863,10 @@ const abortCopyOperationSpec: coreClient.OperationSpec = {
     Parameters.accept1,
     Parameters.leaseId,
     Parameters.allowTrailingDot,
-    Parameters.copyActionAbortConstant
+    Parameters.copyActionAbortConstant,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
 };
 const listHandlesOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
@@ -817,47 +874,19 @@ const listHandlesOperationSpec: coreClient.OperationSpec = {
   responses: {
     200: {
       bodyMapper: Mappers.ListHandlesResponse,
-      headersMapper: Mappers.FileListHandlesHeaders
+      headersMapper: Mappers.FileListHandlesHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileListHandlesExceptionHeaders
-    }
+      headersMapper: Mappers.FileListHandlesExceptionHeaders,
+    },
   },
   queryParameters: [
     Parameters.timeoutInSeconds,
     Parameters.marker,
     Parameters.maxResults,
     Parameters.shareSnapshot,
-    Parameters.comp9
-  ],
-  urlParameters: [Parameters.url],
-  headerParameters: [
-    Parameters.version,
-    Parameters.fileRequestIntent,
-    Parameters.accept1,
-    Parameters.allowTrailingDot
-  ],
-  isXML: true,
-  serializer: xmlSerializer
-};
-const forceCloseHandlesOperationSpec: coreClient.OperationSpec = {
-  path: "/{shareName}/{directory}/{fileName}",
-  httpMethod: "PUT",
-  responses: {
-    200: {
-      headersMapper: Mappers.FileForceCloseHandlesHeaders
-    },
-    default: {
-      bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileForceCloseHandlesExceptionHeaders
-    }
-  },
-  queryParameters: [
-    Parameters.timeoutInSeconds,
-    Parameters.marker,
-    Parameters.shareSnapshot,
-    Parameters.comp10
+    Parameters.comp9,
   ],
   urlParameters: [Parameters.url],
   headerParameters: [
@@ -865,22 +894,50 @@ const forceCloseHandlesOperationSpec: coreClient.OperationSpec = {
     Parameters.fileRequestIntent,
     Parameters.accept1,
     Parameters.allowTrailingDot,
-    Parameters.handleId
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
+};
+const forceCloseHandlesOperationSpec: coreClient.OperationSpec = {
+  path: "/{shareName}/{directory}/{fileName}",
+  httpMethod: "PUT",
+  responses: {
+    200: {
+      headersMapper: Mappers.FileForceCloseHandlesHeaders,
+    },
+    default: {
+      bodyMapper: Mappers.StorageError,
+      headersMapper: Mappers.FileForceCloseHandlesExceptionHeaders,
+    },
+  },
+  queryParameters: [
+    Parameters.timeoutInSeconds,
+    Parameters.marker,
+    Parameters.shareSnapshot,
+    Parameters.comp10,
+  ],
+  urlParameters: [Parameters.url],
+  headerParameters: [
+    Parameters.version,
+    Parameters.fileRequestIntent,
+    Parameters.accept1,
+    Parameters.allowTrailingDot,
+    Parameters.handleId,
+  ],
+  isXML: true,
+  serializer: xmlSerializer,
 };
 const renameOperationSpec: coreClient.OperationSpec = {
   path: "/{shareName}/{directory}/{fileName}",
   httpMethod: "PUT",
   responses: {
     200: {
-      headersMapper: Mappers.FileRenameHeaders
+      headersMapper: Mappers.FileRenameHeaders,
     },
     default: {
       bodyMapper: Mappers.StorageError,
-      headersMapper: Mappers.FileRenameExceptionHeaders
-    }
+      headersMapper: Mappers.FileRenameExceptionHeaders,
+    },
   },
   queryParameters: [Parameters.timeoutInSeconds, Parameters.comp11],
   urlParameters: [Parameters.url],
@@ -903,8 +960,91 @@ const renameOperationSpec: coreClient.OperationSpec = {
     Parameters.fileLastWriteTime,
     Parameters.fileChangeTime,
     Parameters.allowSourceTrailingDot,
-    Parameters.fileContentType
+    Parameters.fileContentType,
   ],
   isXML: true,
-  serializer: xmlSerializer
+  serializer: xmlSerializer,
+};
+const createSymbolicLinkOperationSpec: coreClient.OperationSpec = {
+  path: "/{shareName}/{directory}/{fileName}",
+  httpMethod: "PUT",
+  responses: {
+    201: {
+      headersMapper: Mappers.FileCreateSymbolicLinkHeaders,
+    },
+    default: {
+      bodyMapper: Mappers.StorageError,
+      headersMapper: Mappers.FileCreateSymbolicLinkExceptionHeaders,
+    },
+  },
+  queryParameters: [Parameters.timeoutInSeconds, Parameters.restype3],
+  urlParameters: [Parameters.url],
+  headerParameters: [
+    Parameters.version,
+    Parameters.fileRequestIntent,
+    Parameters.accept1,
+    Parameters.metadata,
+    Parameters.leaseId,
+    Parameters.requestId,
+    Parameters.fileCreatedOn,
+    Parameters.fileLastWriteOn,
+    Parameters.owner,
+    Parameters.group,
+    Parameters.linkText,
+  ],
+  isXML: true,
+  serializer: xmlSerializer,
+};
+const getSymbolicLinkOperationSpec: coreClient.OperationSpec = {
+  path: "/{shareName}/{directory}/{fileName}",
+  httpMethod: "GET",
+  responses: {
+    200: {
+      headersMapper: Mappers.FileGetSymbolicLinkHeaders,
+    },
+    default: {
+      bodyMapper: Mappers.StorageError,
+      headersMapper: Mappers.FileGetSymbolicLinkExceptionHeaders,
+    },
+  },
+  queryParameters: [
+    Parameters.timeoutInSeconds,
+    Parameters.shareSnapshot,
+    Parameters.restype3,
+  ],
+  urlParameters: [Parameters.url],
+  headerParameters: [
+    Parameters.version,
+    Parameters.fileRequestIntent,
+    Parameters.accept1,
+    Parameters.requestId,
+  ],
+  isXML: true,
+  serializer: xmlSerializer,
+};
+const createHardLinkOperationSpec: coreClient.OperationSpec = {
+  path: "/{shareName}/{directory}/{fileName}",
+  httpMethod: "PUT",
+  responses: {
+    201: {
+      headersMapper: Mappers.FileCreateHardLinkHeaders,
+    },
+    default: {
+      bodyMapper: Mappers.StorageError,
+      headersMapper: Mappers.FileCreateHardLinkExceptionHeaders,
+    },
+  },
+  queryParameters: [Parameters.timeoutInSeconds, Parameters.restype4],
+  urlParameters: [Parameters.url],
+  headerParameters: [
+    Parameters.version,
+    Parameters.fileRequestIntent,
+    Parameters.accept1,
+    Parameters.leaseId,
+    Parameters.requestId,
+    Parameters.fileTypeConstant,
+    Parameters.targetFile,
+  ],
+  isXML: true,
+  serializer: xmlSerializer,
 };

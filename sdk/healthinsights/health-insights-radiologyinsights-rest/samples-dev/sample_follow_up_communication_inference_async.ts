@@ -2,27 +2,25 @@
 // Licensed under the MIT License.
 
 /**
- * Displays the follow up communication of the Radiology Insights request.
+ * @summary Displays the follow up communication of the Radiology Insights request.
  */
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-import AzureHealthInsightsClient, {
-  ClinicalDocumentTypeEnum,
+import "dotenv/config";
+import type {
   CreateJobParameters,
   RadiologyInsightsJobOutput,
+} from "@azure-rest/health-insights-radiologyinsights";
+import AzureHealthInsightsClient, {
   getLongRunningPoller,
-  isUnexpected
-} from "../src";
-
-dotenv.config();
+  isUnexpected,
+} from "@azure-rest/health-insights-radiologyinsights";
 
 // You will need to set this environment variables or edit the following values
 
 const endpoint = process.env["HEALTH_INSIGHTS_ENDPOINT"] || "";
 
 /**
-    * Print the follow up communication inference
+ * Print the follow up communication inference
  */
 
 function printResults(radiologyInsightsResult: RadiologyInsightsJobOutput): void {
@@ -30,18 +28,25 @@ function printResults(radiologyInsightsResult: RadiologyInsightsJobOutput): void
     const results = radiologyInsightsResult.result;
     if (results !== undefined) {
       results.patientResults.forEach((patientResult: any) => {
-        patientResult.inferences.forEach((inference: { kind: string; communicatedAt: any[]; recipient: any[]; wasAcknowledged: string; }) => {
-          if (inference.kind === "followupCommunication") {
-            console.log("Followup Communication Inference found");
-            if ("communicatedAt" in inference) {
-              console.log("Communicated at: " + inference.communicatedAt.join(" "));
+        patientResult.inferences.forEach(
+          (inference: {
+            kind: string;
+            communicatedAt: any[];
+            recipient: any[];
+            wasAcknowledged: string;
+          }) => {
+            if (inference.kind === "followupCommunication") {
+              console.log("Followup Communication Inference found");
+              if ("communicatedAt" in inference) {
+                console.log("Communicated at: " + inference.communicatedAt.join(" "));
+              }
+              if ("recipient" in inference) {
+                console.log("Recipient: " + inference.recipient.join(" "));
+              }
+              console.log("   Aknowledged: " + inference.wasAcknowledged);
             }
-            if ("recipient" in inference) {
-              console.log("Recipient: " + inference.recipient.join(" "));
-            }
-            console.log("   Aknowledged: " + inference.wasAcknowledged);
-          }
-        });
+          },
+        );
       });
     }
   } else {
@@ -50,35 +55,32 @@ function printResults(radiologyInsightsResult: RadiologyInsightsJobOutput): void
       console.log(error.code, ":", error.message);
     }
   }
-
 }
-
 
 // Create request body for radiology insights
 function createRequestBody(): CreateJobParameters {
-
   const codingData = {
-    system: "Http://hl7.org/fhir/ValueSet/cpt-all",
-    code: "USPELVIS",
-    display: "US PELVIS COMPLETE"
+    system: "http://www.ama-assn.org/go/cpt",
+    code: "76856",
+    display: "US PELVIS COMPLETE",
   };
 
   const code = {
-    coding: [codingData]
+    coding: [codingData],
   };
 
   const patientInfo = {
     sex: "female",
-    birthDate: new Date("1959-11-11T19:00:00+00:00"),
+    birthDate: "1959-11-11T19:00:00+00:00",
   };
 
   const encounterData = {
     id: "encounterid1",
     period: {
-      "start": "2021-8-28T00:00:00",
-      "end": "2021-8-28T00:00:00"
+      start: "2021-8-28T00:00:00",
+      end: "2021-8-28T00:00:00",
     },
-    class: "inpatient"
+    class: "inpatient",
   };
 
   const authorData = {
@@ -88,12 +90,12 @@ function createRequestBody(): CreateJobParameters {
 
   const orderedProceduresData = {
     code: code,
-    description: "US PELVIS COMPLETE"
+    description: "US PELVIS COMPLETE",
   };
 
   const administrativeMetadata = {
     orderedProcedures: [orderedProceduresData],
-    encounterId: "encounterid1"
+    encounterId: "encounterid1",
   };
 
   const content = {
@@ -120,28 +122,27 @@ function createRequestBody(): CreateJobParameters {
   1. Normal pelvic sonography. Findings of testicular torsion.
   A new US pelvis within the next 6 months is recommended.
 
-  These results have been discussed with Dr. Jones at 3 PM on November 5 2020.`
+  These results have been discussed with Dr. Jones at 3 PM on November 5 2020.`,
   };
 
   const patientDocumentData = {
     type: "note",
-    clinicalType: ClinicalDocumentTypeEnum.RadiologyReport,
+    clinicalType: "radiologyReport",
     id: "docid1",
     language: "en",
     authors: [authorData],
     specialtyType: "radiology",
     administrativeMetadata: administrativeMetadata,
     content: content,
-    createdAt: new Date("2021-05-31T16:00:00.000Z"),
-    orderedProceduresAsCsv: "US PELVIS COMPLETE"
+    createdAt: "2021-05-31T16:00:00.000Z",
+    orderedProceduresAsCsv: "US PELVIS COMPLETE",
   };
-
 
   const patientData = {
     id: "Samantha Jones",
     details: patientInfo,
     encounters: [encounterData],
-    patientDocuments: [patientDocumentData]
+    patientDocuments: [patientDocumentData],
   };
 
   const inferenceTypes = [
@@ -155,21 +156,25 @@ function createRequestBody(): CreateJobParameters {
     "criticalRecommendation",
     "followupRecommendation",
     "followupCommunication",
-    "radiologyProcedure"];
+    "radiologyProcedure",
+    "scoringAndAssessment",
+    "guidance",
+    "qualityMeasure",
+  ];
 
   const followupRecommendationOptions = {
     includeRecommendationsWithNoSpecifiedModality: true,
     includeRecommendationsInReferences: true,
-    provideFocusedSentenceEvidence: true
+    provideFocusedSentenceEvidence: true,
   };
 
   const findingOptions = {
-    provideFocusedSentenceEvidence: true
+    provideFocusedSentenceEvidence: true,
   };
 
   const inferenceOptions = {
     followupRecommendationOptions: followupRecommendationOptions,
-    findingOptions: findingOptions
+    findingOptions: findingOptions,
   };
 
   // Create RI Configuration
@@ -178,7 +183,7 @@ function createRequestBody(): CreateJobParameters {
     inferenceTypes: inferenceTypes,
     locale: "en-US",
     verbose: false,
-    includeEvidence: true
+    includeEvidence: true,
   };
 
   // create RI Data
@@ -186,16 +191,15 @@ function createRequestBody(): CreateJobParameters {
     jobData: {
       patients: [patientData],
       configuration: configuration,
-    }
+    },
   };
 
   return {
     body: RadiologyInsightsJob,
   };
-
 }
 
-export async function main() {
+export async function main(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = AzureHealthInsightsClient(endpoint, credential);
 
@@ -205,7 +209,9 @@ export async function main() {
   // Initiate radiology insights job and retrieve results
   const dateString = Date.now();
   const jobID = "jobId-" + dateString;
-  const initialResponse = await client.path("/radiology-insights/jobs/{id}", jobID).put(radiologyInsightsParameter);
+  const initialResponse = await client
+    .path("/radiology-insights/jobs/{id}", jobID)
+    .put(radiologyInsightsParameter);
   if (isUnexpected(initialResponse)) {
     throw initialResponse;
   }
@@ -215,7 +221,7 @@ export async function main() {
     throw RadiologyInsightsResult;
   }
   const resultBody = RadiologyInsightsResult.body;
-  printResults(resultBody);
+  await printResults(resultBody);
 }
 
 main().catch((err) => {

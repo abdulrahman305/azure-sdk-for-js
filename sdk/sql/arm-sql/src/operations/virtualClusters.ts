@@ -7,18 +7,18 @@
  */
 
 import { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
-import { setContinuationToken } from "../pagingHelper";
-import { VirtualClusters } from "../operationsInterfaces";
+import { setContinuationToken } from "../pagingHelper.js";
+import { VirtualClusters } from "../operationsInterfaces/index.js";
 import * as coreClient from "@azure/core-client";
-import * as Mappers from "../models/mappers";
-import * as Parameters from "../models/parameters";
-import { SqlManagementClient } from "../sqlManagementClient";
+import * as Mappers from "../models/mappers.js";
+import * as Parameters from "../models/parameters.js";
+import { SqlManagementClient } from "../sqlManagementClient.js";
 import {
   SimplePollerLike,
   OperationState,
   createHttpPoller,
 } from "@azure/core-lro";
-import { createLroSpec } from "../lroImpl";
+import { createLroSpec } from "../lroImpl.js";
 import {
   VirtualCluster,
   VirtualClustersListNextOptionalParams,
@@ -37,7 +37,7 @@ import {
   VirtualClustersUpdateDnsServersResponse,
   VirtualClustersListNextResponse,
   VirtualClustersListByResourceGroupNextResponse,
-} from "../models";
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Class containing VirtualClusters operations. */
@@ -535,7 +535,7 @@ const listOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion10],
+  queryParameters: [Parameters.apiVersion9],
   urlParameters: [Parameters.$host, Parameters.subscriptionId],
   headerParameters: [Parameters.accept],
   serializer,
@@ -549,7 +549,7 @@ const listByResourceGroupOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion10],
+  queryParameters: [Parameters.apiVersion9],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -567,7 +567,7 @@ const getOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion10],
+  queryParameters: [Parameters.apiVersion9],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -581,7 +581,7 @@ const deleteOperationSpec: coreClient.OperationSpec = {
   path: "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/virtualClusters/{virtualClusterName}",
   httpMethod: "DELETE",
   responses: { 200: {}, 201: {}, 202: {}, 204: {}, default: {} },
-  queryParameters: [Parameters.apiVersion10],
+  queryParameters: [Parameters.apiVersion9],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -608,8 +608,8 @@ const updateOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  requestBody: Parameters.parameters81,
-  queryParameters: [Parameters.apiVersion10],
+  requestBody: Parameters.parameters79,
+  queryParameters: [Parameters.apiVersion9],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -638,7 +638,7 @@ const updateDnsServersOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion10],
+  queryParameters: [Parameters.apiVersion9],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,

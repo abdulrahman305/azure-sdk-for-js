@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get properties of the provided storage appliance.
  *
  * @summary Get properties of the provided storage appliance.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/StorageAppliances_Get.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/StorageAppliances_Get.json
  */
 async function getStorageAppliance() {
   const subscriptionId =
@@ -30,7 +28,7 @@ async function getStorageAppliance() {
 }
 
 async function main() {
-  getStorageAppliance();
+  await getStorageAppliance();
 }
 
 main().catch(console.error);

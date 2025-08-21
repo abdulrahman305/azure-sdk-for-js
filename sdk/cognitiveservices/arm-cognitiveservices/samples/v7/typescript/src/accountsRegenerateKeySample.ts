@@ -6,24 +6,20 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import { CognitiveServicesManagementClient } from "@azure/arm-cognitiveservices";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Regenerates the specified account key for the specified Cognitive Services account.
  *
  * @summary Regenerates the specified account key for the specified Cognitive Services account.
- * x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/RegenerateKey.json
+ * x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-06-01/examples/RegenerateKey.json
  */
-async function regenerateKeys() {
+async function regenerateKeys(): Promise<void> {
   const subscriptionId =
     process.env["COGNITIVESERVICES_SUBSCRIPTION_ID"] ||
-    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
+    "00000000-1111-2222-3333-444444444444";
   const resourceGroupName =
     process.env["COGNITIVESERVICES_RESOURCE_GROUP"] || "myResourceGroup";
   const accountName = "myAccount";
@@ -31,18 +27,18 @@ async function regenerateKeys() {
   const credential = new DefaultAzureCredential();
   const client = new CognitiveServicesManagementClient(
     credential,
-    subscriptionId
+    subscriptionId,
   );
   const result = await client.accounts.regenerateKey(
     resourceGroupName,
     accountName,
-    keyName
+    keyName,
   );
   console.log(result);
 }
 
-async function main() {
-  regenerateKeys();
+async function main(): Promise<void> {
+  await regenerateKeys();
 }
 
 main().catch(console.error);

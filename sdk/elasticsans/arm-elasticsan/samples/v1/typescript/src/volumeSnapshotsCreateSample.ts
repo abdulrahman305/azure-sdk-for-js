@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { Snapshot, ElasticSanManagement } from "@azure/arm-elasticsan";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Create a Volume Snapshot.
  *
  * @summary Create a Volume Snapshot.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/VolumeSnapshots_Create_MaximumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/VolumeSnapshots_Create_MaximumSet_Gen.json
  */
-async function volumeSnapshotsCreateMaximumSetGen() {
+async function volumeSnapshotsCreateMaximumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -32,9 +30,9 @@ async function volumeSnapshotsCreateMaximumSetGen() {
     properties: {
       creationData: {
         sourceId:
-          "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ElasticSan/elasticSans/{elasticSanName}/volumegroups/{volumeGroupName}/volumes/{volumeName}"
-      }
-    }
+          "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ElasticSan/elasticSans/{elasticSanName}/volumegroups/{volumeGroupName}/volumes/{volumeName}",
+      },
+    },
   };
   const credential = new DefaultAzureCredential();
   const client = new ElasticSanManagement(credential, subscriptionId);
@@ -43,7 +41,7 @@ async function volumeSnapshotsCreateMaximumSetGen() {
     elasticSanName,
     volumeGroupName,
     snapshotName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
@@ -52,9 +50,9 @@ async function volumeSnapshotsCreateMaximumSetGen() {
  * This sample demonstrates how to Create a Volume Snapshot.
  *
  * @summary Create a Volume Snapshot.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/VolumeSnapshots_Create_MinimumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/VolumeSnapshots_Create_MinimumSet_Gen.json
  */
-async function volumeSnapshotsCreateMinimumSetGen() {
+async function volumeSnapshotsCreateMinimumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -66,9 +64,9 @@ async function volumeSnapshotsCreateMinimumSetGen() {
     properties: {
       creationData: {
         sourceId:
-          "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ElasticSan/elasticSans/{elasticSanName}/volumegroups/{volumeGroupName}/volumes/{volumeName}"
-      }
-    }
+          "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ElasticSan/elasticSans/{elasticSanName}/volumegroups/{volumeGroupName}/volumes/{volumeName}",
+      },
+    },
   };
   const credential = new DefaultAzureCredential();
   const client = new ElasticSanManagement(credential, subscriptionId);
@@ -77,12 +75,12 @@ async function volumeSnapshotsCreateMinimumSetGen() {
     elasticSanName,
     volumeGroupName,
     snapshotName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
-async function main() {
+async function main(): Promise<void> {
   volumeSnapshotsCreateMaximumSetGen();
   volumeSnapshotsCreateMinimumSetGen();
 }

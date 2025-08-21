@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create a new volume or update the properties of the existing one.
  *
  * @summary Create a new volume or update the properties of the existing one.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/Volumes_Create.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/Volumes_Create.json
  */
 async function createOrUpdateVolume() {
   const subscriptionId =
@@ -37,13 +35,13 @@ async function createOrUpdateVolume() {
   const result = await client.volumes.beginCreateOrUpdateAndWait(
     resourceGroupName,
     volumeName,
-    volumeParameters
+    volumeParameters,
   );
   console.log(result);
 }
 
 async function main() {
-  createOrUpdateVolume();
+  await createOrUpdateVolume();
 }
 
 main().catch(console.error);

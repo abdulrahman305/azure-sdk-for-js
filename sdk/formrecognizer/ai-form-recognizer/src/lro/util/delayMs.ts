@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AbortError, AbortSignalLike } from "@azure/abort-controller";
-import { maybemap } from "../../util";
+import type { AbortSignalLike } from "@azure/abort-controller";
+import { AbortError } from "@azure/abort-controller";
+import { maybemap } from "../../util.js";
 
 type CancellationToken = Parameters<typeof clearTimeout>[0];
 
@@ -23,7 +24,7 @@ export interface CancelablePromiseLike<T> extends PromiseLike<T> {
  *
  * ### Example:
  *
- * ```javascript
+ * ```ts snippet:ignore
  * let toCancel;
  *
  * // Wait 20 seconds, and optionally allow the function to be cancelled.

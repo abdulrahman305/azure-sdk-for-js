@@ -1,17 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { isTokenCredential, KeyCredential, TokenCredential } from "@azure/core-auth";
-import { InternalClientPipelineOptions } from "@azure/core-client";
-import { ExtendedCommonClientOptions } from "@azure/core-http-compat";
-import { bearerTokenAuthenticationPolicy, Pipeline } from "@azure/core-rest-pipeline";
-import { SearchIndexerStatus } from "./generated/service/models";
-import { SearchServiceClient as GeneratedClient } from "./generated/service/searchServiceClient";
-import { logger } from "./logger";
-import { createOdataMetadataPolicy } from "./odataMetadataPolicy";
-import { createSearchApiKeyCredentialPolicy } from "./searchApiKeyCredentialPolicy";
-import { KnownSearchAudience } from "./searchAudience";
-import {
+import type { KeyCredential, TokenCredential } from "@azure/core-auth";
+import { isTokenCredential } from "@azure/core-auth";
+import type { InternalClientPipelineOptions } from "@azure/core-client";
+import type { ExtendedCommonClientOptions } from "@azure/core-http-compat";
+import type { Pipeline } from "@azure/core-rest-pipeline";
+import { bearerTokenAuthenticationPolicy } from "@azure/core-rest-pipeline";
+import type { SearchIndexerStatus } from "./generated/service/models/index.js";
+import { SearchServiceClient as GeneratedClient } from "./generated/service/searchServiceClient.js";
+import { logger } from "./logger.js";
+import { createOdataMetadataPolicy } from "./odataMetadataPolicy.js";
+import { createSearchApiKeyCredentialPolicy } from "./searchApiKeyCredentialPolicy.js";
+import { KnownSearchAudience } from "./searchAudience.js";
+import type {
   CreateDataSourceConnectionOptions,
   CreateIndexerOptions,
   CreateorUpdateDataSourceConnectionOptions,
@@ -35,9 +37,9 @@ import {
   SearchIndexer,
   SearchIndexerDataSourceConnection,
   SearchIndexerSkillset,
-} from "./serviceModels";
-import * as utils from "./serviceUtils";
-import { createSpan } from "./tracing";
+} from "./serviceModels.js";
+import * as utils from "./serviceUtils.js";
+import { createSpan } from "./tracing.js";
 
 /**
  * Client options used to configure Cognitive Search API requests.
@@ -99,13 +101,10 @@ export class SearchIndexerClient {
    * Creates an instance of SearchIndexerClient.
    *
    * Example usage:
-   * ```ts
-   * const { SearchIndexerClient, AzureKeyCredential } = require("@azure/search-documents");
+   * ```ts snippet:ReadmeSampleSearchIndexerClient
+   * import { SearchIndexerClient, AzureKeyCredential } from "@azure/search-documents";
    *
-   * const client = new SearchIndexerClient(
-   *   "<endpoint>",
-   *   new AzureKeyCredential("<Admin Key>");
-   * );
+   * const indexerClient = new SearchIndexerClient("<endpoint>", new AzureKeyCredential("<apiKey>"));
    * ```
    * @param endpoint - The endpoint of the search service
    * @param credential - Used to authenticate requests to the service.
@@ -185,6 +184,7 @@ export class SearchIndexerClient {
    * Retrieves a list of names of existing indexers in the service.
    * @param options - Options to the list indexers operation.
    */
+  // eslint-disable-next-line @azure/azure-sdk/ts-naming-options
   public async listIndexersNames(options: ListIndexersOptions = {}): Promise<Array<string>> {
     const { span, updatedOptions } = createSpan("SearchIndexerClient-listIndexersNames", options);
     try {
@@ -234,6 +234,7 @@ export class SearchIndexerClient {
    * @param options - Options to the list indexers operation.
    */
   public async listDataSourceConnectionsNames(
+    // eslint-disable-next-line @azure/azure-sdk/ts-naming-options
     options: ListDataSourceConnectionsOptions = {},
   ): Promise<Array<string>> {
     const { span, updatedOptions } = createSpan(
@@ -283,6 +284,7 @@ export class SearchIndexerClient {
    * Retrieves a list of names of existing Skillsets in the service.
    * @param options - Options to the list Skillsets operation.
    */
+  // eslint-disable-next-line @azure/azure-sdk/ts-naming-options
   public async listSkillsetsNames(options: ListSkillsetsOptions = {}): Promise<Array<string>> {
     const { span, updatedOptions } = createSpan("SearchIndexerClient-listSkillsetsNames", options);
     try {

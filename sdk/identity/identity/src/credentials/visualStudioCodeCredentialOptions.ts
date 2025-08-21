@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { MultiTenantTokenCredentialOptions } from "./multiTenantTokenCredentialOptions";
+import type { MultiTenantTokenCredentialOptions } from "./multiTenantTokenCredentialOptions.js";
 
 /**
  * Provides options to configure the Visual Studio Code credential.
+ *
  */
 export interface VisualStudioCodeCredentialOptions extends MultiTenantTokenCredentialOptions {
   /**

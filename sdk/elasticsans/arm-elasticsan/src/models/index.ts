@@ -249,6 +249,8 @@ export interface ElasticSanProperties {
   readonly privateEndpointConnections?: PrivateEndpointConnection[];
   /** Allow or disallow public network access to ElasticSan. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. */
   publicNetworkAccess?: PublicNetworkAccess;
+  /** Auto Scale Properties for Elastic San Appliance. */
+  autoScaleProperties?: AutoScaleProperties;
 }
 
 /** The SKU name. Required for account creation; optional for update. */
@@ -333,6 +335,24 @@ export interface SystemData {
   lastModifiedAt?: Date;
 }
 
+/** The auto scale settings on Elastic San Appliance. */
+export interface AutoScaleProperties {
+  /** Scale up settings on Elastic San Appliance. */
+  scaleUpProperties?: ScaleUpProperties;
+}
+
+/** Scale up properties on Elastic San Appliance. */
+export interface ScaleUpProperties {
+  /** Unused size on Elastic San appliance in TiB. */
+  unusedSizeTiB?: number;
+  /** Unit to increase Capacity Unit on Elastic San appliance in TiB. */
+  increaseCapacityUnitByTiB?: number;
+  /** Maximum scale up size on Elastic San appliance in TiB. */
+  capacityUnitScaleUpLimitTiB?: number;
+  /** Enable or Disable scale up setting on Elastic San Appliance. */
+  autoScalePolicyEnforcement?: AutoScalePolicyEnforcement;
+}
+
 /** Response for ElasticSan update request. */
 export interface ElasticSanUpdate {
   /** Properties of ElasticSan. */
@@ -349,6 +369,8 @@ export interface ElasticSanUpdateProperties {
   extendedCapacitySizeTiB?: number;
   /** Allow or disallow public network access to ElasticSan Account. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. */
   publicNetworkAccess?: PublicNetworkAccess;
+  /** Auto Scale Properties for Elastic San Appliance. */
+  autoScaleProperties?: AutoScaleProperties;
 }
 
 /** List of Volume Groups */
@@ -414,6 +436,10 @@ export interface VolumeGroupProperties {
    * NOTE: This property will not be serialized. It can only be populated by the server.
    */
   readonly privateEndpointConnections?: PrivateEndpointConnection[];
+  /** A boolean indicating whether or not Data Integrity Check is enabled */
+  enforceDataIntegrityCheckForIscsi?: boolean;
+  /** The retention policy for the soft deleted volume group and its associated resources. */
+  deleteRetentionPolicy?: DeleteRetentionPolicy;
 }
 
 /** The encryption settings on the volume group. */
@@ -469,6 +495,13 @@ export interface VirtualNetworkRule {
   action?: Action;
 }
 
+/** Response for Delete Retention Policy object */
+export interface DeleteRetentionPolicy {
+  policyState?: PolicyState;
+  /** The number of days to retain the resources after deletion. */
+  retentionPeriodDays?: number;
+}
+
 /** Volume Group request. */
 export interface VolumeGroupUpdate {
   /** The identity of the resource. */
@@ -487,6 +520,10 @@ export interface VolumeGroupUpdateProperties {
   encryptionProperties?: EncryptionProperties;
   /** A collection of rules governing the accessibility from specific network locations. */
   networkAcls?: NetworkRuleSet;
+  /** A boolean indicating whether or not Data Integrity Check is enabled */
+  enforceDataIntegrityCheckForIscsi?: boolean;
+  /** The retention policy for the soft deleted volume group and its associated resources */
+  deleteRetentionPolicy?: DeleteRetentionPolicy;
 }
 
 /** Volume response properties. */
@@ -655,6 +692,24 @@ export interface SnapshotCreationData {
   sourceId: string;
 }
 
+/** object to hold array of volume names */
+export interface VolumeNameList {
+  /** array of volume names */
+  volumeNames: string[];
+}
+
+/** response object for pre validation api */
+export interface PreValidationResponse {
+  /** a status value indicating success or failure of validation */
+  validationStatus?: string;
+}
+
+/** object to hold array of Disk Snapshot ARM IDs */
+export interface DiskSnapshotList {
+  /** array of DiskSnapshot ARM IDs */
+  diskSnapshotIds: string[];
+}
+
 /**  Response for PrivateEndpoint Connection object */
 export interface PrivateEndpointConnection extends Resource {
   /** Private Endpoint Connection Properties. */
@@ -734,6 +789,21 @@ export interface VolumesDeleteHeaders {
   location?: string;
 }
 
+/** Defines headers for Volumes_preBackup operation. */
+export interface VolumesPreBackupHeaders {
+  location?: string;
+}
+
+/** Defines headers for Volumes_preRestore operation. */
+export interface VolumesPreRestoreHeaders {
+  location?: string;
+}
+
+/** Defines headers for ElasticSanManagement_restoreVolume operation. */
+export interface ElasticSanManagementRestoreVolumeHeaders {
+  location?: string;
+}
+
 /** Defines headers for PrivateEndpointConnections_delete operation. */
 export interface PrivateEndpointConnectionsDeleteHeaders {
   location?: string;
@@ -751,7 +821,7 @@ export enum KnownOrigin {
   /** System */
   System = "system",
   /** UserSystem */
-  UserSystem = "user,system"
+  UserSystem = "user,system",
 }
 
 /**
@@ -768,7 +838,7 @@ export type Origin = string;
 /** Known values of {@link ActionType} that the service accepts. */
 export enum KnownActionType {
   /** Internal */
-  Internal = "Internal"
+  Internal = "Internal",
 }
 
 /**
@@ -785,7 +855,7 @@ export enum KnownSkuName {
   /** Premium locally redundant storage */
   PremiumLRS = "Premium_LRS",
   /** Premium zone redundant storage */
-  PremiumZRS = "Premium_ZRS"
+  PremiumZRS = "Premium_ZRS",
 }
 
 /**
@@ -801,7 +871,7 @@ export type SkuName = string;
 /** Known values of {@link SkuTier} that the service accepts. */
 export enum KnownSkuTier {
   /** Premium Tier */
-  Premium = "Premium"
+  Premium = "Premium",
 }
 
 /**
@@ -830,7 +900,13 @@ export enum KnownProvisioningStates {
   /** Updating */
   Updating = "Updating",
   /** Deleting */
-  Deleting = "Deleting"
+  Deleting = "Deleting",
+  /** Deleted */
+  Deleted = "Deleted",
+  /** Restoring */
+  Restoring = "Restoring",
+  /** SoftDeleting */
+  SoftDeleting = "SoftDeleting",
 }
 
 /**
@@ -845,7 +921,10 @@ export enum KnownProvisioningStates {
  * **Pending** \
  * **Creating** \
  * **Updating** \
- * **Deleting**
+ * **Deleting** \
+ * **Deleted** \
+ * **Restoring** \
+ * **SoftDeleting**
  */
 export type ProvisioningStates = string;
 
@@ -858,7 +937,7 @@ export enum KnownPrivateEndpointServiceConnectionStatus {
   /** Failed */
   Failed = "Failed",
   /** Rejected */
-  Rejected = "Rejected"
+  Rejected = "Rejected",
 }
 
 /**
@@ -882,7 +961,7 @@ export enum KnownCreatedByType {
   /** ManagedIdentity */
   ManagedIdentity = "ManagedIdentity",
   /** Key */
-  Key = "Key"
+  Key = "Key",
 }
 
 /**
@@ -902,7 +981,7 @@ export enum KnownPublicNetworkAccess {
   /** Enabled */
   Enabled = "Enabled",
   /** Disabled */
-  Disabled = "Disabled"
+  Disabled = "Disabled",
 }
 
 /**
@@ -915,6 +994,45 @@ export enum KnownPublicNetworkAccess {
  */
 export type PublicNetworkAccess = string;
 
+/** Known values of {@link AutoScalePolicyEnforcement} that the service accepts. */
+export enum KnownAutoScalePolicyEnforcement {
+  /** None */
+  None = "None",
+  /** Enabled */
+  Enabled = "Enabled",
+  /** Disabled */
+  Disabled = "Disabled",
+}
+
+/**
+ * Defines values for AutoScalePolicyEnforcement. \
+ * {@link KnownAutoScalePolicyEnforcement} can be used interchangeably with AutoScalePolicyEnforcement,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **None** \
+ * **Enabled** \
+ * **Disabled**
+ */
+export type AutoScalePolicyEnforcement = string;
+
+/** Known values of {@link XMsAccessSoftDeletedResources} that the service accepts. */
+export enum KnownXMsAccessSoftDeletedResources {
+  /** True */
+  True = "true",
+  /** False */
+  False = "false",
+}
+
+/**
+ * Defines values for XMsAccessSoftDeletedResources. \
+ * {@link KnownXMsAccessSoftDeletedResources} can be used interchangeably with XMsAccessSoftDeletedResources,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **true** \
+ * **false**
+ */
+export type XMsAccessSoftDeletedResources = string;
+
 /** Known values of {@link IdentityType} that the service accepts. */
 export enum KnownIdentityType {
   /** None */
@@ -922,7 +1040,7 @@ export enum KnownIdentityType {
   /** SystemAssigned */
   SystemAssigned = "SystemAssigned",
   /** UserAssigned */
-  UserAssigned = "UserAssigned"
+  UserAssigned = "UserAssigned",
 }
 
 /**
@@ -941,7 +1059,7 @@ export enum KnownStorageTargetType {
   /** Iscsi */
   Iscsi = "Iscsi",
   /** None */
-  None = "None"
+  None = "None",
 }
 
 /**
@@ -959,7 +1077,7 @@ export enum KnownEncryptionType {
   /** Volume is encrypted at rest with Platform managed key. It is the default encryption type. */
   EncryptionAtRestWithPlatformKey = "EncryptionAtRestWithPlatformKey",
   /** Volume is encrypted at rest with Customer managed key that can be changed and revoked by a customer. */
-  EncryptionAtRestWithCustomerManagedKey = "EncryptionAtRestWithCustomerManagedKey"
+  EncryptionAtRestWithCustomerManagedKey = "EncryptionAtRestWithCustomerManagedKey",
 }
 
 /**
@@ -975,7 +1093,7 @@ export type EncryptionType = string;
 /** Known values of {@link Action} that the service accepts. */
 export enum KnownAction {
   /** Allow */
-  Allow = "Allow"
+  Allow = "Allow",
 }
 
 /**
@@ -986,6 +1104,24 @@ export enum KnownAction {
  * **Allow**
  */
 export type Action = string;
+
+/** Known values of {@link PolicyState} that the service accepts. */
+export enum KnownPolicyState {
+  /** Enabled */
+  Enabled = "Enabled",
+  /** Disabled */
+  Disabled = "Disabled",
+}
+
+/**
+ * Defines values for PolicyState. \
+ * {@link KnownPolicyState} can be used interchangeably with PolicyState,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **Enabled** \
+ * **Disabled**
+ */
+export type PolicyState = string;
 
 /** Known values of {@link VolumeCreateOption} that the service accepts. */
 export enum KnownVolumeCreateOption {
@@ -998,7 +1134,7 @@ export enum KnownVolumeCreateOption {
   /** Disk */
   Disk = "Disk",
   /** DiskRestorePoint */
-  DiskRestorePoint = "DiskRestorePoint"
+  DiskRestorePoint = "DiskRestorePoint",
 }
 
 /**
@@ -1031,7 +1167,7 @@ export enum KnownOperationalStatus {
   /** Stopped */
   Stopped = "Stopped",
   /** StoppedDeallocated */
-  StoppedDeallocated = "Stopped (deallocated)"
+  StoppedDeallocated = "Stopped (deallocated)",
 }
 
 /**
@@ -1055,7 +1191,7 @@ export enum KnownXMsDeleteSnapshots {
   /** True */
   True = "true",
   /** False */
-  False = "false"
+  False = "false",
 }
 
 /**
@@ -1073,7 +1209,7 @@ export enum KnownXMsForceDelete {
   /** True */
   True = "true",
   /** False */
-  False = "false"
+  False = "false",
 }
 
 /**
@@ -1085,6 +1221,21 @@ export enum KnownXMsForceDelete {
  * **false**
  */
 export type XMsForceDelete = string;
+
+/** Known values of {@link DeleteType} that the service accepts. */
+export enum KnownDeleteType {
+  /** Permanent */
+  Permanent = "permanent",
+}
+
+/**
+ * Defines values for DeleteType. \
+ * {@link KnownDeleteType} can be used interchangeably with DeleteType,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **permanent**
+ */
+export type DeleteType = string;
 
 /** Optional parameters. */
 export interface OperationsListOptionalParams
@@ -1172,7 +1323,10 @@ export type ElasticSansListByResourceGroupNextResponse = ElasticSanList;
 
 /** Optional parameters. */
 export interface VolumeGroupsListByElasticSanOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions {
+  /** Optional, returns only soft deleted volume groups if set to true. If set to false or if not specified, returns only active volume groups. */
+  xMsAccessSoftDeletedResources?: XMsAccessSoftDeletedResources;
+}
 
 /** Contains response data for the listByElasticSan operation. */
 export type VolumeGroupsListByElasticSanResponse = VolumeGroupList;
@@ -1219,7 +1373,10 @@ export type VolumeGroupsGetResponse = VolumeGroup;
 
 /** Optional parameters. */
 export interface VolumeGroupsListByElasticSanNextOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions {
+  /** Optional, returns only soft deleted volume groups if set to true. If set to false or if not specified, returns only active volume groups. */
+  xMsAccessSoftDeletedResources?: XMsAccessSoftDeletedResources;
+}
 
 /** Contains response data for the listByElasticSanNext operation. */
 export type VolumeGroupsListByElasticSanNextResponse = VolumeGroupList;
@@ -1255,6 +1412,8 @@ export interface VolumesDeleteOptionalParams
   xMsDeleteSnapshots?: XMsDeleteSnapshots;
   /** Optional, used to delete volume if active sessions present. Allowed value are only true or false. Default value is false. */
   xMsForceDelete?: XMsForceDelete;
+  /** Optional. Specifies that the delete operation should be a permanent delete for the soft deleted volume. The value of deleteType can only be 'permanent'. */
+  deleteType?: DeleteType;
   /** Delay to wait until next poll, in milliseconds. */
   updateIntervalInMs?: number;
   /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
@@ -1269,17 +1428,59 @@ export type VolumesGetResponse = Volume;
 
 /** Optional parameters. */
 export interface VolumesListByVolumeGroupOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions {
+  /** Optional, returns only soft deleted volumes if set to true. If set to false or if not specified, returns only active volumes. */
+  xMsAccessSoftDeletedResources?: XMsAccessSoftDeletedResources;
+}
 
 /** Contains response data for the listByVolumeGroup operation. */
 export type VolumesListByVolumeGroupResponse = VolumeList;
 
 /** Optional parameters. */
+export interface VolumesPreBackupOptionalParams
+  extends coreClient.OperationOptions {
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the preBackup operation. */
+export type VolumesPreBackupResponse = PreValidationResponse;
+
+/** Optional parameters. */
+export interface VolumesPreRestoreOptionalParams
+  extends coreClient.OperationOptions {
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the preRestore operation. */
+export type VolumesPreRestoreResponse = PreValidationResponse;
+
+/** Optional parameters. */
 export interface VolumesListByVolumeGroupNextOptionalParams
-  extends coreClient.OperationOptions {}
+  extends coreClient.OperationOptions {
+  /** Optional, returns only soft deleted volumes if set to true. If set to false or if not specified, returns only active volumes. */
+  xMsAccessSoftDeletedResources?: XMsAccessSoftDeletedResources;
+}
 
 /** Contains response data for the listByVolumeGroupNext operation. */
 export type VolumesListByVolumeGroupNextResponse = VolumeList;
+
+/** Optional parameters. */
+export interface RestoreVolumeOptionalParams
+  extends coreClient.OperationOptions {
+  /** Delay to wait until next poll, in milliseconds. */
+  updateIntervalInMs?: number;
+  /** A serialized poller which can be used to resume an existing paused Long-Running-Operation. */
+  resumeFrom?: string;
+}
+
+/** Contains response data for the restoreVolume operation. */
+export type RestoreVolumeResponse = Volume;
 
 /** Optional parameters. */
 export interface PrivateEndpointConnectionsCreateOptionalParams
@@ -1291,7 +1492,8 @@ export interface PrivateEndpointConnectionsCreateOptionalParams
 }
 
 /** Contains response data for the create operation. */
-export type PrivateEndpointConnectionsCreateResponse = PrivateEndpointConnection;
+export type PrivateEndpointConnectionsCreateResponse =
+  PrivateEndpointConnection;
 
 /** Optional parameters. */
 export interface PrivateEndpointConnectionsGetOptionalParams
@@ -1314,14 +1516,16 @@ export interface PrivateEndpointConnectionsListOptionalParams
   extends coreClient.OperationOptions {}
 
 /** Contains response data for the list operation. */
-export type PrivateEndpointConnectionsListResponse = PrivateEndpointConnectionListResult;
+export type PrivateEndpointConnectionsListResponse =
+  PrivateEndpointConnectionListResult;
 
 /** Optional parameters. */
 export interface PrivateLinkResourcesListByElasticSanOptionalParams
   extends coreClient.OperationOptions {}
 
 /** Contains response data for the listByElasticSan operation. */
-export type PrivateLinkResourcesListByElasticSanResponse = PrivateLinkResourceListResult;
+export type PrivateLinkResourcesListByElasticSanResponse =
+  PrivateLinkResourceListResult;
 
 /** Optional parameters. */
 export interface VolumeSnapshotsListByVolumeGroupOptionalParams

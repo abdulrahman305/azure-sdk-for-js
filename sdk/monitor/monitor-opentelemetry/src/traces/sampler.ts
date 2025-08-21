@@ -4,9 +4,11 @@
  * TODO: Remove this sampler in favor of the implementation in the AzMon Exporter once we support M2M approach for standard metrics.
  * This sampler specifically marks spans as sampled out and records them instead of dropping the span altogether.
  */
-import { Link, Attributes, SpanKind, Context, diag } from "@opentelemetry/api";
-import { Sampler, SamplingDecision, SamplingResult } from "@opentelemetry/sdk-trace-base";
-import { AzureMonitorSampleRate } from "../types";
+import type { Link, Attributes, SpanKind, Context } from "@opentelemetry/api";
+import { diag } from "@opentelemetry/api";
+import type { Sampler, SamplingResult } from "@opentelemetry/sdk-trace-base";
+import { SamplingDecision } from "@opentelemetry/sdk-trace-base";
+import { AzureMonitorSampleRate } from "../types.js";
 
 /**
  * ApplicationInsightsSampler is responsible for the following:

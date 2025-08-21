@@ -1,6 +1,6 @@
 # Release History
 
-## 12.24.0-beta.2 (Unreleased)
+## 12.28.0 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,48 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.27.0 (2025-07-22)
+
+### Features Added
+
+- Includes all features released in 12.27.0-beta.1.
+
+## 12.28.0-beta.1 (2025-06-16)
+
+### Features Added
+
+- Added support for service version 2025-11-05.
+- Added more useful error message when the SDK encounters an x-ms-version mis-match issue.
+
+## 12.27.0-beta.1 (2025-05-20)
+
+### Features Added
+
+- Added support for service version 2025-07-05.
+
+## 12.25.0 (2024-11-13)
+
+### Features Added
+
+- Includes all features released in 12.25.0-beta.1.
+
+## 12.25.0-beta.1 (2024-10-15)
+
+### Features Added
+
+- Added support for service version 2025-01-05.
+- Added generateUserDelegationSasUrl() for DataLakeFileSystemClient, DataLakeFileClient, and DataLakeDirectoryClient.
+
+## 12.24.0 (2024-09-22)
+
+### Features Added
+
+- Includes all features released in 12.24.0-beta.1.
+
+### Other Changes
+
+- Upgraded dependency on `@azure/core-xml` to version `1.4.3`.
 
 ## 12.24.0-beta.1 (2024-08-09)
 

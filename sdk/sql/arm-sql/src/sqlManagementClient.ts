@@ -122,7 +122,6 @@ import {
   ManagedServerDnsAliasesImpl,
   ManagedDatabaseAdvancedThreatProtectionSettingsImpl,
   ManagedInstanceAdvancedThreatProtectionSettingsImpl,
-  ReplicationLinksImpl,
   ManagedDatabaseMoveOperationsImpl,
   ManagedInstanceDtcsImpl,
   SynapseLinkWorkspacesImpl,
@@ -160,7 +159,8 @@ import {
   LongTermRetentionPoliciesImpl,
   ManagedInstancesImpl,
   ServersImpl,
-} from "./operations";
+  ReplicationLinksImpl,
+} from "./operations/index.js";
 import {
   DataMaskingPolicies,
   DataMaskingRules,
@@ -274,7 +274,6 @@ import {
   ManagedServerDnsAliases,
   ManagedDatabaseAdvancedThreatProtectionSettings,
   ManagedInstanceAdvancedThreatProtectionSettings,
-  ReplicationLinks,
   ManagedDatabaseMoveOperations,
   ManagedInstanceDtcs,
   SynapseLinkWorkspaces,
@@ -312,8 +311,9 @@ import {
   LongTermRetentionPolicies,
   ManagedInstances,
   Servers,
-} from "./operationsInterfaces";
-import { SqlManagementClientOptionalParams } from "./models";
+  ReplicationLinks,
+} from "./operationsInterfaces/index.js";
+import { SqlManagementClientOptionalParams } from "./models/index.js";
 
 export class SqlManagementClient extends coreClient.ServiceClient {
   $host: string;
@@ -346,7 +346,7 @@ export class SqlManagementClient extends coreClient.ServiceClient {
       credential: credentials,
     };
 
-    const packageDetails = `azsdk-js-arm-sql/11.0.0-beta.2`;
+    const packageDetails = `azsdk-js-arm-sql/11.0.0-beta.3`;
     const userAgentPrefix =
       options.userAgentOptions && options.userAgentOptions.userAgentPrefix
         ? `${options.userAgentOptions.userAgentPrefix} ${packageDetails}`
@@ -575,7 +575,6 @@ export class SqlManagementClient extends coreClient.ServiceClient {
       new ManagedDatabaseAdvancedThreatProtectionSettingsImpl(this);
     this.managedInstanceAdvancedThreatProtectionSettings =
       new ManagedInstanceAdvancedThreatProtectionSettingsImpl(this);
-    this.replicationLinks = new ReplicationLinksImpl(this);
     this.managedDatabaseMoveOperations = new ManagedDatabaseMoveOperationsImpl(
       this,
     );
@@ -637,6 +636,7 @@ export class SqlManagementClient extends coreClient.ServiceClient {
     this.longTermRetentionPolicies = new LongTermRetentionPoliciesImpl(this);
     this.managedInstances = new ManagedInstancesImpl(this);
     this.servers = new ServersImpl(this);
+    this.replicationLinks = new ReplicationLinksImpl(this);
   }
 
   dataMaskingPolicies: DataMaskingPolicies;
@@ -751,7 +751,6 @@ export class SqlManagementClient extends coreClient.ServiceClient {
   managedServerDnsAliases: ManagedServerDnsAliases;
   managedDatabaseAdvancedThreatProtectionSettings: ManagedDatabaseAdvancedThreatProtectionSettings;
   managedInstanceAdvancedThreatProtectionSettings: ManagedInstanceAdvancedThreatProtectionSettings;
-  replicationLinks: ReplicationLinks;
   managedDatabaseMoveOperations: ManagedDatabaseMoveOperations;
   managedInstanceDtcs: ManagedInstanceDtcs;
   synapseLinkWorkspaces: SynapseLinkWorkspaces;
@@ -789,4 +788,5 @@ export class SqlManagementClient extends coreClient.ServiceClient {
   longTermRetentionPolicies: LongTermRetentionPolicies;
   managedInstances: ManagedInstances;
   servers: Servers;
+  replicationLinks: ReplicationLinks;
 }

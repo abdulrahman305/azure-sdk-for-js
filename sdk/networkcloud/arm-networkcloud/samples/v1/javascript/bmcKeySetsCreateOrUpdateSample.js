@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create a new baseboard management controller key set or update the existing one for the provided cluster.
  *
  * @summary Create a new baseboard management controller key set or update the existing one for the provided cluster.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/BmcKeySets_Create.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/BmcKeySets_Create.json
  */
 async function createOrUpdateBaseboardManagementControllerKeySetOfCluster() {
   const subscriptionId =
@@ -42,6 +40,7 @@ async function createOrUpdateBaseboardManagementControllerKeySetOfCluster() {
           keyData:
             "ssh-rsa AAtsE3njSONzDYRIZv/WLjVuMfrUSByHp+jfaaOLHTIIB4fJvo6dQUZxE20w2iDHV3tEkmnTo84eba97VMueQD6OzJPEyWZMRpz8UYWOd0IXeRqiFu1lawNblZhwNT/ojNZfpB3af/YDzwQCZgTcTRyNNhL4o/blKUmug0daSsSXISTRnIDpcf5qytjs1Xo+yYyJMvzLL59mhAyb3p/cD+Y3/s3WhAx+l0XOKpzXnblrv9d3q4c2tWmm/SyFqthaqd0= admin@vm",
         },
+        userPrincipalName: "userABC@contoso.com",
       },
       {
         description: "Needs access for troubleshooting as a part of the support team",
@@ -50,6 +49,7 @@ async function createOrUpdateBaseboardManagementControllerKeySetOfCluster() {
           keyData:
             "ssh-rsa AAtsE3njSONzDYRIZv/WLjVuMfrUSByHp+jfaaOLHTIIB4fJvo6dQUZxE20w2iDHV3tEkmnTo84eba97VMueQD6OzJPEyWZMRpz8UYWOd0IXeRqiFu1lawNblZhwNT/ojNZfpB3af/YDzwQCZgTcTRyNNhL4o/blKUmug0daSsSXISTRnIDpcf5qytjs1Xo+yYyJMvzLL59mhAyb3p/cD+Y3/s3WhAx+l0XOKpzXnblrv9d3q4c2tWmm/SyFqthaqd0= admin@vm",
         },
+        userPrincipalName: "userABC@contoso.com",
       },
     ],
   };
@@ -59,13 +59,13 @@ async function createOrUpdateBaseboardManagementControllerKeySetOfCluster() {
     resourceGroupName,
     clusterName,
     bmcKeySetName,
-    bmcKeySetParameters
+    bmcKeySetParameters,
   );
   console.log(result);
 }
 
 async function main() {
-  createOrUpdateBaseboardManagementControllerKeySetOfCluster();
+  await createOrUpdateBaseboardManagementControllerKeySetOfCluster();
 }
 
 main().catch(console.error);

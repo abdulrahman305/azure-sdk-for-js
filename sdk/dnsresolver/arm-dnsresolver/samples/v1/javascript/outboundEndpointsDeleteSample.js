@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Deletes an outbound endpoint for a DNS resolver. WARNING: This operation cannot be undone.
  *
  * @summary Deletes an outbound endpoint for a DNS resolver. WARNING: This operation cannot be undone.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/OutboundEndpoint_Delete.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/OutboundEndpoint_Delete.json
  */
 async function deleteOutboundEndpointForDnsResolver() {
   const subscriptionId =
@@ -29,13 +27,13 @@ async function deleteOutboundEndpointForDnsResolver() {
   const result = await client.outboundEndpoints.beginDeleteAndWait(
     resourceGroupName,
     dnsResolverName,
-    outboundEndpointName
+    outboundEndpointName,
   );
   console.log(result);
 }
 
 async function main() {
-  deleteOutboundEndpointForDnsResolver();
+  await deleteOutboundEndpointForDnsResolver();
 }
 
 main().catch(console.error);

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Azure Event Hubs - Checkpoint Store client library samples for TypeScript",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "build": "tsc",
@@ -28,16 +28,15 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/eventhub/eventhubs-checkpointstore-blob",
   "dependencies": {
-    "@azure-samples/eventhubs-checkpointstore-blob-ts": "file:",
-    "@azure/event-hubs": "^5.12.0",
     "@azure/eventhubs-checkpointstore-blob": "latest",
-    "@azure/identity": "^4.3.0",
+    "dotenv": "latest",
     "@azure/storage-blob": "^12.9.0",
-    "dotenv": "latest"
+    "@azure/identity": "^4.3.0",
+    "@azure/event-hubs": "^5.12.0"
   },
   "devDependencies": {
-    "@types/node": "^18.0.0",
-    "rimraf": "latest",
-    "typescript": "~5.5.3"
+    "@types/node": "^20.0.0",
+    "typescript": "~5.8.2",
+    "rimraf": "latest"
   }
 }

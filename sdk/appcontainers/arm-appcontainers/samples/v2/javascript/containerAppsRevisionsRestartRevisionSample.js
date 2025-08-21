@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Restarts a revision for a Container App
  *
  * @summary Restarts a revision for a Container App
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Revisions_Restart.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Revisions_Restart.json
  */
 async function restartContainerAppRevision() {
   const subscriptionId =
@@ -35,7 +35,7 @@ async function restartContainerAppRevision() {
 }
 
 async function main() {
-  restartContainerAppRevision();
+  await restartContainerAppRevision();
 }
 
 main().catch(console.error);

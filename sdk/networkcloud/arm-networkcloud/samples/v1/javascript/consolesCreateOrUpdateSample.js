@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create a new virtual machine console or update the properties of the existing virtual machine console.
  *
  * @summary Create a new virtual machine console or update the properties of the existing virtual machine console.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/Consoles_Create.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/Consoles_Create.json
  */
 async function createOrUpdateVirtualMachineConsole() {
   const subscriptionId =
@@ -44,13 +42,13 @@ async function createOrUpdateVirtualMachineConsole() {
     resourceGroupName,
     virtualMachineName,
     consoleName,
-    consoleParameters
+    consoleParameters,
   );
   console.log(result);
 }
 
 async function main() {
-  createOrUpdateVirtualMachineConsole();
+  await createOrUpdateVirtualMachineConsole();
 }
 
 main().catch(console.error);

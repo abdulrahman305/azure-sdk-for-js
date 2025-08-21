@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Delete a Container App SourceControl.
  *
  * @summary Delete a Container App SourceControl.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/SourceControls_Delete.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/SourceControls_Delete.json
  */
 async function deleteContainerAppSourceControl() {
   const subscriptionId =
@@ -35,7 +35,7 @@ async function deleteContainerAppSourceControl() {
 }
 
 async function main() {
-  deleteContainerAppSourceControl();
+  await deleteContainerAppSourceControl();
 }
 
 main().catch(console.error);

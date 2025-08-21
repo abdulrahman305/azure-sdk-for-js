@@ -167,7 +167,7 @@ export interface Resource {
 }
 
 export interface ApiProperties {
-  /** Describes the ServerVersion of an a MongoDB account. */
+  /** Describes the version of the MongoDB account. */
   serverVersion?: ServerVersion;
 }
 
@@ -199,6 +199,8 @@ export interface RestoreParametersBase {
   restoreSource?: string;
   /** Time to which the account has to be restored (ISO-8601 format). */
   restoreTimestampInUtc?: Date;
+  /** Specifies whether the restored account will have Time-To-Live disabled upon the successful restore. */
+  restoreWithTtlDisabled?: boolean;
 }
 
 /** The object representing the policy for taking backups on an account. */
@@ -376,10 +378,12 @@ export interface DatabaseAccountUpdateParameters {
   enablePartitionMerge?: boolean;
   /** Indicates the minimum allowed Tls version. The default value is Tls 1.2. Cassandra and Mongo APIs only work with Tls 1.2. */
   minimalTlsVersion?: MinimalTlsVersion;
-  /** Flag to indicate enabling/disabling of Burst Capacity Preview feature on the account */
+  /** Flag to indicate enabling/disabling of Burst Capacity feature on the account */
   enableBurstCapacity?: boolean;
   /** Indicates the status of the Customer Managed Key feature on the account. In case there are errors, the property provides troubleshooting guidance. */
   customerManagedKeyStatus?: string;
+  /** Flag to indicate enabling/disabling of PerRegionPerPartitionAutoscale feature on the account */
+  enablePerRegionPerPartitionAutoscale?: boolean;
 }
 
 /** The list of new failover policies for the failover priority change. */
@@ -447,12 +451,53 @@ export interface RegionForOnlineOffline {
   region: string;
 }
 
-/** Error Response. */
+/** Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.). */
 export interface ErrorResponse {
-  /** Error code. */
-  code?: string;
-  /** Error message indicating why the operation failed. */
-  message?: string;
+  /** The error object. */
+  error?: ErrorDetail;
+}
+
+/** The error detail. */
+export interface ErrorDetail {
+  /**
+   * The error code.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly code?: string;
+  /**
+   * The error message.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly message?: string;
+  /**
+   * The error target.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly target?: string;
+  /**
+   * The error details.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly details?: ErrorDetail[];
+  /**
+   * The error additional info.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly additionalInfo?: ErrorAdditionalInfo[];
+}
+
+/** The resource management error additional info. */
+export interface ErrorAdditionalInfo {
+  /**
+   * The additional info type.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly type?: string;
+  /**
+   * The additional info.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly info?: Record<string, unknown>;
 }
 
 /** Parameters to regenerate the keys within the database account. */
@@ -845,12 +890,6 @@ export interface ThroughputPolicyResource {
   incrementPercent?: number;
 }
 
-/** An error response from the service. */
-export interface CloudError {
-  /** Error Response. */
-  error?: ErrorResponse;
-}
-
 /** The List operation response, that contains the containers and their properties. */
 export interface SqlContainerListResult {
   /**
@@ -884,6 +923,10 @@ export interface SqlContainerResource {
   createMode?: CreateMode;
   /** List of computed properties */
   computedProperties?: ComputedProperty[];
+  /** The vector embedding policy for the container. */
+  vectorEmbeddingPolicy?: VectorEmbeddingPolicy;
+  /** The FullText policy for the container. */
+  fullTextPolicy?: FullTextPolicy;
 }
 
 /** Cosmos DB indexing policy */
@@ -900,6 +943,8 @@ export interface IndexingPolicy {
   compositeIndexes?: CompositePath[][];
   /** List of spatial specifics */
   spatialIndexes?: SpatialSpec[];
+  /** List of paths to include in the vector indexing */
+  vectorIndexes?: VectorIndex[];
 }
 
 /** The paths that are included in indexing */
@@ -937,6 +982,13 @@ export interface SpatialSpec {
   path?: string;
   /** List of path's spatial type */
   types?: SpatialType[];
+}
+
+export interface VectorIndex {
+  /** The path to the vector field in the document. */
+  path: string;
+  /** The index type of the vector. Currently, flat, diskANN, and quantizedFlat are supported. */
+  type: VectorIndexType;
 }
 
 /** The configuration of the partition key to be used for partitioning data into multiple partitions */
@@ -1002,6 +1054,40 @@ export interface ComputedProperty {
   name?: string;
   /** The query that evaluates the value for computed property, for example - "SELECT VALUE LOWER(c.name) FROM c" */
   query?: string;
+}
+
+/** Cosmos DB Vector Embedding Policy */
+export interface VectorEmbeddingPolicy {
+  /** List of vector embeddings */
+  vectorEmbeddings?: VectorEmbedding[];
+}
+
+/** Represents a vector embedding. A vector embedding is used to define a vector field in the documents. */
+export interface VectorEmbedding {
+  /** The path to the vector field in the document. */
+  path: string;
+  /** Indicates the data type of vector. */
+  dataType: VectorDataType;
+  /** The distance function to use for distance calculation in between vectors. */
+  distanceFunction: DistanceFunction;
+  /** The number of dimensions in the vector. */
+  dimensions: number;
+}
+
+/** Cosmos DB FullText Policy */
+export interface FullTextPolicy {
+  /** The default language for a full text paths. */
+  defaultLanguage?: string;
+  /** List of FullText Paths */
+  fullTextPaths?: FullTextPath[];
+}
+
+/** Represents the full text path specification. */
+export interface FullTextPath {
+  /** The path to the full text field in the document. */
+  path: string;
+  /** The language of the full text field in the document. */
+  language?: string;
 }
 
 /** The List operation response, that contains the client encryption keys and their properties. */
@@ -2766,10 +2852,12 @@ export interface DatabaseAccountGetResults extends ARMResourceProperties {
   enablePartitionMerge?: boolean;
   /** Indicates the minimum allowed Tls version. The default value is Tls 1.2. Cassandra and Mongo APIs only work with Tls 1.2. */
   minimalTlsVersion?: MinimalTlsVersion;
-  /** Flag to indicate enabling/disabling of Burst Capacity Preview feature on the account */
+  /** Flag to indicate enabling/disabling of Burst Capacity feature on the account */
   enableBurstCapacity?: boolean;
   /** Indicates the status of the Customer Managed Key feature on the account. In case there are errors, the property provides troubleshooting guidance. */
   customerManagedKeyStatus?: string;
+  /** Flag to indicate enabling/disabling of PerRegionPerPartitionAutoscale feature on the account */
+  enablePerRegionPerPartitionAutoscale?: boolean;
 }
 
 /** Parameters to create and update Cosmos DB database accounts. */
@@ -2842,10 +2930,12 @@ export interface DatabaseAccountCreateUpdateParameters
   enablePartitionMerge?: boolean;
   /** Indicates the minimum allowed Tls version. The default value is Tls 1.2. Cassandra and Mongo APIs only work with Tls 1.2. */
   minimalTlsVersion?: MinimalTlsVersion;
-  /** Flag to indicate enabling/disabling of Burst Capacity Preview feature on the account */
+  /** Flag to indicate enabling/disabling of Burst Capacity feature on the account */
   enableBurstCapacity?: boolean;
   /** Indicates the status of the Customer Managed Key feature on the account. In case there are errors, the property provides troubleshooting guidance. */
   customerManagedKeyStatus?: string;
+  /** Flag to indicate enabling/disabling of PerRegionPerPartitionAutoscale feature on the account */
+  enablePerRegionPerPartitionAutoscale?: boolean;
 }
 
 /** An Azure Cosmos DB SQL database. */
@@ -4017,6 +4107,8 @@ export enum KnownServerVersion {
   Five0 = "5.0",
   /** Six0 */
   Six0 = "6.0",
+  /** Seven0 */
+  Seven0 = "7.0",
 }
 
 /**
@@ -4029,7 +4121,8 @@ export enum KnownServerVersion {
  * **4.0** \
  * **4.2** \
  * **5.0** \
- * **6.0**
+ * **6.0** \
+ * **7.0**
  */
 export type ServerVersion = string;
 
@@ -4435,6 +4528,27 @@ export enum KnownSpatialType {
  */
 export type SpatialType = string;
 
+/** Known values of {@link VectorIndexType} that the service accepts. */
+export enum KnownVectorIndexType {
+  /** Flat */
+  Flat = "flat",
+  /** DiskANN */
+  DiskANN = "diskANN",
+  /** QuantizedFlat */
+  QuantizedFlat = "quantizedFlat",
+}
+
+/**
+ * Defines values for VectorIndexType. \
+ * {@link KnownVectorIndexType} can be used interchangeably with VectorIndexType,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **flat** \
+ * **diskANN** \
+ * **quantizedFlat**
+ */
+export type VectorIndexType = string;
+
 /** Known values of {@link PartitionKind} that the service accepts. */
 export enum KnownPartitionKind {
   /** Hash */
@@ -4473,6 +4587,48 @@ export enum KnownConflictResolutionMode {
  * **Custom**
  */
 export type ConflictResolutionMode = string;
+
+/** Known values of {@link VectorDataType} that the service accepts. */
+export enum KnownVectorDataType {
+  /** Float32 */
+  Float32 = "float32",
+  /** Uint8 */
+  Uint8 = "uint8",
+  /** Int8 */
+  Int8 = "int8",
+}
+
+/**
+ * Defines values for VectorDataType. \
+ * {@link KnownVectorDataType} can be used interchangeably with VectorDataType,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **float32** \
+ * **uint8** \
+ * **int8**
+ */
+export type VectorDataType = string;
+
+/** Known values of {@link DistanceFunction} that the service accepts. */
+export enum KnownDistanceFunction {
+  /** Euclidean */
+  Euclidean = "euclidean",
+  /** Cosine */
+  Cosine = "cosine",
+  /** Dotproduct */
+  Dotproduct = "dotproduct",
+}
+
+/**
+ * Defines values for DistanceFunction. \
+ * {@link KnownDistanceFunction} can be used interchangeably with DistanceFunction,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **euclidean** \
+ * **cosine** \
+ * **dotproduct**
+ */
+export type DistanceFunction = string;
 
 /** Known values of {@link TriggerType} that the service accepts. */
 export enum KnownTriggerType {

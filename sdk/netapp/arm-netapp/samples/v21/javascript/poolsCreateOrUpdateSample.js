@@ -6,21 +6,19 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetAppManagementClient } = require("@azure/arm-netapp");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create or Update a capacity pool
  *
  * @summary Create or Update a capacity pool
- * x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2024-03-01/examples/Pools_CreateOrUpdate.json
+ * x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2025-03-01/examples/Pools_CreateOrUpdate.json
  */
 async function poolsCreateOrUpdate() {
   const subscriptionId =
-    process.env["NETAPP_SUBSCRIPTION_ID"] || "D633CC2E-722B-4AE1-B636-BBD9E4C60ED9";
+    process.env["NETAPP_SUBSCRIPTION_ID"] || "00000000-0000-0000-0000-000000000000";
   const resourceGroupName = process.env["NETAPP_RESOURCE_GROUP"] || "myRG";
   const accountName = "account1";
   const poolName = "pool1";
@@ -42,7 +40,7 @@ async function poolsCreateOrUpdate() {
 }
 
 async function main() {
-  poolsCreateOrUpdate();
+  await poolsCreateOrUpdate();
 }
 
 main().catch(console.error);

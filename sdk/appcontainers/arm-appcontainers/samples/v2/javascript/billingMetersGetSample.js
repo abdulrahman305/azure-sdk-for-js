@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get all billingMeters for a location.
  *
  * @summary Get all billingMeters for a location.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/BillingMeters_Get.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/BillingMeters_Get.json
  */
 async function billingMetersGet() {
   const subscriptionId =
@@ -29,7 +29,7 @@ async function billingMetersGet() {
 }
 
 async function main() {
-  billingMetersGet();
+  await billingMetersGet();
 }
 
 main().catch(console.error);

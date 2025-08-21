@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Checks if resource name is available.
  *
  * @summary Checks if resource name is available.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironments_GetAuthToken.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedEnvironments_GetAuthToken.json
  */
 async function getManagedEnvironmentAuthToken() {
   const subscriptionId =
@@ -30,7 +30,7 @@ async function getManagedEnvironmentAuthToken() {
 }
 
 async function main() {
-  getManagedEnvironmentAuthToken();
+  await getManagedEnvironmentAuthToken();
 }
 
 main().catch(console.error);

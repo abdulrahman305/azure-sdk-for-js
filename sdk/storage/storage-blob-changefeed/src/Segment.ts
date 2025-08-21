@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { BlobChangeFeedEvent } from "./models/BlobChangeFeedEvent";
-import { Shard } from "./Shard";
-import { SegmentCursor, ShardCursor } from "./models/ChangeFeedCursor";
-import { CommonOptions } from "@azure/storage-blob";
-import { AbortSignalLike } from "@azure/abort-controller";
-import { tracingClient } from "./utils/tracing";
+import type { BlobChangeFeedEvent } from "./models/BlobChangeFeedEvent.js";
+import type { Shard } from "./Shard.js";
+import type { SegmentCursor, ShardCursor } from "./models/ChangeFeedCursor.js";
+import type { CommonOptions } from "@azure/storage-blob";
+import type { AbortSignalLike } from "@azure/abort-controller";
+import { tracingClient } from "./utils/tracing.js";
 
 /**
  * Options to configure {@link Segment.getChange} operation.

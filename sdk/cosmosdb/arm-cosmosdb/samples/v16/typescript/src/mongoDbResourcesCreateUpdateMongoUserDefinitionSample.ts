@@ -6,24 +6,20 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import {
   MongoUserDefinitionCreateUpdateParameters,
   CosmosDBManagementClient,
 } from "@azure/arm-cosmosdb";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Creates or updates an Azure Cosmos DB Mongo User Definition.
  *
  * @summary Creates or updates an Azure Cosmos DB Mongo User Definition.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBMongoDBUserDefinitionCreateUpdate.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBMongoDBUserDefinitionCreateUpdate.json
  */
-async function cosmosDbMongoDbuserDefinitionCreateUpdate() {
+async function cosmosDbMongoDbuserDefinitionCreateUpdate(): Promise<void> {
   const subscriptionId =
     process.env["COSMOSDB_SUBSCRIPTION_ID"] || "mySubscriptionId";
   const mongoUserDefinitionId = "myMongoUserDefinitionId";
@@ -51,8 +47,8 @@ async function cosmosDbMongoDbuserDefinitionCreateUpdate() {
   console.log(result);
 }
 
-async function main() {
-  cosmosDbMongoDbuserDefinitionCreateUpdate();
+async function main(): Promise<void> {
+  await cosmosDbMongoDbuserDefinitionCreateUpdate();
 }
 
 main().catch(console.error);

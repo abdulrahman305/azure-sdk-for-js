@@ -10,24 +10,27 @@ import type {
   FullConfig,
   Suite,
 } from "@playwright/test/reporter";
-import { exec } from "child_process";
-import { reporterLogger } from "../common/logger";
-import { createHash, randomUUID } from "crypto";
-import { IBackOffOptions } from "../common/types";
-import fs from "fs";
-import os from "os";
-import path from "path";
-import { Constants } from "../common/constants";
-import { EnvironmentVariables } from "../common/environmentVariables";
-import { DedupedStep, RawTestStep } from "../common/types";
-import { TokenType } from "../model/mptTokenDetails";
-import { Shard, TestRunStatus, UploadMetadata } from "../model/shard";
-import { TestResult as MPTTestResult, RawTestResult } from "../model/testResult";
-import { TestRun, TestRunConfig } from "../model/testRun";
-import { CIInfo, CI_PROVIDERS } from "./cIInfoProvider";
-import { CIInfoProvider } from "./cIInfoProvider";
-import { StorageUri } from "../model/storageUri";
-
+import { exec } from "node:child_process";
+import { reporterLogger } from "../common/logger.js";
+import { createHash, randomUUID } from "node:crypto";
+import type { IBackOffOptions } from "../common/types.js";
+import fs from "node:fs";
+import path from "node:path";
+import { Constants } from "../common/constants.js";
+import type { EnvironmentVariables } from "../common/environmentVariables.js";
+import type { DedupedStep, RawTestStep } from "../common/types.js";
+import { TokenType } from "../model/mptTokenDetails.js";
+import type { UploadMetadata } from "../model/shard.js";
+import { Shard, TestRunStatus } from "../model/shard.js";
+import type { RawTestResult } from "../model/testResult.js";
+import { TestResult as MPTTestResult } from "../model/testResult.js";
+import type { TestRunConfig } from "../model/testRun.js";
+import { TestRun } from "../model/testRun.js";
+import type { CIInfo } from "./cIInfoProvider.js";
+import { CI_PROVIDERS } from "./cIInfoProvider.js";
+import { CIInfoProvider } from "./cIInfoProvider.js";
+import type { StorageUri } from "../model/storageUri.js";
+import { getPackageVersion } from "./utils.js";
 class ReporterUtils {
   private envVariables: EnvironmentVariables;
 
@@ -54,16 +57,9 @@ class ReporterUtils {
 
   public async getTestRunObject(ciInfo: CIInfo): Promise<TestRun> {
     const testRun = new TestRun();
-    const runName = await this.getRunName(ciInfo);
-    if (ReporterUtils.isNullOrEmpty(this.envVariables.runId)) {
-      if (!ReporterUtils.isNullOrEmpty(runName)) {
-        this.envVariables.runId = runName;
-      } else {
-        this.envVariables.runId = randomUUID();
-      }
-    }
+    const runName = this.envVariables.runName || (await this.getRunName(ciInfo));
     testRun.testRunId = this.envVariables.runId;
-    testRun.displayName = ReporterUtils.isNullOrEmpty(runName) ? randomUUID() : runName;
+    testRun.displayName = ReporterUtils.isNullOrEmpty(runName) ? this.envVariables.runId : runName;
     testRun.creatorName = this.envVariables.userName;
     testRun.creatorId = this.envVariables.userId!;
     testRun.startTime = ReporterUtils.timestampToRFC3339(this.startTime);
@@ -113,6 +109,21 @@ class ReporterUtils {
     return shard;
   }
 
+  public getOSName(result: TestResult, data: string): string {
+    try {
+      for (const attachment of result.attachments) {
+        if (attachment.name === data) {
+          const match = attachment?.contentType?.match(/charset=(.*)/);
+          const charset = match && match.length > 1 ? match[1] : "utf-8";
+          return attachment.body?.toString((charset as any) || "utf-8").toUpperCase() || "";
+        }
+      }
+    } catch (error) {
+      reporterLogger.error(`Error in fetching OS -  ${error}`);
+    }
+    return "";
+  }
+
   public getTestResultObject(test: TestCase, result: TestResult, jobName: string): MPTTestResult {
     switch (test.outcome()) {
       case "skipped":
@@ -137,10 +148,6 @@ class ReporterUtils {
         break;
     }
 
-    let browserName = test.parent.project()!.use.browserName?.toLowerCase();
-    if (!browserName) {
-      browserName = test.parent.project()!.use.defaultBrowserType?.toLowerCase();
-    }
     const testResult = new MPTTestResult();
     testResult.runId = this.envVariables.runId;
     testResult.shardId = this.envVariables.runId + "_" + this.envVariables.shardId;
@@ -155,11 +162,15 @@ class ReporterUtils {
     testResult.status = this.getTestStatus(test, result);
     testResult.lineNumber = test.location.line;
     testResult.retry = result.retry ? result.retry : 0;
+    let browserName = test.parent.project()?.use.browserName?.toLowerCase();
+    if (!browserName) {
+      browserName = test.parent.project()?.use.defaultBrowserType?.toLowerCase();
+    }
     testResult.webTestConfig = {
       jobName: jobName,
       projectName: test.parent.project()!.name,
-      browserType: browserName!.toUpperCase(),
-      os: this.getOsName(),
+      browserType: browserName ? browserName.toUpperCase() : "",
+      os: this.getOSName(result, Constants.OS),
     };
     testResult.annotations = this.extractTestAnnotations(test.annotations);
     testResult.tags = this.extractTestTags(test);
@@ -206,7 +217,7 @@ class ReporterUtils {
   public getRawTestResultObject(result: TestResult): RawTestResult {
     const rawTestResult: RawTestResult = {
       steps: this.dedupeSteps(result.steps).map((step) => this.serializeTestStep(step)),
-      errors: result.errors ? JSON.stringify(result.errors, null, 2) : "",
+      errors: this.getTestError(result),
       stdErr: result.stderr ? JSON.stringify(result.stderr, null, 2) : "",
       stdOut: result.stdout ? JSON.stringify(result.stdout, null, 2) : "",
     };
@@ -224,7 +235,7 @@ class ReporterUtils {
   }
 
   public static calculateSha1(buffer: Buffer | string): string {
-    const hash = createHash("sha1");
+    const hash = createHash("sha256");
     hash.update(buffer);
     return hash.digest("hex");
   }
@@ -275,7 +286,6 @@ class ReporterUtils {
 
       // Check if the payload has an 'aud' claim
       return "aud" in payloadObject;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       return false;
     }
@@ -349,7 +359,15 @@ class ReporterUtils {
     try {
       const stats = fs.statSync(attachmentPath);
       return stats.size;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      return 0;
+    }
+  }
+
+  public static getBufferSize(attachmentBody: Buffer): number {
+    try {
+      const fileSizeInBytes = attachmentBody.length;
+      return fileSizeInBytes;
     } catch (error) {
       return 0;
     }
@@ -362,27 +380,6 @@ class ReporterUtils {
     const accessTokenRegex = new RegExp(this.envVariables.accessToken, "g");
     return info.replace(accessTokenRegex, Constants.DEFAULT_REDACTED_MESSAGE);
   }
-
-  public static populateValuesFromServiceUrl(): {
-    region: string;
-    accountId: string;
-  } | null {
-    // Service URL format: wss://<region>.api.playwright.microsoft.com/accounts/<workspace-id>/browsers
-    const url = process.env["PLAYWRIGHT_SERVICE_URL"]!;
-    if (!ReporterUtils.isNullOrEmpty(url)) {
-      const parts = url.split("/");
-
-      if (parts.length > 2) {
-        const subdomainParts = parts[2]!.split(".");
-        const region = subdomainParts.length > 0 ? subdomainParts[0] : null;
-        const accountId = parts[4];
-
-        return { region: region!, accountId: accountId! };
-      }
-    }
-    return null;
-  }
-
   public static getRegionFromAccountID(accountId: string): string | undefined {
     if (accountId.includes("_")) {
       return accountId.split("_")[0]!;
@@ -397,15 +394,17 @@ class ReporterUtils {
     const completed = Math.round(width * percent);
     const remaining = width - completed;
 
-    process.stdout.write("\r");
-    process.stdout.write(
-      `[${"=".repeat(completed)}${" ".repeat(remaining)}] ${Math.round(percent * 100)}%`,
-    );
+    if (current % Math.round(total / 5) === 0 || current === total) {
+      process.stdout.write("\r");
+      process.stdout.write(
+        `[${"=".repeat(completed)}${" ".repeat(remaining)}] ${Math.round(percent * 100)}%`,
+      );
+    }
   }
 
   private getTestRunConfig(): TestRunConfig {
     const testRunConfig: TestRunConfig = {
-      workers: this.config.workers,
+      workers: this.getWorkers(),
       pwVersion: this.config.version,
       timeout: this.config.globalTimeout,
       repeatEach: this.config.projects[0].repeatEach,
@@ -418,7 +417,7 @@ class ReporterUtils {
       },
       testType: Constants.TEST_TYPE,
       testSdkLanguage: Constants.TEST_SDK_LANGUAGE,
-      reporterPackageVersion: Constants.REPORTER_PACKAGE_VERSION,
+      reporterPackageVersion: getPackageVersion(),
     };
     return testRunConfig;
   }
@@ -455,7 +454,6 @@ class ReporterUtils {
       if (obj.tag && Array.isArray(obj.tag)) {
         tags = tags.concat(obj.tag);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // Ignore parsing errors
     }
@@ -494,6 +492,11 @@ class ReporterUtils {
           attachmentStatus += ",";
         }
         attachmentStatus += "trace";
+      } else if (attachment.contentType === "text/plain") {
+        if (attachmentStatus !== "") {
+          attachmentStatus += ",";
+        }
+        attachmentStatus += "txt";
       }
     }
     return attachmentStatus;
@@ -623,18 +626,33 @@ class ReporterUtils {
     return !str || str.trim() === "";
   }
 
-  private getOsName(): string {
-    const osType = os.type();
-    switch (osType) {
-      case "Darwin":
-        return "MAC";
-      case "Linux":
-        return "LINUX";
-      case "Windows_NT":
-        return "WINDOWS";
-      default:
-        return "UNKNOWN";
+  private getTestError(result: TestResult): string {
+    if (!result.errors || result.errors.length === 0) return "";
+    const errorMessages: { message: string }[] = [];
+    result.errors.forEach((error) => {
+      if (error.message) errorMessages.push({ message: error.message });
+      if (error.snippet && error.location) {
+        errorMessages.push({
+          message: error.snippet + "\n\n" + this.getReadableLineLocation(error.location),
+        });
+      } else if (error.snippet) errorMessages.push({ message: error.snippet });
+    });
+    return JSON.stringify(errorMessages, null, 2);
+  }
+
+  private getReadableLineLocation(location: Location): string {
+    return `at ${location.file}:${location.line}:${location.column}`;
+  }
+
+  private getWorkers(): number {
+    if (
+      this.config.metadata &&
+      "actualWorkers" in this.config.metadata &&
+      typeof this.config.metadata.actualWorkers === "number"
+    ) {
+      return this.config.metadata.actualWorkers;
     }
+    return this.config.workers;
   }
 }
 

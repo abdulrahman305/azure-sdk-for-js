@@ -1,14 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { DocumentSpan } from "../../src";
+import type { DocumentSpan } from "../../src/index.js";
 import {
   contains,
   fastGetChildren,
   iteratorFromFirstMatchBinarySearch,
-} from "../../src/lro/analysis";
-
-import { assert } from "chai";
+} from "../../src/lro/analysis.js";
+import { describe, it, assert } from "vitest";
 
 interface TestData {
   id: number;
@@ -17,8 +16,7 @@ interface TestData {
 
 let currentId = 0;
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-function TestData(offset: number, length: number): TestData {
+function createTestData(offset: number, length: number): TestData {
   return {
     id: currentId++,
     span: {
@@ -29,13 +27,13 @@ function TestData(offset: number, length: number): TestData {
 }
 
 const TEST_DATA: TestData[] = [
-  TestData(0, 0),
-  TestData(0, 1),
-  TestData(2, 1),
-  TestData(3, 6),
-  TestData(9, 2),
-  TestData(9, 2),
-  TestData(11, 5),
+  createTestData(0, 0),
+  createTestData(0, 1),
+  createTestData(2, 1),
+  createTestData(3, 6),
+  createTestData(9, 2),
+  createTestData(9, 2),
+  createTestData(11, 5),
 ];
 
 /**

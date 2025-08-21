@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Updates an inbound endpoint for a DNS resolver.
  *
  * @summary Updates an inbound endpoint for a DNS resolver.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/InboundEndpoint_Patch.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/InboundEndpoint_Patch.json
  */
 async function updateInboundEndpointForDnsResolver() {
   const subscriptionId =
@@ -31,13 +29,13 @@ async function updateInboundEndpointForDnsResolver() {
     resourceGroupName,
     dnsResolverName,
     inboundEndpointName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
 async function main() {
-  updateInboundEndpointForDnsResolver();
+  await updateInboundEndpointForDnsResolver();
 }
 
 main().catch(console.error);

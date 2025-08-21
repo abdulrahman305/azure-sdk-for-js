@@ -23,12 +23,15 @@ import {
   Job as JobMapper,
   JobPatchProperties as JobPatchPropertiesMapper,
   JobExecutionTemplate as JobExecutionTemplateMapper,
+  JavaComponent as JavaComponentMapper,
   ManagedEnvironment as ManagedEnvironmentMapper,
   ManagedCertificate as ManagedCertificateMapper,
   ManagedCertificatePatch as ManagedCertificatePatchMapper,
   ManagedEnvironmentStorage as ManagedEnvironmentStorageMapper,
+  SessionPool as SessionPoolMapper,
+  SessionPoolUpdatableProperties as SessionPoolUpdatablePropertiesMapper,
   SourceControl as SourceControlMapper,
-} from "../models/mappers";
+} from "../models/mappers.js";
 
 export const accept: OperationParameter = {
   parameterPath: "accept",
@@ -97,7 +100,7 @@ export const containerAppName: OperationURLParameter = {
 export const apiVersion: OperationQueryParameter = {
   parameterPath: "apiVersion",
   mapper: {
-    defaultValue: "2024-03-01",
+    defaultValue: "2025-01-01",
     isConstant: true,
     serializedName: "api-version",
     type: {
@@ -388,6 +391,39 @@ export const jobExecutionName: OperationURLParameter = {
   },
 };
 
+export const environmentName1: OperationURLParameter = {
+  parameterPath: "environmentName",
+  mapper: {
+    constraints: {
+      Pattern: new RegExp("^[-\\w\\._\\(\\)]+$"),
+    },
+    serializedName: "environmentName",
+    required: true,
+    type: {
+      name: "String",
+    },
+  },
+};
+
+export const name: OperationURLParameter = {
+  parameterPath: "name",
+  mapper: {
+    constraints: {
+      Pattern: new RegExp("^[-\\w\\._\\(\\)]+$"),
+    },
+    serializedName: "name",
+    required: true,
+    type: {
+      name: "String",
+    },
+  },
+};
+
+export const javaComponentEnvelope: OperationParameter = {
+  parameterPath: "javaComponentEnvelope",
+  mapper: JavaComponentMapper,
+};
+
 export const environmentEnvelope1: OperationParameter = {
   parameterPath: "environmentEnvelope",
   mapper: ManagedEnvironmentMapper,
@@ -417,6 +453,32 @@ export const managedCertificateEnvelope1: OperationParameter = {
 export const storageEnvelope1: OperationParameter = {
   parameterPath: "storageEnvelope",
   mapper: ManagedEnvironmentStorageMapper,
+};
+
+export const sessionPoolName: OperationURLParameter = {
+  parameterPath: "sessionPoolName",
+  mapper: {
+    constraints: {
+      Pattern: new RegExp("^[a-z][a-z0-9]*$"),
+      MaxLength: 63,
+      MinLength: 3,
+    },
+    serializedName: "sessionPoolName",
+    required: true,
+    type: {
+      name: "String",
+    },
+  },
+};
+
+export const sessionPoolEnvelope: OperationParameter = {
+  parameterPath: "sessionPoolEnvelope",
+  mapper: SessionPoolMapper,
+};
+
+export const sessionPoolEnvelope1: OperationParameter = {
+  parameterPath: "sessionPoolEnvelope",
+  mapper: SessionPoolUpdatablePropertiesMapper,
 };
 
 export const sourceControlName: OperationURLParameter = {
@@ -449,7 +511,7 @@ export const location1: OperationURLParameter = {
   },
 };
 
-export const environmentName1: OperationURLParameter = {
+export const environmentName2: OperationURLParameter = {
   parameterPath: "environmentName",
   mapper: {
     constraints: {

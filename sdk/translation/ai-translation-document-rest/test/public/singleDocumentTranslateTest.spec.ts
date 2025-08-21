@@ -1,32 +1,32 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Recorder } from "@azure-tools/test-recorder";
-import { assert } from "chai";
-import {
+import type { Recorder } from "@azure-tools/test-recorder";
+import type {
   DocumentTranslateDefaultResponse,
   DocumentTranslateParameters,
   DocumentTranslationClient,
-  isUnexpected,
-} from "../../src";
-import { createDocumentTranslationClient, startRecorder } from "./utils/recordedClient";
-import { Context } from "mocha";
+} from "../../src/index.js";
+import { isUnexpected } from "../../src/index.js";
+import { createDocumentTranslationClient, startRecorder } from "./utils/recordedClient.js";
+import { describe, it, assert, beforeEach, afterEach } from "vitest";
+import { createRestError } from "@azure-rest/core-client";
 
 describe("SingleDocumentTranslate tests", () => {
   let recorder: Recorder;
   let client: DocumentTranslationClient;
 
-  beforeEach(async function (this: Context) {
-    recorder = await startRecorder(this);
+  beforeEach(async (ctx) => {
+    recorder = await startRecorder(ctx);
     client = await createDocumentTranslationClient({ recorder });
   });
 
-  afterEach(async function () {
+  afterEach(async () => {
     await recorder.stop();
   });
 
   it("document translate", async () => {
-    const options = {
+    const response = await client.path("/document:translate").post({
       queryParameters: {
         targetLanguage: "hi",
       },
@@ -39,13 +39,9 @@ describe("SingleDocumentTranslate tests", () => {
           contentType: "text/html",
         },
       ],
-    };
-
-    const response = await client
-      .path("/document:translate")
-      .post(options as DocumentTranslateParameters);
+    });
     if (isUnexpected(response)) {
-      throw response.body;
+      throw createRestError(response);
     }
   });
 

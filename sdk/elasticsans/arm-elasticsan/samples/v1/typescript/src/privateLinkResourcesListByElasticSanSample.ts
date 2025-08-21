@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { ElasticSanManagement } from "@azure/arm-elasticsan";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Gets the private link resources that need to be created for a elastic San.
  *
  * @summary Gets the private link resources that need to be created for a elastic San.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/PrivateLinkResources_ListByElasticSan_MaximumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/PrivateLinkResources_ListByElasticSan_MaximumSet_Gen.json
  */
-async function privateLinkResourcesListByElasticSanMaximumSetGen() {
+async function privateLinkResourcesListByElasticSanMaximumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -30,7 +28,7 @@ async function privateLinkResourcesListByElasticSanMaximumSetGen() {
   const client = new ElasticSanManagement(credential, subscriptionId);
   const result = await client.privateLinkResources.listByElasticSan(
     resourceGroupName,
-    elasticSanName
+    elasticSanName,
   );
   console.log(result);
 }
@@ -39,9 +37,9 @@ async function privateLinkResourcesListByElasticSanMaximumSetGen() {
  * This sample demonstrates how to Gets the private link resources that need to be created for a elastic San.
  *
  * @summary Gets the private link resources that need to be created for a elastic San.
- * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/PrivateLinkResources_ListByElasticSan_MinimumSet_Gen.json
+ * x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/PrivateLinkResources_ListByElasticSan_MinimumSet_Gen.json
  */
-async function privateLinkResourcesListByElasticSanMinimumSetGen() {
+async function privateLinkResourcesListByElasticSanMinimumSetGen(): Promise<void> {
   const subscriptionId =
     process.env["ELASTICSANS_SUBSCRIPTION_ID"] || "subscriptionid";
   const resourceGroupName =
@@ -51,12 +49,12 @@ async function privateLinkResourcesListByElasticSanMinimumSetGen() {
   const client = new ElasticSanManagement(credential, subscriptionId);
   const result = await client.privateLinkResources.listByElasticSan(
     resourceGroupName,
-    elasticSanName
+    elasticSanName,
   );
   console.log(result);
 }
 
-async function main() {
+async function main(): Promise<void> {
   privateLinkResourcesListByElasticSanMaximumSetGen();
   privateLinkResourcesListByElasticSanMinimumSetGen();
 }

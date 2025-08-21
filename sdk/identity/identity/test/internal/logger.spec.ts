@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AccessToken, GetTokenOptions, TokenCredential } from "../../src";
+import type { AccessToken, GetTokenOptions, TokenCredential } from "@azure/identity";
+import type { CredentialLogger } from "$internal/util/logging.js";
 import {
-  CredentialLogger,
   credentialLogger,
   credentialLoggerInstance,
   formatError,
   formatSuccess,
-} from "../../src/util/logging";
-import { assert } from "chai";
+} from "$internal/util/logging.js";
+import { describe, it, assert } from "vitest";
 
 describe("Identity logging utilities", function () {
   describe("credentialLoggerInstance", function () {

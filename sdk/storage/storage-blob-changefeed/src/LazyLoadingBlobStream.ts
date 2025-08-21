@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Readable, ReadableOptions } from "stream";
-import { BlobClient, CommonOptions } from "@azure/storage-blob";
-import { AbortSignalLike } from "@azure/abort-controller";
-import { tracingClient } from "./utils/tracing";
+import type { ReadableOptions } from "node:stream";
+import { Readable } from "node:stream";
+import type { BlobClient, CommonOptions } from "@azure/storage-blob";
+import type { AbortSignalLike } from "@azure/abort-controller";
+import { tracingClient } from "./utils/tracing.js";
 
 /**
  * Options to configure the LazyLoadingBlobStream.

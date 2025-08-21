@@ -2,21 +2,18 @@
 // Licensed under the MIT License.
 
 /**
- * Displays the radiology procedure of the Radiology Insights request.
+ * @summary Displays the radiology procedure of the Radiology Insights request.
  */
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
+import "dotenv/config";
 
 import AzureHealthInsightsClient, {
-  ClinicalDocumentTypeEnum,
+  ClinicalDocumentType,
   CreateJobParameters,
   RadiologyInsightsJobOutput,
   getLongRunningPoller,
   isUnexpected
-} from "@azure-rest/health-insights-radiologyinsights";
-
-dotenv.config();
-
+} from "../src/index.js";
 // You will need to set this environment variables or edit the following values
 
 const endpoint = process.env["HEALTH_INSIGHTS_ENDPOINT"] || "";
@@ -40,7 +37,7 @@ function printResults(radiologyInsightsResult: RadiologyInsightsJobOutput): void
               });
 
               if ("imagingProcedures" in inference) {
-                inference.imagingProcedures.forEach((imagingProcedure: any) => {
+                inference.imagingProcedures?.forEach((imagingProcedure: any) => {
                   console.log("   Imaging Procedure Codes: ");
                   displayImaging(imagingProcedure);
                 });
@@ -71,7 +68,7 @@ function printResults(radiologyInsightsResult: RadiologyInsightsJobOutput): void
   function displayCodes(codeableConcept: any): void {
     codeableConcept.coding?.forEach((coding: any) => {
       if ("code" in coding) {
-        console.log("   Coding: " + coding.code + ", " + coding.display + " (" + coding.system + ")");
+        console.log("      Coding: " + coding.code + ", " + coding.display + " (" + coding.system + ")");
       }
     });
   }
@@ -101,7 +98,7 @@ function printResults(radiologyInsightsResult: RadiologyInsightsJobOutput): void
 function createRequestBody(): CreateJobParameters {
 
   const codingData = {
-    system: "Http://hl7.org/fhir/ValueSet/cpt-all",
+    system: "http://www.ama-assn.org/go/cpt",
     code: "24727-0",
     display: "CT HEAD W CONTRAST IV"
   };
@@ -112,7 +109,7 @@ function createRequestBody(): CreateJobParameters {
 
   const patientInfo = {
     sex: "female",
-    birthDate: new Date("1959-11-11T19:00:00+00:00"),
+    birthDate: "1959-11-11T19:00:00+00:00",
   };
 
   const encounterData = {
@@ -155,14 +152,14 @@ function createRequestBody(): CreateJobParameters {
 
   const patientDocumentData = {
     type: "note",
-    clinicalType: ClinicalDocumentTypeEnum.RadiologyReport,
+    clinicalType: "radiologyReport",
     id: "docid1",
     language: "en",
     authors: [authorData],
     specialtyType: "radiology",
     administrativeMetadata: administrativeMetadata,
     content: content,
-    createdAt: new Date("2021-05-31T16:00:00.000Z"),
+    createdAt: "2021-05-31T16:00:00.000Z",
     orderedProceduresAsCsv: "CT HEAD W CONTRAST IV"
   };
 
@@ -219,13 +216,13 @@ function createRequestBody(): CreateJobParameters {
     }
   };
 
-  const param = {
+  return {
     body: RadiologyInsightsJob,
   };
 
 }
 
-export async function main() {
+export async function main(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = AzureHealthInsightsClient(endpoint, credential);
 

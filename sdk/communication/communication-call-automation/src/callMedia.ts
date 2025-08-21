@@ -7,9 +7,7 @@ import {
   FileSourceInternal,
   TextSourceInternal,
   SsmlSourceInternal,
-  KnownPlaySourceType,
   RecognizeRequest,
-  KnownRecognizeInputType,
   RecognizeOptions,
   DtmfOptions,
   CallAutomationApiClient,
@@ -18,24 +16,26 @@ import {
   SendDtmfTonesRequest,
   Tone,
   SpeechOptions,
-  StartHoldMusicRequest,
-  StopHoldMusicRequest,
   StartTranscriptionRequest,
   StopTranscriptionRequest,
   UpdateTranscriptionRequest,
   HoldRequest,
   UnholdRequest,
-} from "./generated/src";
+  StartMediaStreamingRequest,
+  StopMediaStreamingRequest,
+} from "./generated/src/index.js";
+import { KnownPlaySourceType, KnownRecognizeInputType } from "./generated/src/index.js";
 
-import { CallMediaImpl } from "./generated/src/operations";
+import { CallMediaImpl } from "./generated/src/operations/index.js";
 
+import type { CommunicationIdentifier } from "@azure/communication-common";
 import {
-  CommunicationIdentifier,
+  createCommunicationAuthPolicy,
   serializeCommunicationIdentifier,
 } from "@azure/communication-common";
 
-import { FileSource, TextSource, SsmlSource, DtmfTone } from "./models/models";
-import {
+import type { FileSource, TextSource, SsmlSource, DtmfTone } from "./models/models.js";
+import type {
   PlayOptions,
   CallMediaRecognizeDtmfOptions,
   CallMediaRecognizeChoiceOptions,
@@ -47,24 +47,14 @@ import {
   StopTranscriptionOptions,
   HoldOptions,
   UnholdOptions,
-} from "./models/options";
-import { KeyCredential, TokenCredential } from "@azure/core-auth";
-import {
-  CancelAllMediaOperationsResult,
-  PlayResult,
-  SendDtmfTonesResult,
-  StartRecognizingResult,
-} from "./models/responses";
-import {
-  CancelAllMediaOperationsEventResult,
-  PlayEventResult,
-  SendDtmfEventResult,
-  StartRecognizingEventResult,
-} from "./eventprocessor/eventResponses";
-import { CallAutomationEventProcessor } from "./eventprocessor/callAutomationEventProcessor";
+  StartMediaStreamingOptions,
+  StopMediaStreamingOptions,
+  PlayToAllOptions,
+  UpdateTranscriptionOptions,
+} from "./models/options.js";
+import type { KeyCredential, TokenCredential } from "@azure/core-auth";
+import type { SendDtmfTonesResult } from "./models/responses.js";
 import { randomUUID } from "@azure/core-util";
-import { createCustomCallAutomationApiClient } from "./credential/callAutomationAuthPolicy";
-
 /**
  * CallMedia class represents call media related APIs.
  */
@@ -72,21 +62,16 @@ export class CallMedia {
   private readonly callConnectionId: string;
   private readonly callMedia: CallMediaImpl;
   private readonly callAutomationApiClient: CallAutomationApiClient;
-  private readonly callAutomationEventProcessor: CallAutomationEventProcessor;
   constructor(
     callConnectionId: string,
     endpoint: string,
     credential: KeyCredential | TokenCredential,
-    eventProcessor: CallAutomationEventProcessor,
     options?: CallAutomationApiClientOptionalParams,
   ) {
-    this.callAutomationApiClient = createCustomCallAutomationApiClient(
-      credential,
-      options,
-      endpoint,
-    );
+    this.callAutomationApiClient = new CallAutomationApiClient(endpoint, options);
+    const authPolicy = createCommunicationAuthPolicy(credential);
+    this.callAutomationApiClient.pipeline.addPolicy(authPolicy);
     this.callConnectionId = callConnectionId;
-    this.callAutomationEventProcessor = eventProcessor;
     this.callMedia = new CallMediaImpl(this.callAutomationApiClient);
   }
 
@@ -146,14 +131,14 @@ export class CallMedia {
     playSources: (FileSource | TextSource | SsmlSource)[],
     playTo: CommunicationIdentifier[],
     options: PlayOptions = { loop: false },
-  ): Promise<PlayResult> {
+  ): Promise<void> {
     const playRequest: PlayRequest = {
       playSources: playSources.map((source) => this.createPlaySourceInternal(source)),
       playTo: playTo.map((identifier) => serializeCommunicationIdentifier(identifier)),
       playOptions: {
         loop: false,
       },
-      operationContext: options.operationContext ? options.operationContext : randomUUID(),
+      operationContext: options.operationContext,
       operationCallbackUri: options.operationCallbackUrl,
     };
 
@@ -162,41 +147,6 @@ export class CallMedia {
       playRequest.playOptions.loop = options.loop;
     }
     await this.callMedia.play(this.callConnectionId, playRequest, options);
-
-    const playResult: PlayResult = {
-      waitForEventProcessor: async (abortSignal, timeoutInMs) => {
-        const playEventResult: PlayEventResult = {
-          isSuccess: false,
-        };
-        await this.callAutomationEventProcessor.waitForEventProcessor(
-          (event) => {
-            if (
-              event.callConnectionId === this.callConnectionId &&
-              event.kind === "PlayCompleted" &&
-              event.operationContext === playRequest.operationContext
-            ) {
-              playEventResult.isSuccess = true;
-              playEventResult.successResult = event;
-              return true;
-            } else if (
-              event.callConnectionId === this.callConnectionId &&
-              event.kind === "PlayFailed" &&
-              event.operationContext === playRequest.operationContext
-            ) {
-              playEventResult.isSuccess = false;
-              playEventResult.failureResult = event;
-              return true;
-            } else {
-              return false;
-            }
-          },
-          abortSignal,
-          timeoutInMs,
-        );
-        return playEventResult;
-      },
-    };
-    return playResult;
   }
 
   /**
@@ -207,8 +157,8 @@ export class CallMedia {
    */
   public async playToAll(
     playSources: (FileSource | TextSource | SsmlSource)[],
-    options: PlayOptions = { loop: false },
-  ): Promise<PlayResult> {
+    options: PlayToAllOptions = { loop: false },
+  ): Promise<void> {
     const playRequest: PlayRequest = {
       playSources: playSources.map((source) => this.createPlaySourceInternal(source)),
       playTo: [],
@@ -223,42 +173,15 @@ export class CallMedia {
       playRequest.playOptions = playRequest.playOptions || { loop: false }; // Ensure playOptions is defined
       playRequest.playOptions.loop = options.loop;
     }
-    await this.callMedia.play(this.callConnectionId, playRequest, options);
 
-    const playResult: PlayResult = {
-      waitForEventProcessor: async (abortSignal, timeoutInMs) => {
-        const playEventResult: PlayEventResult = {
-          isSuccess: false,
-        };
-        await this.callAutomationEventProcessor.waitForEventProcessor(
-          (event) => {
-            if (
-              event.callConnectionId === this.callConnectionId &&
-              event.kind === "PlayCompleted" &&
-              event.operationContext === playRequest.operationContext
-            ) {
-              playEventResult.isSuccess = true;
-              playEventResult.successResult = event;
-              return true;
-            } else if (
-              event.callConnectionId === this.callConnectionId &&
-              event.kind === "PlayFailed" &&
-              event.operationContext === playRequest.operationContext
-            ) {
-              playEventResult.isSuccess = false;
-              playEventResult.failureResult = event;
-              return true;
-            } else {
-              return false;
-            }
-          },
-          abortSignal,
-          timeoutInMs,
-        );
-        return playEventResult;
-      },
-    };
-    return playResult;
+    if (options.interruptCallMediaOperation !== undefined) {
+      playRequest.playOptions = playRequest.playOptions || {
+        loop: false,
+      }; // Ensure playOptions is defined
+      playRequest.interruptCallMediaOperation = options.interruptCallMediaOperation;
+    }
+
+    await this.callMedia.play(this.callConnectionId, playRequest, options);
   }
 
   private createRecognizeRequest(
@@ -290,6 +213,10 @@ export class CallMedia {
         playPrompt: recognizeOptions.playPrompt
           ? this.createPlaySourceInternal(recognizeOptions.playPrompt)
           : undefined,
+        playPrompts:
+          recognizeOptions.playPrompts !== undefined
+            ? recognizeOptions.playPrompts.map((source) => this.createPlaySourceInternal(source))
+            : undefined,
         interruptCallMediaOperation: recognizeOptions.interruptCallMediaOperation,
         recognizeOptions: recognizeOptionsInternal,
         operationContext: recognizeOptions.operationContext,
@@ -311,6 +238,10 @@ export class CallMedia {
         playPrompt: recognizeOptions.playPrompt
           ? this.createPlaySourceInternal(recognizeOptions.playPrompt)
           : undefined,
+        playPrompts:
+          recognizeOptions.playPrompts !== undefined
+            ? recognizeOptions.playPrompts.map((source) => this.createPlaySourceInternal(source))
+            : undefined,
         interruptCallMediaOperation: recognizeOptions.interruptCallMediaOperation,
         recognizeOptions: recognizeOptionsInternal,
         operationContext: recognizeOptions.operationContext,
@@ -337,6 +268,10 @@ export class CallMedia {
         playPrompt: recognizeOptions.playPrompt
           ? this.createPlaySourceInternal(recognizeOptions.playPrompt)
           : undefined,
+        playPrompts:
+          recognizeOptions.playPrompts !== undefined
+            ? recognizeOptions.playPrompts.map((source) => this.createPlaySourceInternal(source))
+            : undefined,
         interruptCallMediaOperation: recognizeOptions.interruptCallMediaOperation,
         recognizeOptions: recognizeOptionsInternal,
         operationContext: recognizeOptions.operationContext,
@@ -370,6 +305,10 @@ export class CallMedia {
         playPrompt: recognizeOptions.playPrompt
           ? this.createPlaySourceInternal(recognizeOptions.playPrompt)
           : undefined,
+        playPrompts:
+          recognizeOptions.playPrompts !== undefined
+            ? recognizeOptions.playPrompts.map((source) => this.createPlaySourceInternal(source))
+            : undefined,
         interruptCallMediaOperation: recognizeOptions.interruptCallMediaOperation,
         recognizeOptions: recognizeOptionsInternal,
         operationContext: recognizeOptions.operationContext,
@@ -390,7 +329,7 @@ export class CallMedia {
     targetParticipant: CommunicationIdentifier,
     maxTonesToCollect: number,
     options: CallMediaRecognizeDtmfOptions,
-  ): Promise<StartRecognizingResult>;
+  ): Promise<void>;
 
   /**
    *  Recognize participant input.
@@ -404,7 +343,7 @@ export class CallMedia {
       | CallMediaRecognizeChoiceOptions
       | CallMediaRecognizeSpeechOptions
       | CallMediaRecognizeSpeechOrDtmfOptions,
-  ): Promise<StartRecognizingResult>;
+  ): Promise<void>;
   async startRecognizing(
     targetParticipant: CommunicationIdentifier,
     maxTonesOrOptions:
@@ -414,14 +353,14 @@ export class CallMedia {
       | CallMediaRecognizeSpeechOptions
       | CallMediaRecognizeSpeechOrDtmfOptions,
     options?: CallMediaRecognizeDtmfOptions,
-  ): Promise<StartRecognizingResult> {
+  ): Promise<void> {
     if (typeof maxTonesOrOptions === "number" && options) {
       // Old function signature logic
       console.warn(
         "Deprecated function signature used. Please use the new signature with targetParticipant and options params instead, and set maxTonesToCollect in options.",
       );
       options.maxTonesToCollect = maxTonesOrOptions;
-      await this.callMedia.recognize(
+      return this.callMedia.recognize(
         this.callConnectionId,
         this.createRecognizeRequest(targetParticipant, options),
         {},
@@ -431,45 +370,11 @@ export class CallMedia {
         ? maxTonesOrOptions.operationContext
         : randomUUID();
       // New function signature logic
-      await this.callMedia.recognize(
+      return this.callMedia.recognize(
         this.callConnectionId,
         this.createRecognizeRequest(targetParticipant, maxTonesOrOptions),
         {},
       );
-      const startRecognizingResult: StartRecognizingResult = {
-        waitForEventProcessor: async (abortSignal, timeoutInMs) => {
-          const startRecognizingEventResult: StartRecognizingEventResult = {
-            isSuccess: false,
-          };
-          await this.callAutomationEventProcessor.waitForEventProcessor(
-            (event) => {
-              if (
-                event.callConnectionId === this.callConnectionId &&
-                event.kind === "RecognizeCompleted" &&
-                event.operationContext === maxTonesOrOptions.operationContext
-              ) {
-                startRecognizingEventResult.isSuccess = true;
-                startRecognizingEventResult.successResult = event;
-                return true;
-              } else if (
-                event.callConnectionId === this.callConnectionId &&
-                event.kind === "RecognizeFailed" &&
-                event.operationContext === maxTonesOrOptions.operationContext
-              ) {
-                startRecognizingEventResult.isSuccess = false;
-                startRecognizingEventResult.failureResult = event;
-                return true;
-              } else {
-                return false;
-              }
-            },
-            abortSignal,
-            timeoutInMs,
-          );
-          return startRecognizingEventResult;
-        },
-      };
-      return startRecognizingResult;
     }
     throw new Error("Invalid params");
   }
@@ -477,38 +382,8 @@ export class CallMedia {
   /**
    * Cancels all the queued media operations.
    */
-  public async cancelAllOperations(): Promise<CancelAllMediaOperationsResult> {
+  public async cancelAllOperations(): Promise<void> {
     await this.callMedia.cancelAllMediaOperations(this.callConnectionId, {});
-
-    const cancelAllMediaOperationsResult: CancelAllMediaOperationsResult = {
-      waitForEventProcessor: async (abortSignal, timeoutInMs) => {
-        const cancelAllMediaOperationsEventResult: CancelAllMediaOperationsEventResult = {
-          isSuccess: false,
-        };
-        await this.callAutomationEventProcessor.waitForEventProcessor(
-          (event) => {
-            if (event.callConnectionId === this.callConnectionId && event.kind === "PlayCanceled") {
-              cancelAllMediaOperationsEventResult.isSuccess = true;
-              cancelAllMediaOperationsEventResult.playCanceledSuccessResult = event;
-              return true;
-            } else if (
-              event.callConnectionId === this.callConnectionId &&
-              event.kind === "RecognizeCanceled"
-            ) {
-              cancelAllMediaOperationsEventResult.isSuccess = false;
-              cancelAllMediaOperationsEventResult.recognizeCanceledSuccessResult = event;
-              return true;
-            } else {
-              return false;
-            }
-          },
-          abortSignal,
-          timeoutInMs,
-        );
-        return cancelAllMediaOperationsEventResult;
-      },
-    };
-    return cancelAllMediaOperationsResult;
   }
 
   /**
@@ -522,7 +397,7 @@ export class CallMedia {
   ): Promise<void> {
     const continuousDtmfRecognitionRequest: ContinuousDtmfRecognitionRequest = {
       targetParticipant: serializeCommunicationIdentifier(targetParticipant),
-      operationContext: options.operationContext ? options.operationContext : randomUUID(),
+      operationContext: options.operationContext,
     };
     return this.callMedia.startContinuousDtmfRecognition(
       this.callConnectionId,
@@ -542,7 +417,7 @@ export class CallMedia {
   ): Promise<void> {
     const continuousDtmfRecognitionRequest: ContinuousDtmfRecognitionRequest = {
       targetParticipant: serializeCommunicationIdentifier(targetParticipant),
-      operationContext: options.operationContext ? options.operationContext : randomUUID(),
+      operationContext: options.operationContext,
       operationCallbackUri: options.operationCallbackUrl,
     };
     return this.callMedia.stopContinuousDtmfRecognition(
@@ -566,43 +441,22 @@ export class CallMedia {
     const sendDtmfTonesRequest: SendDtmfTonesRequest = {
       tones: tones,
       targetParticipant: serializeCommunicationIdentifier(targetParticipant),
-      operationContext: options.operationContext ? options.operationContext : randomUUID(),
+      operationContext: options.operationContext,
       operationCallbackUri: options.operationCallbackUrl,
     };
-    await this.callMedia.sendDtmfTones(this.callConnectionId, sendDtmfTonesRequest, {});
+    const optionsInternal = {
+      ...options,
+      repeatabilityFirstSent: new Date(),
+      repeatabilityRequestID: randomUUID(),
+    };
+    const result = await this.callMedia.sendDtmfTones(
+      this.callConnectionId,
+      sendDtmfTonesRequest,
+      optionsInternal,
+    );
 
     const sendDtmfTonesResult: SendDtmfTonesResult = {
-      waitForEventProcessor: async (abortSignal, timeoutInMs) => {
-        const sendDtmfEventResult: SendDtmfEventResult = {
-          isSuccess: false,
-        };
-        await this.callAutomationEventProcessor.waitForEventProcessor(
-          (event) => {
-            if (
-              event.callConnectionId === this.callConnectionId &&
-              event.kind === "SendDtmfTonesCompleted" &&
-              event.operationContext === sendDtmfTonesResult.operationContext
-            ) {
-              sendDtmfEventResult.isSuccess = true;
-              sendDtmfEventResult.successResult = event;
-              return true;
-            } else if (
-              event.callConnectionId === this.callConnectionId &&
-              event.kind === "SendDtmfTonesFailed" &&
-              event.operationContext === sendDtmfTonesResult.operationContext
-            ) {
-              sendDtmfEventResult.isSuccess = false;
-              sendDtmfEventResult.failureResult = event;
-              return true;
-            } else {
-              return false;
-            }
-          },
-          abortSignal,
-          timeoutInMs,
-        );
-        return sendDtmfEventResult;
-      },
+      ...result,
     };
     return sendDtmfTonesResult;
   }
@@ -626,7 +480,7 @@ export class CallMedia {
       operationContext:
         options.operationContext !== undefined ? options.operationContext : undefined,
       operationCallbackUri:
-        options.operationCallbackUri !== undefined ? options.operationCallbackUri : undefined,
+        options.operationCallbackUrl !== undefined ? options.operationCallbackUrl : undefined,
     };
     return this.callMedia.hold(this.callConnectionId, holdRequest);
   }
@@ -645,56 +499,10 @@ export class CallMedia {
       targetParticipant: serializeCommunicationIdentifier(targetParticipant),
       operationContext:
         options.operationContext !== undefined ? options.operationContext : undefined,
+      operationCallbackUri:
+        options.operationCallbackUrl !== undefined ? options.operationCallbackUrl : undefined,
     };
     return this.callMedia.unhold(this.callConnectionId, unholdRequest);
-  }
-
-  /**
-   * Put participant on hold while playing audio.
-   *
-   * @deprecated - This operations is deprecated, please use hold instead.
-   * @param targetParticipant - The targets to play to.
-   * @param playSource - A PlaySource representing the source to play.
-   * @param operationContext - Operation Context.
-   * @param operationCallbackUri - Set a callback URI that overrides the default callback URI set by CreateCall/AnswerCall for this operation.
-   */
-  public async startHoldMusic(
-    targetParticipant: CommunicationIdentifier,
-    playSource: FileSource | TextSource | SsmlSource | undefined = undefined,
-    loop?: boolean,
-    operationContext: string | undefined = undefined,
-    operationCallbackUri: string | undefined = undefined,
-  ): Promise<void> {
-    const holdRequest: StartHoldMusicRequest = {
-      targetParticipant: serializeCommunicationIdentifier(targetParticipant),
-      playSourceInfo:
-        playSource !== undefined ? this.createPlaySourceInternal(playSource) : undefined,
-      operationContext: operationContext,
-      operationCallbackUri: operationCallbackUri,
-    };
-    if (loop) {
-      // Do nothing. Added since it needs to be backwards compatible.
-    }
-    return this.callMedia.startHoldMusic(this.callConnectionId, holdRequest);
-  }
-
-  /**
-   * Remove participant from hold.
-   *
-   * @deprecated - This operations is deprecated, please use unhold instead.
-   * @param targetParticipant - The targets to play to.
-   * @param operationContext - Operation Context.
-   */
-  public async stopHoldMusic(
-    targetParticipant: CommunicationIdentifier,
-    operationContext: string | undefined = undefined,
-  ): Promise<void> {
-    const unholdRequest: StopHoldMusicRequest = {
-      targetParticipant: serializeCommunicationIdentifier(targetParticipant),
-      operationContext: operationContext,
-    };
-
-    return this.callMedia.stopHoldMusic(this.callConnectionId, unholdRequest);
   }
 
   /**
@@ -704,7 +512,9 @@ export class CallMedia {
   public async startTranscription(options: StartTranscriptionOptions = {}): Promise<void> {
     const startTranscriptionRequest: StartTranscriptionRequest = {
       locale: options.locale,
-      operationContext: options.operationContext ? options.operationContext : randomUUID(),
+      operationContext: options.operationContext,
+      speechModelEndpointId: options.speechRecognitionModelEndpointId,
+      operationCallbackUri: options.operationCallbackUrl,
     };
     return this.callMedia.startTranscription(this.callConnectionId, startTranscriptionRequest, {});
   }
@@ -715,7 +525,8 @@ export class CallMedia {
    */
   public async stopTranscription(options: StopTranscriptionOptions = {}): Promise<void> {
     const stopTranscriptionRequest: StopTranscriptionRequest = {
-      operationContext: options.operationContext ? options.operationContext : randomUUID(),
+      operationContext: options.operationContext,
+      operationCallbackUri: options.operationCallbackUrl,
     };
     return this.callMedia.stopTranscription(this.callConnectionId, stopTranscriptionRequest, {});
   }
@@ -724,14 +535,51 @@ export class CallMedia {
    * Update transcription language.
    * @param locale - Defines new locale for transcription.
    */
-  public async updateTranscription(locale: string): Promise<void> {
+  public async updateTranscription(
+    locale: string,
+    options?: UpdateTranscriptionOptions,
+  ): Promise<void> {
     const updateTranscriptionRequest: UpdateTranscriptionRequest = {
       locale: locale,
+      speechModelEndpointId: options?.speechRecognitionModelEndpointId,
+      operationContext: options?.operationContext,
+      operationCallbackUri: options?.operationCallbackUrl,
     };
     return this.callMedia.updateTranscription(
       this.callConnectionId,
       updateTranscriptionRequest,
       {},
+    );
+  }
+  /**
+   * Starts media streaming in the call.
+   * @param options - Additional attributes for start media streaming.
+   */
+  public async startMediaStreaming(options: StartMediaStreamingOptions = {}): Promise<void> {
+    const startMediaStreamingRequest: StartMediaStreamingRequest = {
+      operationContext: options.operationContext,
+      operationCallbackUri: options.operationCallbackUrl,
+    };
+    return this.callMedia.startMediaStreaming(
+      this.callConnectionId,
+      startMediaStreamingRequest,
+      options,
+    );
+  }
+
+  /**
+   * Stops media streaming in the call.
+   * @param options - Additional attributes for stop media streaming.
+   */
+  public async stopMediaStreaming(options: StopMediaStreamingOptions = {}): Promise<void> {
+    const stopMediaStreamingRequest: StopMediaStreamingRequest = {
+      operationCallbackUri: options.operationCallbackUrl,
+      operationContext: options.operationContext,
+    };
+    return this.callMedia.stopMediaStreaming(
+      this.callConnectionId,
+      stopMediaStreamingRequest,
+      options,
     );
   }
 }

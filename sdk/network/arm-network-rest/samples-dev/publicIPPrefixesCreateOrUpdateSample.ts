@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createNetworkManagementClient, {
-  PublicIPPrefixesCreateOrUpdateParameters,
-  getLongRunningPoller,
-} from "@azure-rest/arm-network";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Creates or updates a static or dynamic public IP prefix.
  *
  * @summary Creates or updates a static or dynamic public IP prefix.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/PublicIpPrefixCreateCustomizedValues.json
  */
-async function createPublicIPPrefixAllocationMethod() {
+
+import type { PublicIPPrefixesCreateOrUpdateParameters } from "@azure-rest/arm-network";
+import createNetworkManagementClient, { getLongRunningPoller } from "@azure-rest/arm-network";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function createPublicIPPrefixAllocationMethod(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";
@@ -52,7 +47,7 @@ createPublicIPPrefixAllocationMethod().catch(console.error);
  * @summary Creates or updates a static or dynamic public IP prefix.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/PublicIpPrefixCreateDefaults.json
  */
-async function createPublicIPPrefixDefaults() {
+async function createPublicIPPrefixDefaults(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";

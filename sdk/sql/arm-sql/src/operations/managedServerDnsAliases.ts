@@ -7,18 +7,18 @@
  */
 
 import { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
-import { setContinuationToken } from "../pagingHelper";
-import { ManagedServerDnsAliases } from "../operationsInterfaces";
+import { setContinuationToken } from "../pagingHelper.js";
+import { ManagedServerDnsAliases } from "../operationsInterfaces/index.js";
 import * as coreClient from "@azure/core-client";
-import * as Mappers from "../models/mappers";
-import * as Parameters from "../models/parameters";
-import { SqlManagementClient } from "../sqlManagementClient";
+import * as Mappers from "../models/mappers.js";
+import * as Parameters from "../models/parameters.js";
+import { SqlManagementClient } from "../sqlManagementClient.js";
 import {
   SimplePollerLike,
   OperationState,
   createHttpPoller,
 } from "@azure/core-lro";
-import { createLroSpec } from "../lroImpl";
+import { createLroSpec } from "../lroImpl.js";
 import {
   ManagedServerDnsAlias,
   ManagedServerDnsAliasesListByManagedInstanceNextOptionalParams,
@@ -34,7 +34,7 @@ import {
   ManagedServerDnsAliasesAcquireOptionalParams,
   ManagedServerDnsAliasesAcquireResponse,
   ManagedServerDnsAliasesListByManagedInstanceNextResponse,
-} from "../models";
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Class containing ManagedServerDnsAliases operations. */
@@ -506,7 +506,7 @@ const listByManagedInstanceOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion9],
+  queryParameters: [Parameters.apiVersion8],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -525,7 +525,7 @@ const getOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  queryParameters: [Parameters.apiVersion9],
+  queryParameters: [Parameters.apiVersion8],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -554,8 +554,8 @@ const createOrUpdateOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  requestBody: Parameters.parameters76,
-  queryParameters: [Parameters.apiVersion9],
+  requestBody: Parameters.parameters74,
+  queryParameters: [Parameters.apiVersion8],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -571,7 +571,7 @@ const deleteOperationSpec: coreClient.OperationSpec = {
   path: "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}",
   httpMethod: "DELETE",
   responses: { 200: {}, 201: {}, 202: {}, 204: {}, default: {} },
-  queryParameters: [Parameters.apiVersion9],
+  queryParameters: [Parameters.apiVersion8],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,
@@ -599,8 +599,8 @@ const acquireOperationSpec: coreClient.OperationSpec = {
     },
     default: {},
   },
-  requestBody: Parameters.parameters77,
-  queryParameters: [Parameters.apiVersion9],
+  requestBody: Parameters.parameters75,
+  queryParameters: [Parameters.apiVersion8],
   urlParameters: [
     Parameters.$host,
     Parameters.subscriptionId,

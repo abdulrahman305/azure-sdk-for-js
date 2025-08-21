@@ -1,6 +1,6 @@
 # Release History
 
-## 4.8.1 (Unreleased)
+## 4.10.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,36 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.10.0 (2025-06-10)
+
+### Features Added
+
+- Added support for service API version `7.6` which is now the default. [#32947](https://github.com/Azure/azure-sdk-for-js/pull/32947)
+
+### Other Changes
+
+- Generate code from TypeSpec. This is an internal change that should not affect customers. [#31848](https://github.com/Azure/azure-sdk-for-js/pull/31848)
+
+## 4.10.0-beta.1 (2025-03-11)
+
+### Features Added
+
+- Added support for service API version `7.6-preview.2`. [#32947](https://github.com/Azure/azure-sdk-for-js/pull/32947)
+
+### Other Changes
+
+- Generate code from TypeSpec. This is an internal change that should not affect customers. [#31848](https://github.com/Azure/azure-sdk-for-js/pull/31848)
+
+## 4.9.0 (2024-10-16)
+
+### Features Added
+
+- Add support for Continuous Access Evaluation (CAE). [#31140](https://github.com/Azure/azure-sdk-for-js/pull/31140)
+
+### Other Changes
+
+- Native ESM support has been added, and this package will now emit both CommonJS and ESM. [#31254](https://github.com/Azure/azure-sdk-for-js/pull/31254)
 
 ## 4.8.0 (2024-02-14)
 

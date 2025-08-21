@@ -4,8 +4,9 @@
 import { leafCommand, makeCommandInfo } from "../../../framework/command";
 import { readFile, writeFile } from "node:fs/promises";
 import { resolveRoot } from "../../../util/resolveProject";
+import os from "node:os";
 import path from "node:path";
-import stripJsonComments from "strip-json-comments";
+import { getRushJson, type RushJsonProject } from "../../../util/synthesizedRushJson";
 
 export const commandInfo = makeCommandInfo(
   "esm-migrations",
@@ -16,42 +17,13 @@ export const commandInfo = makeCommandInfo(
       kind: "string",
       shortName: "o",
     },
+    verbose: {
+      description: "generate a detailed report by package",
+      kind: "boolean",
+      default: false,
+    },
   },
 );
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let _rushJson: any = undefined;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function getRushJson(): Promise<any> {
-  if (_rushJson) return _rushJson;
-
-  const rushJsonText = await readFile(
-    path.resolve(__dirname, "../../../../../../../rush.json"),
-    "utf-8",
-  );
-
-  return (_rushJson = JSON.parse(stripJsonComments(rushJsonText)));
-}
-
-/**
- * The shape of a rush.json `projects` entry.
- */
-export interface RushJsonProject {
-  /**
-   * The name of the package.
-   */
-  packageName: string;
-  /**
-   * The path to the project, relative to the monorepo root.
-   */
-  projectFolder: string;
-
-  /**
-   * The version policy name.
-   */
-  versionPolicyName: string;
-}
 
 interface MigrationResults {
   core: MigrationResult;
@@ -116,29 +88,50 @@ function setMigrationResult(
   results.totalProjects++;
 }
 
-function echoMigrationResult(category: string, result: MigrationResult): void {
-  console.log(`Category: ${category}`);
-  console.log(`Total projects: ${result.totalProjects}`);
-  console.log(`Total CJS: ${result.totalCjs}`);
-  console.log(`Total ESM: ${result.totalEsm}`);
-  console.log(`Total Mocha: ${result.totalMocha}`);
-  console.log(`Total Vitest: ${result.totalVitest}`);
+function echoMigrationResult(category: string, result: MigrationResult, verbose: boolean): void {
+  console.log(`## Category: ${category}`);
+  console.log();
+  console.log(`- Total projects: ${result.totalProjects}`);
+  console.log(`- Total CJS: ${result.totalCjs}`);
+  console.log(`- Total ESM: ${result.totalEsm}`);
+  console.log(`- Total Mocha: ${result.totalMocha}`);
+  console.log(`- Total Vitest: ${result.totalVitest}`);
 
   console.log(
-    `Converted to ESM percentage: ${((result.totalEsm / result.totalProjects) * 100).toFixed(2)}%`,
+    `- Converted to ESM percentage: ${((result.totalEsm / result.totalProjects) * 100).toFixed(2)}%`,
   );
   console.log(
-    `Converted to vitest percentage: ${((result.totalVitest / result.totalProjects) * 100).toFixed(2)}%`,
+    `- Converted to vitest percentage: ${((result.totalVitest / result.totalProjects) * 100).toFixed(2)}%`,
   );
+
+  if (verbose) {
+    generateDetailedReport(category, result);
+  }
 }
 
-export default leafCommand(commandInfo, async ({ output }) => {
+function generateDetailedReport(category: string, result: MigrationResult): void {
+  const header = `${os.EOL}| Package Name | Project Folder | Type | Migrated to ESM |`;
+  const separator = `| --- | --- | --- | --- |`;
+
+  console.log(header);
+  console.log(separator);
+
+  const allEntries = [
+    ...Object.entries(result.esm).map((f) => [...f, "✅"]),
+    ...Object.entries(result.cjs).map((f) => [...f, "❌"]),
+  ].sort((a, b) => a[0].localeCompare(b[0]));
+
+  for (const [packageName, projectFolder, migrated] of allEntries) {
+    console.log(`| ${packageName} | ${projectFolder} | ${category} | ${migrated} |`);
+  }
+}
+
+export default leafCommand(commandInfo, async ({ output, verbose }) => {
   const root = await resolveRoot();
   const cwd = process.cwd();
 
   const rushJson = await getRushJson();
   const projects = rushJson.projects;
-
   const results: MigrationResults = {
     core: createMigrationResult(),
     management: createMigrationResult(),
@@ -178,15 +171,17 @@ export default leafCommand(commandInfo, async ({ output }) => {
     await writeFile(outputPath, JSON.stringify(results, null, 2));
   }
 
-  echoMigrationResult("core", results.core);
-  console.log(`\n---------------------------------\n`);
-  echoMigrationResult("management", results.management);
-  console.log(`\n---------------------------------\n`);
-  echoMigrationResult("client", results.client);
-  console.log(`\n---------------------------------\n`);
-  echoMigrationResult("utility", results.utility);
-  console.log(`\n---------------------------------\n`);
-  echoMigrationResult("test", results.test);
+  console.log(`# Migration report${os.EOL}`);
+  echoMigrationResult("core", results.core, verbose);
+  console.log(`${os.EOL}---------------------------------${os.EOL}`);
+  echoMigrationResult("management", results.management, verbose);
+  console.log(`${os.EOL}---------------------------------${os.EOL}`);
+  echoMigrationResult("client", results.client, verbose);
+  console.log(`${os.EOL}---------------------------------${os.EOL}`);
+  echoMigrationResult("utility", results.utility, verbose);
+  console.log(`${os.EOL}---------------------------------${os.EOL}`);
+  echoMigrationResult("test", results.test, verbose);
+  console.log(`${os.EOL}---------------------------------${os.EOL}`);
 
   return true;
 });

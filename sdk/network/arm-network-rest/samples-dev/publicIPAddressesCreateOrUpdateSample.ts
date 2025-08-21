@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createNetworkManagementClient, {
-  PublicIPAddressesCreateOrUpdateParameters,
-  getLongRunningPoller,
-} from "@azure-rest/arm-network";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Creates or updates a static or dynamic public IP address.
  *
  * @summary Creates or updates a static or dynamic public IP address.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/PublicIpAddressCreateDns.json
  */
-async function createPublicIPAddressDns() {
+
+import type { PublicIPAddressesCreateOrUpdateParameters } from "@azure-rest/arm-network";
+import createNetworkManagementClient, { getLongRunningPoller } from "@azure-rest/arm-network";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function createPublicIPAddressDns(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";
@@ -51,7 +46,7 @@ createPublicIPAddressDns().catch(console.error);
  * @summary Creates or updates a static or dynamic public IP address.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/PublicIpAddressCreateCustomizedValues.json
  */
-async function createPublicIPAddressAllocationMethod() {
+async function createPublicIPAddressAllocationMethod(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";
@@ -89,7 +84,7 @@ createPublicIPAddressAllocationMethod().catch(console.error);
  * @summary Creates or updates a static or dynamic public IP address.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/PublicIpAddressCreateDefaults.json
  */
-async function createPublicIPAddressDefaults() {
+async function createPublicIPAddressDefaults(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";

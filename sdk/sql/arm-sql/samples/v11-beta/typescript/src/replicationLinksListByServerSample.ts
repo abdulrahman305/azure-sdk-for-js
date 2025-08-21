@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { SqlManagementClient } from "@azure/arm-sql";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Gets a list of replication links.
  *
  * @summary Gets a list of replication links.
- * x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-02-01-preview/examples/ReplicationLinkListByServer.json
+ * x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/ReplicationLinkListByServer.json
  */
-async function listReplicationLinksOnServer() {
+async function listReplicationLinksOnServer(): Promise<void> {
   const subscriptionId =
     process.env["SQL_SUBSCRIPTION_ID"] ||
     "00000000-1111-2222-3333-444444444444";
@@ -38,7 +36,7 @@ async function listReplicationLinksOnServer() {
   console.log(resArray);
 }
 
-async function main() {
+async function main(): Promise<void> {
   listReplicationLinksOnServer();
 }
 

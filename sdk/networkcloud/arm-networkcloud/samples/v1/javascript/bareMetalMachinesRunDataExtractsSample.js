@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Run one or more data extractions on the provided bare metal machine. The URL to storage account with the command execution results and the command exit code can be retrieved from the operation status API once available.
  *
  * @summary Run one or more data extractions on the provided bare metal machine. The URL to storage account with the command execution results and the command exit code can be retrieved from the operation status API once available.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/BareMetalMachines_RunDataExtracts.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/BareMetalMachines_RunDataExtracts.json
  */
 async function runDataExtractionOnBareMetalMachine() {
   const subscriptionId =
@@ -37,13 +35,13 @@ async function runDataExtractionOnBareMetalMachine() {
   const result = await client.bareMetalMachines.beginRunDataExtractsAndWait(
     resourceGroupName,
     bareMetalMachineName,
-    bareMetalMachineRunDataExtractsParameters
+    bareMetalMachineRunDataExtractsParameters,
   );
   console.log(result);
 }
 
 async function main() {
-  runDataExtractionOnBareMetalMachine();
+  await runDataExtractionOnBareMetalMachine();
 }
 
 main().catch(console.error);

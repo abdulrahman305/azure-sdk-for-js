@@ -6,49 +6,45 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import {
   StorageApplianceEnableRemoteVendorManagementParameters,
   StorageAppliancesEnableRemoteVendorManagementOptionalParams,
-  NetworkCloud
+  NetworkCloud,
 } from "@azure/arm-networkcloud";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Enable remote vendor management of the provided storage appliance.
  *
  * @summary Enable remote vendor management of the provided storage appliance.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/StorageAppliances_EnableRemoteVendorManagement.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/StorageAppliances_EnableRemoteVendorManagement.json
  */
-async function turnOnRemoteVendorManagementForStorageAppliance() {
+async function turnOnRemoteVendorManagementForStorageAppliance(): Promise<void> {
   const subscriptionId =
     process.env["NETWORKCLOUD_SUBSCRIPTION_ID"] ||
     "123e4567-e89b-12d3-a456-426655440000";
   const resourceGroupName =
     process.env["NETWORKCLOUD_RESOURCE_GROUP"] || "resourceGroupName";
   const storageApplianceName = "storageApplianceName";
-  const storageApplianceEnableRemoteVendorManagementParameters: StorageApplianceEnableRemoteVendorManagementParameters = {
-    supportEndpoints: ["10.0.0.0/24"]
-  };
+  const storageApplianceEnableRemoteVendorManagementParameters: StorageApplianceEnableRemoteVendorManagementParameters =
+    { supportEndpoints: ["10.0.0.0/24"] };
   const options: StorageAppliancesEnableRemoteVendorManagementOptionalParams = {
-    storageApplianceEnableRemoteVendorManagementParameters
+    storageApplianceEnableRemoteVendorManagementParameters,
   };
   const credential = new DefaultAzureCredential();
   const client = new NetworkCloud(credential, subscriptionId);
-  const result = await client.storageAppliances.beginEnableRemoteVendorManagementAndWait(
-    resourceGroupName,
-    storageApplianceName,
-    options
-  );
+  const result =
+    await client.storageAppliances.beginEnableRemoteVendorManagementAndWait(
+      resourceGroupName,
+      storageApplianceName,
+      options,
+    );
   console.log(result);
 }
 
-async function main() {
-  turnOnRemoteVendorManagementForStorageAppliance();
+async function main(): Promise<void> {
+  await turnOnRemoteVendorManagementForStorageAppliance();
 }
 
 main().catch(console.error);

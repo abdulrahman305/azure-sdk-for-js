@@ -2,35 +2,34 @@
 // Licensed under the MIT License.
 
 import {
-  ConfigurationSetting,
-  ConfigurationSettingParam,
-  HttpOnlyIfChangedField,
-  HttpOnlyIfUnchangedField,
-  HttpResponseField,
-  HttpResponseFields,
-  ListRevisionsOptions,
-  ListSettingsOptions,
-  ListSnapshotsOptions,
-  ConfigurationSnapshot,
-  SnapshotResponse,
-  EtagEntity,
-  ListLabelsOptions,
-} from "../models";
-import { FeatureFlagHelper, FeatureFlagValue, featureFlagContentType } from "../featureFlag";
-import {
+  type ConfigurationSetting,
+  type ConfigurationSettingParam,
+  type HttpOnlyIfChangedField,
+  type HttpOnlyIfUnchangedField,
+  type HttpResponseField,
+  type HttpResponseFields,
+  type ListRevisionsOptions,
+  type ListSettingsOptions,
+  type ListSnapshotsOptions,
+  type ConfigurationSnapshot,
+  type SnapshotResponse,
+  type EtagEntity,
+  type ListLabelsOptions,
+  KnownAppConfigAudience,
+} from "../models.js";
+import type { FeatureFlagValue } from "../featureFlag.js";
+import { FeatureFlagHelper, featureFlagContentType } from "../featureFlag.js";
+import type {
   GetKeyValuesOptionalParams,
   GetLabelsOptionalParams,
   GetSnapshotsOptionalParams,
   KeyValue,
-} from "../generated/src/models";
-import {
-  SecretReferenceHelper,
-  SecretReferenceValue,
-  secretReferenceContentType,
-} from "../secretReference";
+} from "../generated/src/models/index.js";
+import type { SecretReferenceValue } from "../secretReference.js";
+import { SecretReferenceHelper, secretReferenceContentType } from "../secretReference.js";
 import { isDefined } from "@azure/core-util";
-import { logger } from "../logger";
-import { OperationOptions } from "@azure/core-client";
+import { logger } from "../logger.js";
+import type { OperationOptions } from "@azure/core-client";
 
 /**
  * Options for listConfigurationSettings that allow for filtering based on keys, labels and other fields.
@@ -460,4 +459,29 @@ export function hasUnderscoreResponse<T extends object>(
   result: T,
 ): result is T & HttpResponseField<any> {
   return Object.prototype.hasOwnProperty.call(result, "_response");
+}
+
+/**
+ * Get the scope for the App Configuration service based on the endpoint and audience.
+ * If the audience is provided, it will be used as the scope.
+ * If not, the scope is defaulted to Azure Public Cloud when not specified.
+ *
+ * @internal
+ */
+export function getScope(appConfigEndpoint: string, appConfigAudience?: string): string {
+  if (appConfigAudience) {
+    return `${appConfigAudience}/.default`;
+  } else if (
+    appConfigEndpoint.endsWith("azconfig.azure.us") ||
+    appConfigEndpoint.endsWith("appconfig.azure.us")
+  ) {
+    return `${KnownAppConfigAudience.AzureGovernment}/.default`;
+  } else if (
+    appConfigEndpoint.endsWith("azconfig.azure.cn") ||
+    appConfigEndpoint.endsWith("appconfig.azure.cn")
+  ) {
+    return `${KnownAppConfigAudience.AzureChina}/.default`;
+  } else {
+    return `${KnownAppConfigAudience.AzurePublicCloud}/.default`;
+  }
 }

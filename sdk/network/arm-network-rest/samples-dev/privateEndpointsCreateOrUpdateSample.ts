@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createNetworkManagementClient, {
-  PrivateEndpointsCreateOrUpdateParameters,
-  getLongRunningPoller,
-} from "@azure-rest/arm-network";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Creates or updates an private endpoint in the specified resource group.
  *
  * @summary Creates or updates an private endpoint in the specified resource group.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/PrivateEndpointCreate.json
  */
-async function createPrivateEndpoint() {
+
+import type { PrivateEndpointsCreateOrUpdateParameters } from "@azure-rest/arm-network";
+import createNetworkManagementClient, { getLongRunningPoller } from "@azure-rest/arm-network";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function createPrivateEndpoint(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";
@@ -76,7 +71,7 @@ createPrivateEndpoint().catch(console.error);
  * @summary Creates or updates an private endpoint in the specified resource group.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/PrivateEndpointCreateWithASG.json
  */
-async function createPrivateEndpointWithApplicationSecurityGroups() {
+async function createPrivateEndpointWithApplicationSecurityGroups(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";
@@ -128,7 +123,7 @@ createPrivateEndpointWithApplicationSecurityGroups().catch(console.error);
  * @summary Creates or updates an private endpoint in the specified resource group.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/PrivateEndpointCreateForManualApproval.json
  */
-async function createPrivateEndpointWithManualApprovalConnection() {
+async function createPrivateEndpointWithManualApprovalConnection(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";

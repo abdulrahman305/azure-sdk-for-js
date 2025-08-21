@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Tags } from ".";
+import type { Tags } from "./index.js";
+import type { BlobPropertiesInternal as BlobProperties } from "./generated/src/models/index.js";
 import {
   AppendBlobAppendBlockFromUrlHeaders,
   AppendBlobAppendBlockHeaders,
@@ -14,7 +15,6 @@ import {
   BlobDownloadResponse as BlobDownloadResponseInternal,
   BlobDownloadHeaders,
   BlobGetPropertiesHeaders,
-  BlobPropertiesInternal as BlobProperties,
   BlobGetTagsHeaders,
   BlobTags,
   BlobQueryResponse as BlobQueryResponseInternal,
@@ -72,14 +72,14 @@ import {
   PageRange,
   BlobGetAccountInfoHeaders,
   ContainerGetAccountInfoHeaders,
-} from "./generated/src/models";
+} from "./generated/src/models/index.js";
 import {
   WithResponse,
   ResponseWithBody,
   ResponseLike,
   ResponseWithHeaders,
   HttpResponse,
-} from "./utils/utils.common";
+} from "./utils/utils.common.js";
 
 /** Contains response data for the appendBlockFromUrl operation. */
 export type AppendBlobAppendBlockFromUrlResponse = WithResponse<
@@ -402,6 +402,7 @@ export {
   ListContainersSegmentResponse,
   FilterBlobItem as FilterBlobItemModel,
   FilterBlobSegment as FilterBlobSegmentModel,
+  FileShareTokenIntent,
   ServiceFilterBlobsHeaders,
   Logging,
   Metrics,
@@ -418,7 +419,7 @@ export {
   ServiceSubmitBatchOptionalParams as ServiceSubmitBatchOptionalParamsModel,
   ContainerEncryptionScope,
   SyncCopyStatusType,
-} from "./generated/src/models";
+} from "./generated/src/models/index.js";
 
 // Following definitions are to avoid breaking change.
 export interface BlobPrefix {

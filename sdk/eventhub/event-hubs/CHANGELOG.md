@@ -1,6 +1,6 @@
 # Release History
 
-## 5.13.0-beta.3 (Unreleased)
+## 6.0.1 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,35 @@
 
 ### Bugs Fixed
 
-- Revert the change to the definition of the earliest event position.
-
 ### Other Changes
+
+## 6.0.0 (2025-04-08)
+
+### Features Added
+
+- Stable release of the Geographic replication support added in v6.0.0-beta.1.
+
+## 6.0.0-beta.1 (2025-02-11)
+
+### Features Added
+
+- Support Geographic replication to enable recovery in case of geographic disasters.
+
+### Breaking Changes
+
+- `offset` type is updated from `number` to `string`.
+
+## 5.12.2 (2024-10-11)
+
+### Bugs Fixed
+
+- The desired capabilities array should be omitted if it is empty.
+
+## 5.12.1 (2024-10-08)
+
+### Bugs Fixed
+
+- The producer now verifies that the input message follows the expected structure.
 
 ## 5.13.0-beta.2 (2024-06-27)
 
@@ -386,7 +412,7 @@ Construction of both objects is the same as it was for the previous client.
 ### Breaking changes
 
 - Removed the `createFromIotHubConnectionString` method from `EventHubClient`. ([PR #5311](https://github.com/Azure/azure-sdk-for-js/pull/5311)).
-  Instead, pass an [Event Hubs-compatible connection string](https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin)
+  Instead, pass an [Event Hubs-compatible connection string](https://learn.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin)
   when instantiating an `EventHubClient` to read properties or events from an IoT Hub.
 
   Previously:
@@ -638,7 +664,7 @@ For more information, please visit https://aka.ms/azsdk/releases/july2019preview
 
 ```javascript
 const client = await EventHubClient.createFromIotHubConnectionString(
-  process.env.IOTHUB_CONNECTION_STRING
+  process.env.IOTHUB_CONNECTION_STRING,
 );
 ```
 

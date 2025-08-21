@@ -1,21 +1,17 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as fs from "fs";
-import * as os from "os";
-import * as path from "path";
+import { tmpdir } from "node:os";
+import { basename, join } from "node:path";
 import { diag } from "@opentelemetry/api";
-import { PersistentStorage } from "../../../types";
-import { FileAccessControl } from "./fileAccessControl";
-import { confirmDirExists, getShallowDirectorySize } from "./fileSystemHelpers";
-import { promisify } from "util";
-import { AzureMonitorExporterOptions } from "../../../config";
-
-const statAsync = promisify(fs.stat);
-const readdirAsync = promisify(fs.readdir);
-const readFileAsync = promisify(fs.readFile);
-const unlinkAsync = promisify(fs.unlink);
-const writeFileAsync = promisify(fs.writeFile);
+import type { PersistentStorage } from "../../../types.js";
+import { FileAccessControl } from "./fileAccessControl.js";
+import { confirmDirExists, getShallowDirectorySize } from "./fileSystemHelpers.js";
+import type { AzureMonitorExporterOptions } from "../../../config.js";
+import { readdir, readFile, stat, unlink, writeFile } from "node:fs/promises";
+import type { CustomerSDKStatsMetrics } from "../../../export/statsbeat/customerSDKStats.js";
+import { DropCode } from "../../../export/statsbeat/types.js";
+import type { TelemetryItem as Envelope } from "../../../generated/index.js";
 
 /**
  * File system persist class.
@@ -37,6 +33,7 @@ export class FileSystemPersist implements PersistentStorage {
   constructor(
     instrumentationKey: string,
     private _options?: AzureMonitorExporterOptions,
+    private _customerSDKStatsMetrics?: CustomerSDKStatsMetrics,
   ) {
     this._instrumentationKey = instrumentationKey;
     if (this._options?.disableOfflineStorage) {
@@ -60,8 +57,8 @@ export class FileSystemPersist implements PersistentStorage {
       );
     }
     if (this._enabled) {
-      this._tempDirectory = path.join(
-        this._options?.storageDirectory || os.tmpdir(),
+      this._tempDirectory = join(
+        this._options?.storageDirectory || tmpdir(),
         "Microsoft",
         "AzureMonitor",
         FileSystemPersist.TEMPDIR_PREFIX + this._instrumentationKey,
@@ -80,7 +77,7 @@ export class FileSystemPersist implements PersistentStorage {
   push(value: unknown[]): Promise<boolean> {
     if (this._enabled) {
       diag.debug("Pushing value to persistent storage", value.toString());
-      return this._storeToDisk(JSON.stringify(value));
+      return this._storeToDisk(JSON.stringify(value), value as Envelope[]);
     }
     // Only return a false promise if the SDK isn't set to disable offline storage
     if (!this._options?.disableOfflineStorage) {
@@ -117,20 +114,20 @@ export class FileSystemPersist implements PersistentStorage {
    */
   private async _getFirstFileOnDisk(): Promise<Buffer | null> {
     try {
-      const stats = await statAsync(this._tempDirectory);
+      const stats = await stat(this._tempDirectory);
       if (stats.isDirectory()) {
-        const origFiles = await readdirAsync(this._tempDirectory);
+        const origFiles = await readdir(this._tempDirectory);
         const files = origFiles.filter((f) =>
-          path.basename(f).includes(FileSystemPersist.FILENAME_SUFFIX),
+          basename(f).includes(FileSystemPersist.FILENAME_SUFFIX),
         );
         if (files.length === 0) {
           return null;
         } else {
           const firstFile = files[0];
-          const filePath = path.join(this._tempDirectory, firstFile);
-          const payload = await readFileAsync(filePath);
+          const filePath = join(this._tempDirectory, firstFile);
+          const payload = await readFile(filePath);
           // delete the file first to prevent double sending
-          await unlinkAsync(filePath);
+          await unlink(filePath);
           return payload;
         }
       }
@@ -145,17 +142,37 @@ export class FileSystemPersist implements PersistentStorage {
     }
   }
 
-  private async _storeToDisk(payload: string): Promise<boolean> {
+  /**
+   * Stores telemetry data to disk.
+   * @param payload - The telemetry data to store.
+   * @param envelopeLength -The length of the telemetry envelope.
+   * @returns A promise that resolves to true if the data was stored successfully, false otherwise.
+   */
+  private async _storeToDisk(payload: string, envelopes: Envelope[]): Promise<boolean> {
     try {
       await confirmDirExists(this._tempDirectory);
     } catch (error: any) {
-      diag.warn(`Error while checking/creating directory: `, error && error.message);
+      // Check if error is due to permission/readonly issues
+      if (error?.code === "EACCES" || error?.code === "EPERM") {
+        this._customerSDKStatsMetrics?.countDroppedItems(envelopes, DropCode.CLIENT_READONLY);
+        diag.warn(
+          `Permission denied while checking/creating directory: ${this._tempDirectory}`,
+          error?.message,
+        );
+      } else {
+        diag.warn(`Error while checking/creating directory: `, error && error.message);
+      }
       return false;
     }
 
     try {
       const size = await getShallowDirectorySize(this._tempDirectory);
       if (size > this.maxBytesOnDisk) {
+        // If the directory size exceeds the max limit, we send customer SDK Stats and warn the user
+        this._customerSDKStatsMetrics?.countDroppedItems(
+          envelopes,
+          DropCode.CLIENT_PERSISTENCE_CAPACITY,
+        );
         diag.warn(
           `Not saving data due to max size limit being met. Directory size in bytes is: ${size}`,
         );
@@ -167,13 +184,19 @@ export class FileSystemPersist implements PersistentStorage {
     }
 
     const fileName = `${new Date().getTime()}${FileSystemPersist.FILENAME_SUFFIX}`;
-    const fileFullPath = path.join(this._tempDirectory, fileName);
+    const fileFullPath = join(this._tempDirectory, fileName);
 
     // Mode 600 is w/r for creator and no read access for others
     diag.info(`saving data to disk at: ${fileFullPath}`);
     try {
-      await writeFileAsync(fileFullPath, payload, { mode: 0o600 });
+      await writeFile(fileFullPath, payload, { mode: 0o600 });
     } catch (writeError: any) {
+      // If the envelopes cannot be written to disk, we send customer SDK Stats and warn the user
+      this._customerSDKStatsMetrics?.countDroppedItems(
+        envelopes,
+        DropCode.CLIENT_EXCEPTION,
+        writeError?.message,
+      );
       diag.warn(`Error writing file to persistent file storage`, writeError);
       return false;
     }
@@ -182,16 +205,15 @@ export class FileSystemPersist implements PersistentStorage {
 
   private async _fileCleanupTask(): Promise<boolean> {
     try {
-      const stats = await statAsync(this._tempDirectory);
+      const stats = await stat(this._tempDirectory);
       if (stats.isDirectory()) {
-        const origFiles = await readdirAsync(this._tempDirectory);
+        const origFiles = await readdir(this._tempDirectory);
         const files = origFiles.filter((f) =>
-          path.basename(f).includes(FileSystemPersist.FILENAME_SUFFIX),
+          basename(f).includes(FileSystemPersist.FILENAME_SUFFIX),
         );
         if (files.length === 0) {
           return false;
         } else {
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           files.forEach(async (file) => {
             // Check expiration
             const fileCreationDate: Date = new Date(
@@ -199,8 +221,8 @@ export class FileSystemPersist implements PersistentStorage {
             );
             const expired = new Date(+new Date() - this.fileRetemptionPeriod) > fileCreationDate;
             if (expired) {
-              const filePath = path.join(this._tempDirectory, file);
-              await unlinkAsync(filePath);
+              const filePath = join(this._tempDirectory, file);
+              await unlink(filePath);
             }
           });
           return true;

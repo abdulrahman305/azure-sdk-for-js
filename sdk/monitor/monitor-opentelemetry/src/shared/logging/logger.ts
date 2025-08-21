@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AzureLogLevel, AzureLogger, createClientLogger, setLogLevel } from "@azure/logger";
-import { diag, DiagLogger, DiagLogLevel } from "@opentelemetry/api";
-import { DiagFileConsoleLogger } from "./diagFileConsoleLogger";
+import type { AzureLogLevel } from "@azure/logger";
+import { AzureLogger, createClientLogger, setLogLevel } from "@azure/logger";
+import type { DiagLogger } from "@opentelemetry/api";
+import { diag, DiagLogLevel } from "@opentelemetry/api";
+import { DiagFileConsoleLogger } from "./diagFileConsoleLogger.js";
 
 export class Logger {
   private static instance: Logger;

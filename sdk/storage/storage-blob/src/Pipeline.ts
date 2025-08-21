@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import type {
+  KeepAliveOptions,
+  ExtendedServiceClientOptions,
+  HttpPipelineLogLevel,
+} from "@azure/core-http-compat";
 import {
   CompatResponse as HttpOperationResponse,
   RequestPolicy as IHttpClient,
@@ -9,42 +14,45 @@ import {
   RequestPolicyFactory,
   RequestPolicyOptionsLike as RequestPolicyOptions,
   WebResourceLike as WebResource,
-  KeepAliveOptions,
-  ExtendedServiceClientOptions,
   convertHttpClient,
   createRequestPolicyFactoryPolicy,
-  HttpPipelineLogLevel,
 } from "@azure/core-http-compat";
-import {
-  RequestBodyType as HttpRequestBody,
+import type {
   ProxySettings as ProxyOptions,
   UserAgentPolicyOptions as UserAgentOptions,
-  bearerTokenAuthenticationPolicy,
   Pipeline as CorePipeline,
-  decompressResponsePolicyName,
   PipelinePolicy,
   HttpClient,
 } from "@azure/core-rest-pipeline";
+import {
+  RequestBodyType as HttpRequestBody,
+  bearerTokenAuthenticationPolicy,
+  decompressResponsePolicyName,
+} from "@azure/core-rest-pipeline";
 import { authorizeRequestOnTenantChallenge, createClientPipeline } from "@azure/core-client";
 import { parseXML, stringifyXML } from "@azure/core-xml";
-import { TokenCredential, isTokenCredential } from "@azure/core-auth";
-
-import { logger } from "./log";
-import { StorageRetryOptions, StorageRetryPolicyFactory } from "./StorageRetryPolicyFactory";
-import { StorageSharedKeyCredential } from "./credentials/StorageSharedKeyCredential";
-import { AnonymousCredential } from "./credentials/AnonymousCredential";
+import type { TokenCredential } from "@azure/core-auth";
+import { isTokenCredential } from "@azure/core-auth";
+import { logger } from "./log.js";
+import type { StorageRetryOptions } from "./StorageRetryPolicyFactory.js";
+import { StorageRetryPolicyFactory } from "./StorageRetryPolicyFactory.js";
+import { StorageSharedKeyCredential } from "./credentials/StorageSharedKeyCredential.js";
+import { AnonymousCredential } from "./credentials/AnonymousCredential.js";
 import {
   StorageOAuthScopes,
   StorageBlobLoggingAllowedHeaderNames,
   StorageBlobLoggingAllowedQueryParameters,
   SDK_VERSION,
-} from "./utils/constants";
-import { getCachedDefaultHttpClient } from "./utils/cache";
-import { storageBrowserPolicy } from "./policies/StorageBrowserPolicyV2";
-import { storageRetryPolicy } from "./policies/StorageRetryPolicyV2";
-import { storageSharedKeyCredentialPolicy } from "./policies/StorageSharedKeyCredentialPolicyV2";
-import { StorageBrowserPolicyFactory } from "./StorageBrowserPolicyFactory";
-import { storageCorrectContentLengthPolicy } from "./policies/StorageCorrectContentLengthPolicy";
+} from "./utils/constants.js";
+import {
+  getCachedDefaultHttpClient,
+  storageRequestFailureDetailsParserPolicy,
+} from "@azure/storage-common";
+import { storageBrowserPolicy } from "./policies/StorageBrowserPolicyV2.js";
+import { storageRetryPolicy } from "./policies/StorageRetryPolicyV2.js";
+import { storageSharedKeyCredentialPolicy } from "./policies/StorageSharedKeyCredentialPolicyV2.js";
+import { StorageBrowserPolicyFactory } from "./StorageBrowserPolicyFactory.js";
+import { storageCorrectContentLengthPolicy } from "./policies/StorageCorrectContentLengthPolicy.js";
 
 // Export following interfaces and types for customers who want to implement their
 // own RequestPolicy or HTTPClient
@@ -303,6 +311,7 @@ export function getCoreClientOptions(pipeline: PipelineLike): ExtendedServiceCli
     corePipeline.removePolicy({ name: decompressResponsePolicyName });
     corePipeline.addPolicy(storageCorrectContentLengthPolicy());
     corePipeline.addPolicy(storageRetryPolicy(restOptions.retryOptions), { phase: "Retry" });
+    corePipeline.addPolicy(storageRequestFailureDetailsParserPolicy());
     corePipeline.addPolicy(storageBrowserPolicy());
     const downlevelResults = processDownlevelPipeline(pipeline);
     if (downlevelResults) {

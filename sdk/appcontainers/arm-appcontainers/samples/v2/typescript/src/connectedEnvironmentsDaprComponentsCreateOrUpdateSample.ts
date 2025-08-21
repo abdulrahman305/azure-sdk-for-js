@@ -13,17 +13,15 @@ import {
   ContainerAppsAPIClient,
 } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Creates or updates a Dapr Component in a connected environment.
  *
  * @summary Creates or updates a Dapr Component in a connected environment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironmentsDaprComponents_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironmentsDaprComponents_CreateOrUpdate.json
  */
-async function createOrUpdateDaprComponent() {
+async function createOrUpdateDaprComponent(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "8efdecc5-919e-44eb-b179-915dca89ebf9";
@@ -57,8 +55,8 @@ async function createOrUpdateDaprComponent() {
   console.log(result);
 }
 
-async function main() {
-  createOrUpdateDaprComponent();
+async function main(): Promise<void> {
+  await createOrUpdateDaprComponent();
 }
 
 main().catch(console.error);

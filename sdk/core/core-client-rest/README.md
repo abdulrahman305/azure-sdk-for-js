@@ -25,7 +25,7 @@ Examples can be found in the `samples` folder.
 
 ## Next steps
 
-You can build and run the tests locally by executing `rushx test`. Explore the `test` folder to see advanced usage and behavior of the public classes.
+You can build and run the tests locally by executing `npm run test`. Explore the `test` folder to see advanced usage and behavior of the public classes.
 
 Learn more about [AutoRest](https://github.com/Azure/autorest) and the [autorest.typescript extension](https://github.com/Azure/autorest.typescript) for generating a compatible client on top of this package.
 
@@ -36,5 +36,3 @@ If you run into issues while using this library, please feel free to [file an is
 ## Contributing
 
 If you'd like to contribute to this library, please read the [contributing guide](https://github.com/Azure/azure-sdk-for-js/blob/main/CONTRIBUTING.md) to learn more about how to build and test the code.
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-js%2Fsdk%2Fcore-rest%2Fcore-client%2FREADME.png)

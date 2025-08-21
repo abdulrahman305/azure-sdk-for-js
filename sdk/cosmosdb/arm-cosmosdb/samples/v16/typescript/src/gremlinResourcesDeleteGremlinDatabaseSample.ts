@@ -6,21 +6,17 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import { CosmosDBManagementClient } from "@azure/arm-cosmosdb";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Deletes an existing Azure Cosmos DB Gremlin database.
  *
  * @summary Deletes an existing Azure Cosmos DB Gremlin database.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBGremlinDatabaseDelete.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBGremlinDatabaseDelete.json
  */
-async function cosmosDbGremlinDatabaseDelete() {
+async function cosmosDbGremlinDatabaseDelete(): Promise<void> {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
   const resourceGroupName = process.env["COSMOSDB_RESOURCE_GROUP"] || "rg1";
   const accountName = "ddb1";
@@ -36,8 +32,8 @@ async function cosmosDbGremlinDatabaseDelete() {
   console.log(result);
 }
 
-async function main() {
-  cosmosDbGremlinDatabaseDelete();
+async function main(): Promise<void> {
+  await cosmosDbGremlinDatabaseDelete();
 }
 
 main().catch(console.error);

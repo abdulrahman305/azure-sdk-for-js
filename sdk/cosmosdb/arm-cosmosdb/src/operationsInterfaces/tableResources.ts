@@ -30,7 +30,7 @@ import {
   ContinuousBackupRestoreLocation,
   TableResourcesRetrieveContinuousBackupInformationOptionalParams,
   TableResourcesRetrieveContinuousBackupInformationResponse,
-} from "../models";
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Interface representing a TableResources. */

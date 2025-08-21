@@ -6,20 +6,19 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Invoke a command like nodetool for cassandra maintenance
  *
  * @summary Invoke a command like nodetool for cassandra maintenance
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBManagedCassandraCommand.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBManagedCassandraCommand.json
  */
 async function cosmosDbManagedCassandraCommand() {
-  const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
+  const subscriptionId =
+    process.env["COSMOSDB_SUBSCRIPTION_ID"] || "ffffffff-ffff-ffff-ffff-ffffffffffff";
   const resourceGroupName = process.env["COSMOSDB_RESOURCE_GROUP"] || "cassandra-prod-rg";
   const clusterName = "cassandra-prod";
   const body = {
@@ -37,7 +36,7 @@ async function cosmosDbManagedCassandraCommand() {
 }
 
 async function main() {
-  cosmosDbManagedCassandraCommand();
+  await cosmosDbManagedCassandraCommand();
 }
 
 main().catch(console.error);

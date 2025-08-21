@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Update properties of the provided storage appliance, or update tags associated with the storage appliance Properties and tag updates can be done independently.
  *
  * @summary Update properties of the provided storage appliance, or update tags associated with the storage appliance Properties and tag updates can be done independently.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/StorageAppliances_Patch.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/StorageAppliances_Patch.json
  */
 async function patchStorageAppliance() {
   const subscriptionId =
@@ -35,13 +33,13 @@ async function patchStorageAppliance() {
   const result = await client.storageAppliances.beginUpdateAndWait(
     resourceGroupName,
     storageApplianceName,
-    options
+    options,
   );
   console.log(result);
 }
 
 async function main() {
-  patchStorageAppliance();
+  await patchStorageAppliance();
 }
 
 main().catch(console.error);

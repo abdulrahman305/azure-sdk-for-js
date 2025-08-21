@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Reimage the provided virtual machine.
  *
  * @summary Reimage the provided virtual machine.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/VirtualMachines_Reimage.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/VirtualMachines_Reimage.json
  */
 async function reimageVirtualMachine() {
   const subscriptionId =
@@ -27,13 +25,13 @@ async function reimageVirtualMachine() {
   const client = new NetworkCloud(credential, subscriptionId);
   const result = await client.virtualMachines.beginReimageAndWait(
     resourceGroupName,
-    virtualMachineName
+    virtualMachineName,
   );
   console.log(result);
 }
 
 async function main() {
-  reimageVirtualMachine();
+  await reimageVirtualMachine();
 }
 
 main().catch(console.error);

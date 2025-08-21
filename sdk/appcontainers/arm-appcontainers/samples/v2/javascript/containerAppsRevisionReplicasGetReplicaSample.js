@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get a replica for a Container App Revision.
  *
  * @summary Get a replica for a Container App Revision.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Replicas_Get.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Replicas_Get.json
  */
 async function getContainerAppRevisionReplica() {
   const subscriptionId =
@@ -37,7 +37,7 @@ async function getContainerAppRevisionReplica() {
 }
 
 async function main() {
-  getContainerAppRevisionReplica();
+  await getContainerAppRevisionReplica();
 }
 
 main().catch(console.error);

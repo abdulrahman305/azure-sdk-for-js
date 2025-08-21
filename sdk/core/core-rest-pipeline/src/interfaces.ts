@@ -3,6 +3,7 @@
 
 import type { AbortSignalLike } from "@azure/abort-controller";
 import type { OperationTracingOptions } from "@azure/core-tracing";
+import type { HttpMethods } from "@azure/core-util";
 
 /**
  * A HttpHeaders collection represented as a simple JSON object.
@@ -239,6 +240,18 @@ export interface PipelineRequest {
 
   /** Settings for configuring TLS authentication */
   tlsSettings?: TlsSettings;
+
+  /**
+   * Additional options to set on the request. This provides a way to override
+   * existing ones or provide request properties that are not declared.
+   *
+   * For possible valid properties, see
+   *   - NodeJS https.request options:  https://nodejs.org/api/http.html#httprequestoptions-callback
+   *   - Browser RequestInit: https://developer.mozilla.org/en-US/docs/Web/API/RequestInit
+   *
+   * WARNING: Options specified here will override any properties of same names when request is sent by {@link HttpClient}.
+   */
+  requestOverrides?: Record<string, unknown>;
 }
 
 /**
@@ -315,24 +328,12 @@ export type TransferProgressEvent = {
 };
 
 /**
- * Supported HTTP methods to use when making requests.
- */
-export type HttpMethods =
-  | "GET"
-  | "PUT"
-  | "POST"
-  | "DELETE"
-  | "PATCH"
-  | "HEAD"
-  | "OPTIONS"
-  | "TRACE";
-
-/**
  * Options to configure a proxy for outgoing requests (Node.js only).
  */
 export interface ProxySettings {
   /**
    * The proxy's host address.
+   * Must include the protocol (e.g., http:// or https://).
    */
   host: string;
 

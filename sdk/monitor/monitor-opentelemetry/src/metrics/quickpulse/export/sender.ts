@@ -1,17 +1,18 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 import url from "url";
-import { RestError, redirectPolicyName } from "@azure/core-rest-pipeline";
-import { TokenCredential } from "@azure/core-auth";
+import type { RestError } from "@azure/core-rest-pipeline";
+import { redirectPolicyName } from "@azure/core-rest-pipeline";
+import type { TokenCredential } from "@azure/core-auth";
 import { diag } from "@opentelemetry/api";
-import {
+import type {
   IsSubscribedOptionalParams,
   IsSubscribedResponse,
   PublishOptionalParams,
   PublishResponse,
-  QuickpulseClient,
   QuickpulseClientOptionalParams,
-} from "../../../generated";
+} from "../../../generated/index.js";
+import { QuickpulseClient } from "../../../generated/index.js";
 
 const applicationInsightsResource = "https://monitor.azure.com//.default";
 

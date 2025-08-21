@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Creates or updates a Dapr Component in a connected environment.
  *
  * @summary Creates or updates a Dapr Component in a connected environment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironmentsDaprComponents_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironmentsDaprComponents_CreateOrUpdate.json
  */
 async function createOrUpdateDaprComponent() {
   const subscriptionId =
@@ -50,7 +50,7 @@ async function createOrUpdateDaprComponent() {
 }
 
 async function main() {
-  createOrUpdateDaprComponent();
+  await createOrUpdateDaprComponent();
 }
 
 main().catch(console.error);

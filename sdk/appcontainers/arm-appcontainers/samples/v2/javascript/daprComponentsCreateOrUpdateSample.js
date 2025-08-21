@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Creates or updates a Dapr Component in a Managed Environment.
  *
  * @summary Creates or updates a Dapr Component in a Managed Environment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/DaprComponents_CreateOrUpdate_SecretStoreComponent.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/DaprComponents_CreateOrUpdate_SecretStoreComponent.json
  */
 async function createOrUpdateDaprComponentWithSecretStoreComponent() {
   const subscriptionId =
@@ -53,7 +53,7 @@ async function createOrUpdateDaprComponentWithSecretStoreComponent() {
  * This sample demonstrates how to Creates or updates a Dapr Component in a Managed Environment.
  *
  * @summary Creates or updates a Dapr Component in a Managed Environment.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/DaprComponents_CreateOrUpdate_Secrets.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/DaprComponents_CreateOrUpdate_Secrets.json
  */
 async function createOrUpdateDaprComponentWithSecrets() {
   const subscriptionId =
@@ -87,8 +87,8 @@ async function createOrUpdateDaprComponentWithSecrets() {
 }
 
 async function main() {
-  createOrUpdateDaprComponentWithSecretStoreComponent();
-  createOrUpdateDaprComponentWithSecrets();
+  await createOrUpdateDaprComponentWithSecretStoreComponent();
+  await createOrUpdateDaprComponentWithSecrets();
 }
 
 main().catch(console.error);

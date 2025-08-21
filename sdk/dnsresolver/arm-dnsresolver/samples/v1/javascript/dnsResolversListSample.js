@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Lists DNS resolvers in all resource groups of a subscription.
  *
  * @summary Lists DNS resolvers in all resource groups of a subscription.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/DnsResolver_ListBySubscription.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/DnsResolver_ListBySubscription.json
  */
 async function listDnsResolversBySubscription() {
   const subscriptionId =
@@ -24,14 +22,14 @@ async function listDnsResolversBySubscription() {
   const credential = new DefaultAzureCredential();
   const client = new DnsResolverManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.dnsResolvers.list()) {
+  for await (const item of client.dnsResolvers.list()) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  listDnsResolversBySubscription();
+  await listDnsResolversBySubscription();
 }
 
 main().catch(console.error);

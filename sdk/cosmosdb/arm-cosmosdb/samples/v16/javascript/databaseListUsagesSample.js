@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Retrieves the usages (most recent data) for the given database.
  *
  * @summary Retrieves the usages (most recent data) for the given database.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBDatabaseGetUsages.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBDatabaseGetUsages.json
  */
 async function cosmosDbDatabaseGetUsages() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -28,7 +26,7 @@ async function cosmosDbDatabaseGetUsages() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.database.listUsages(
+  for await (const item of client.database.listUsages(
     resourceGroupName,
     accountName,
     databaseRid,
@@ -40,7 +38,7 @@ async function cosmosDbDatabaseGetUsages() {
 }
 
 async function main() {
-  cosmosDbDatabaseGetUsages();
+  await cosmosDbDatabaseGetUsages();
 }
 
 main().catch(console.error);

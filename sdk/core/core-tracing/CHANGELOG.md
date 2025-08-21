@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.3 (Unreleased)
+## 1.3.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,18 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.3.0 (2025-07-10)
+
+### Other Changes
+
+- Update `engines` to `"node": ">=20.0.0"`. Please refer to our [support policy](https://github.com/Azure/azure-sdk-for-js/blob/main/SUPPORT.md) for more information on our supported Node.js versions.
+
+## 1.2.0 (2024-10-03)
+
+### Features Added
+
+- Added support for attaching events to a span. [#31162](https://github.com/Azure/azure-sdk-for-js/pull/31162)
 
 ## 1.1.2 (2024-04-09)
 

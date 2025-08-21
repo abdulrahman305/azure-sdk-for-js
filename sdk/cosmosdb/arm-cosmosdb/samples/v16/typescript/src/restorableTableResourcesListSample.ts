@@ -6,24 +6,20 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import {
   RestorableTableResourcesListOptionalParams,
   CosmosDBManagementClient,
 } from "@azure/arm-cosmosdb";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Return a list of tables that exist on the account at the given timestamp and location. This helps in scenarios to validate what resources exist at given timestamp and location. This API requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
  *
  * @summary Return a list of tables that exist on the account at the given timestamp and location. This helps in scenarios to validate what resources exist at given timestamp and location. This API requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBRestorableTableResourceList.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBRestorableTableResourceList.json
  */
-async function cosmosDbRestorableTableResourceList() {
+async function cosmosDbRestorableTableResourceList(): Promise<void> {
   const subscriptionId =
     process.env["COSMOSDB_SUBSCRIPTION_ID"] ||
     "2296c272-5d55-40d9-bc05-4d56dc2d7588";
@@ -38,7 +34,7 @@ async function cosmosDbRestorableTableResourceList() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.restorableTableResources.list(
+  for await (const item of client.restorableTableResources.list(
     location,
     instanceId,
     options,
@@ -48,8 +44,8 @@ async function cosmosDbRestorableTableResourceList() {
   console.log(resArray);
 }
 
-async function main() {
-  cosmosDbRestorableTableResourceList();
+async function main(): Promise<void> {
+  await cosmosDbRestorableTableResourceList();
 }
 
 main().catch(console.error);

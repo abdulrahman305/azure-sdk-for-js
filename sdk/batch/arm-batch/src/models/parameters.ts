@@ -22,7 +22,7 @@ import {
   CertificateCreateOrUpdateParameters as CertificateCreateOrUpdateParametersMapper,
   PrivateEndpointConnection as PrivateEndpointConnectionMapper,
   Pool as PoolMapper,
-} from "../models/mappers";
+} from "../models/mappers.js";
 
 export const contentType: OperationParameter = {
   parameterPath: ["options", "contentType"],
@@ -95,7 +95,7 @@ export const accountName: OperationURLParameter = {
 export const apiVersion: OperationQueryParameter = {
   parameterPath: "apiVersion",
   mapper: {
-    defaultValue: "2024-02-01",
+    defaultValue: "2024-07-01",
     isConstant: true,
     serializedName: "api-version",
     type: {
@@ -360,3 +360,18 @@ export const poolName: OperationURLParameter = {
     },
   },
 };
+
+export const networkSecurityPerimeterConfigurationName: OperationURLParameter =
+  {
+    parameterPath: "networkSecurityPerimeterConfigurationName",
+    mapper: {
+      constraints: {
+        Pattern: new RegExp("^.*$"),
+      },
+      serializedName: "networkSecurityPerimeterConfigurationName",
+      required: true,
+      type: {
+        name: "String",
+      },
+    },
+  };

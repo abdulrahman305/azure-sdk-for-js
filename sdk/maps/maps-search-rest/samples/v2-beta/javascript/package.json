@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "MapsSearchClient client library samples for JavaScript (Beta)",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "repository": {
     "type": "git",
@@ -27,8 +27,7 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/maps/maps-search-rest",
   "dependencies": {
     "@azure-rest/maps-search": "next",
-    "@azure-samples/maps-search-js-beta": "file:",
-    "@azure/identity": "^4.0.1",
-    "dotenv": "latest"
+    "dotenv": "latest",
+    "@azure/identity": "^4.0.1"
   }
 }

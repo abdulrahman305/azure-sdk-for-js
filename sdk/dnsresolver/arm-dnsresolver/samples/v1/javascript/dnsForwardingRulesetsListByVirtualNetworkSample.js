@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Lists DNS forwarding ruleset resource IDs attached to a virtual network.
  *
  * @summary Lists DNS forwarding ruleset resource IDs attached to a virtual network.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/DnsForwardingRuleset_ListByVirtualNetwork.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/DnsForwardingRuleset_ListByVirtualNetwork.json
  */
 async function listDnsForwardingRulesetsByVirtualNetwork() {
   const subscriptionId =
@@ -26,9 +24,9 @@ async function listDnsForwardingRulesetsByVirtualNetwork() {
   const credential = new DefaultAzureCredential();
   const client = new DnsResolverManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.dnsForwardingRulesets.listByVirtualNetwork(
+  for await (const item of client.dnsForwardingRulesets.listByVirtualNetwork(
     resourceGroupName,
-    virtualNetworkName
+    virtualNetworkName,
   )) {
     resArray.push(item);
   }
@@ -36,7 +34,7 @@ async function listDnsForwardingRulesetsByVirtualNetwork() {
 }
 
 async function main() {
-  listDnsForwardingRulesetsByVirtualNetwork();
+  await listDnsForwardingRulesetsByVirtualNetwork();
 }
 
 main().catch(console.error);

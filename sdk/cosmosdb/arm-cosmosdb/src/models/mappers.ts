@@ -430,6 +430,12 @@ export const RestoreParametersBase: coreClient.CompositeMapper = {
           name: "DateTime",
         },
       },
+      restoreWithTtlDisabled: {
+        serializedName: "restoreWithTtlDisabled",
+        type: {
+          name: "Boolean",
+        },
+      },
     },
   },
 };
@@ -933,6 +939,12 @@ export const DatabaseAccountUpdateParameters: coreClient.CompositeMapper = {
           name: "String",
         },
       },
+      enablePerRegionPerPartitionAutoscale: {
+        serializedName: "properties.enablePerRegionPerPartitionAutoscale",
+        type: {
+          name: "Boolean",
+        },
+      },
     },
   },
 };
@@ -1085,16 +1097,91 @@ export const ErrorResponse: coreClient.CompositeMapper = {
     name: "Composite",
     className: "ErrorResponse",
     modelProperties: {
+      error: {
+        serializedName: "error",
+        type: {
+          name: "Composite",
+          className: "ErrorDetail",
+        },
+      },
+    },
+  },
+};
+
+export const ErrorDetail: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "ErrorDetail",
+    modelProperties: {
       code: {
         serializedName: "code",
+        readOnly: true,
         type: {
           name: "String",
         },
       },
       message: {
         serializedName: "message",
+        readOnly: true,
         type: {
           name: "String",
+        },
+      },
+      target: {
+        serializedName: "target",
+        readOnly: true,
+        type: {
+          name: "String",
+        },
+      },
+      details: {
+        serializedName: "details",
+        readOnly: true,
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "ErrorDetail",
+            },
+          },
+        },
+      },
+      additionalInfo: {
+        serializedName: "additionalInfo",
+        readOnly: true,
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "ErrorAdditionalInfo",
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const ErrorAdditionalInfo: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "ErrorAdditionalInfo",
+    modelProperties: {
+      type: {
+        serializedName: "type",
+        readOnly: true,
+        type: {
+          name: "String",
+        },
+      },
+      info: {
+        serializedName: "info",
+        readOnly: true,
+        type: {
+          name: "Dictionary",
+          value: { type: { name: "any" } },
         },
       },
     },
@@ -1895,22 +1982,6 @@ export const ThroughputPolicyResource: coreClient.CompositeMapper = {
   },
 };
 
-export const CloudError: coreClient.CompositeMapper = {
-  type: {
-    name: "Composite",
-    className: "CloudError",
-    modelProperties: {
-      error: {
-        serializedName: "error",
-        type: {
-          name: "Composite",
-          className: "ErrorResponse",
-        },
-      },
-    },
-  },
-};
-
 export const SqlContainerListResult: coreClient.CompositeMapper = {
   type: {
     name: "Composite",
@@ -2018,6 +2089,20 @@ export const SqlContainerResource: coreClient.CompositeMapper = {
           },
         },
       },
+      vectorEmbeddingPolicy: {
+        serializedName: "vectorEmbeddingPolicy",
+        type: {
+          name: "Composite",
+          className: "VectorEmbeddingPolicy",
+        },
+      },
+      fullTextPolicy: {
+        serializedName: "fullTextPolicy",
+        type: {
+          name: "Composite",
+          className: "FullTextPolicy",
+        },
+      },
     },
   },
 };
@@ -2089,6 +2174,18 @@ export const IndexingPolicy: coreClient.CompositeMapper = {
             type: {
               name: "Composite",
               className: "SpatialSpec",
+            },
+          },
+        },
+      },
+      vectorIndexes: {
+        serializedName: "vectorIndexes",
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "VectorIndex",
             },
           },
         },
@@ -2209,6 +2306,29 @@ export const SpatialSpec: coreClient.CompositeMapper = {
               name: "String",
             },
           },
+        },
+      },
+    },
+  },
+};
+
+export const VectorIndex: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "VectorIndex",
+    modelProperties: {
+      path: {
+        serializedName: "path",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      type: {
+        serializedName: "type",
+        required: true,
+        type: {
+          name: "String",
         },
       },
     },
@@ -2411,6 +2531,113 @@ export const ComputedProperty: coreClient.CompositeMapper = {
       },
       query: {
         serializedName: "query",
+        type: {
+          name: "String",
+        },
+      },
+    },
+  },
+};
+
+export const VectorEmbeddingPolicy: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "VectorEmbeddingPolicy",
+    modelProperties: {
+      vectorEmbeddings: {
+        serializedName: "vectorEmbeddings",
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "VectorEmbedding",
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const VectorEmbedding: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "VectorEmbedding",
+    modelProperties: {
+      path: {
+        serializedName: "path",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      dataType: {
+        serializedName: "dataType",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      distanceFunction: {
+        serializedName: "distanceFunction",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      dimensions: {
+        serializedName: "dimensions",
+        required: true,
+        type: {
+          name: "Number",
+        },
+      },
+    },
+  },
+};
+
+export const FullTextPolicy: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "FullTextPolicy",
+    modelProperties: {
+      defaultLanguage: {
+        serializedName: "defaultLanguage",
+        type: {
+          name: "String",
+        },
+      },
+      fullTextPaths: {
+        serializedName: "fullTextPaths",
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "FullTextPath",
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const FullTextPath: coreClient.CompositeMapper = {
+  type: {
+    name: "Composite",
+    className: "FullTextPath",
+    modelProperties: {
+      path: {
+        serializedName: "path",
+        required: true,
+        type: {
+          name: "String",
+        },
+      },
+      language: {
+        serializedName: "language",
         type: {
           name: "String",
         },
@@ -6696,6 +6923,12 @@ export const DatabaseAccountGetResults: coreClient.CompositeMapper = {
           name: "String",
         },
       },
+      enablePerRegionPerPartitionAutoscale: {
+        serializedName: "properties.enablePerRegionPerPartitionAutoscale",
+        type: {
+          name: "Boolean",
+        },
+      },
     },
   },
 };
@@ -6957,6 +7190,12 @@ export const DatabaseAccountCreateUpdateParameters: coreClient.CompositeMapper =
           serializedName: "properties.customerManagedKeyStatus",
           type: {
             name: "String",
+          },
+        },
+        enablePerRegionPerPartitionAutoscale: {
+          serializedName: "properties.enablePerRegionPerPartitionAutoscale",
+          type: {
+            name: "Boolean",
           },
         },
       },

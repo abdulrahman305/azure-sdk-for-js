@@ -10,17 +10,15 @@
 // Licensed under the MIT License.
 import { Job, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Create or Update a Container Apps Job.
  *
  * @summary Create or Update a Container Apps Job.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Job_CreateorUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Job_CreateorUpdate.json
  */
-async function createOrUpdateContainerAppsJob() {
+async function createOrUpdateContainerAppsJob(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345";
@@ -28,6 +26,14 @@ async function createOrUpdateContainerAppsJob() {
   const jobName = "testcontainerappsjob0";
   const jobEnvelope: Job = {
     configuration: {
+      identitySettings: [
+        {
+          identity:
+            "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity",
+          lifecycle: "All",
+        },
+        { identity: "system", lifecycle: "Init" },
+      ],
       manualTriggerConfig: { parallelism: 4, replicaCompletionCount: 1 },
       replicaRetryLimit: 10,
       replicaTimeout: 10,
@@ -35,6 +41,13 @@ async function createOrUpdateContainerAppsJob() {
     },
     environmentId:
       "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube",
+    identity: {
+      type: "SystemAssigned,UserAssigned",
+      userAssignedIdentities: {
+        "/subscriptions/34adfa4fCedf4dc0Ba29B6d1a69ab345/resourcegroups/rg/providers/MicrosoftManagedIdentity/userAssignedIdentities/myidentity":
+          {},
+      },
+    },
     location: "East US",
     template: {
       containers: [
@@ -53,6 +66,18 @@ async function createOrUpdateContainerAppsJob() {
               periodSeconds: 3,
             },
           ],
+          volumeMounts: [
+            {
+              mountPath: "/mnt/path1",
+              subPath: "subPath1",
+              volumeName: "azurefile",
+            },
+            {
+              mountPath: "/mnt/path2",
+              subPath: "subPath2",
+              volumeName: "nfsazurefile",
+            },
+          ],
         },
       ],
       initContainers: [
@@ -62,6 +87,14 @@ async function createOrUpdateContainerAppsJob() {
           command: ["/bin/sh"],
           image: "repo/testcontainerappsjob0:v4",
           resources: { cpu: 0.5, memory: "1Gi" },
+        },
+      ],
+      volumes: [
+        { name: "azurefile", storageName: "storage", storageType: "AzureFile" },
+        {
+          name: "nfsazurefile",
+          storageName: "nfsStorage",
+          storageType: "NfsAzureFile",
         },
       ],
     },
@@ -80,9 +113,9 @@ async function createOrUpdateContainerAppsJob() {
  * This sample demonstrates how to Create or Update a Container Apps Job.
  *
  * @summary Create or Update a Container Apps Job.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Job_CreateorUpdate_EventTrigger.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Job_CreateorUpdate_EventTrigger.json
  */
-async function createOrUpdateContainerAppsJobWithEventDrivenTrigger() {
+async function createOrUpdateContainerAppsJobWithEventDrivenTrigger(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345";
@@ -101,6 +134,8 @@ async function createOrUpdateContainerAppsJobWithEventDrivenTrigger() {
             {
               name: "servicebuscalingrule",
               type: "azure-servicebus",
+              identity:
+                "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity",
               metadata: { topicName: "my-topic" },
             },
           ],
@@ -112,6 +147,13 @@ async function createOrUpdateContainerAppsJobWithEventDrivenTrigger() {
     },
     environmentId:
       "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube",
+    identity: {
+      type: "UserAssigned",
+      userAssignedIdentities: {
+        "/subscriptions/34adfa4fCedf4dc0Ba29B6d1a69ab345/resourcegroups/rg/providers/MicrosoftManagedIdentity/userAssignedIdentities/myidentity":
+          {},
+      },
+    },
     location: "East US",
     template: {
       containers: [
@@ -141,9 +183,9 @@ async function createOrUpdateContainerAppsJobWithEventDrivenTrigger() {
   console.log(result);
 }
 
-async function main() {
-  createOrUpdateContainerAppsJob();
-  createOrUpdateContainerAppsJobWithEventDrivenTrigger();
+async function main(): Promise<void> {
+  await createOrUpdateContainerAppsJob();
+  await createOrUpdateContainerAppsJobWithEventDrivenTrigger();
 }
 
 main().catch(console.error);

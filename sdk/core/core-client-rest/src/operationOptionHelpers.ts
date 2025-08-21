@@ -1,7 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { OperationOptions, RequestParameters } from "./common.js";
+import type { OperationOptions, RequestParameters } from "./common.js";
+
+import {
+  operationOptionsToRequestParameters as tspOperationOptionsToRequestParameters,
+  type OperationOptions as TspOperationOptions,
+} from "@typespec/ts-http-runtime";
 
 /**
  * Helper function to convert OperationOptions to RequestParameters
@@ -9,15 +14,7 @@ import { OperationOptions, RequestParameters } from "./common.js";
  * @returns the result of the conversion in RequestParameters of RLC layer
  */
 export function operationOptionsToRequestParameters(options: OperationOptions): RequestParameters {
-  return {
-    allowInsecureConnection: options.requestOptions?.allowInsecureConnection,
-    timeout: options.requestOptions?.timeout,
-    skipUrlEncoding: options.requestOptions?.skipUrlEncoding,
-    abortSignal: options.abortSignal,
-    onUploadProgress: options.requestOptions?.onUploadProgress,
-    onDownloadProgress: options.requestOptions?.onDownloadProgress,
-    tracingOptions: options.tracingOptions,
-    headers: { ...options.requestOptions?.headers },
-    onResponse: options.onResponse,
-  };
+  return tspOperationOptionsToRequestParameters(
+    options as TspOperationOptions,
+  ) as RequestParameters;
 }

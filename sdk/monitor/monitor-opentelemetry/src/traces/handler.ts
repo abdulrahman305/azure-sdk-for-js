@@ -1,28 +1,32 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { RequestOptions } from "http";
+import type { RequestOptions } from "node:http";
 import { createAzureSdkInstrumentation } from "@azure/opentelemetry-instrumentation-azure-sdk";
-import { AzureMonitorTraceExporter } from "@azure/monitor-opentelemetry-exporter";
-import { BatchSpanProcessor, BufferConfig } from "@opentelemetry/sdk-trace-base";
 import {
-  HttpInstrumentation,
+  AzureMonitorTraceExporter,
+  RateLimitedSampler,
+} from "@azure/monitor-opentelemetry-exporter";
+import type { BufferConfig, Sampler } from "@opentelemetry/sdk-trace-base";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import type {
   HttpInstrumentationConfig,
   IgnoreOutgoingRequestFunction,
 } from "@opentelemetry/instrumentation-http";
+import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 import { MongoDBInstrumentation } from "@opentelemetry/instrumentation-mongodb";
 import { MySQLInstrumentation } from "@opentelemetry/instrumentation-mysql";
 import { PgInstrumentation } from "@opentelemetry/instrumentation-pg";
 import { RedisInstrumentation } from "@opentelemetry/instrumentation-redis";
 import { RedisInstrumentation as Redis4Instrumentation } from "@opentelemetry/instrumentation-redis-4";
 
-import { InternalConfig } from "../shared/config";
-import { MetricHandler } from "../metrics/handler";
-import { ignoreOutgoingRequestHook } from "../utils/common";
-import { AzureMonitorSpanProcessor } from "./spanProcessor";
-import { AzureFunctionsHook } from "./azureFnHook";
-import { Instrumentation } from "@opentelemetry/instrumentation";
-import { ApplicationInsightsSampler } from "./sampler";
+import type { InternalConfig } from "../shared/config.js";
+import type { MetricHandler } from "../metrics/handler.js";
+import { ignoreOutgoingRequestHook } from "../utils/common.js";
+import { AzureMonitorSpanProcessor } from "./spanProcessor.js";
+import { AzureFunctionsHook } from "./azureFnHook.js";
+import type { Instrumentation } from "@opentelemetry/instrumentation";
+import { ApplicationInsightsSampler } from "./sampler.js";
 
 /**
  * Azure Monitor OpenTelemetry Trace Handler
@@ -35,7 +39,7 @@ export class TraceHandler {
   private _config: InternalConfig;
   private _metricHandler: MetricHandler;
   private _azureFunctionsHook: AzureFunctionsHook;
-  private _aiSampler: ApplicationInsightsSampler;
+  private _sampler: Sampler;
 
   /**
    * Initializes a new instance of the TraceHandler class.
@@ -46,7 +50,14 @@ export class TraceHandler {
     this._config = config;
     this._metricHandler = metricHandler;
     this._instrumentations = [];
-    this._aiSampler = new ApplicationInsightsSampler(this._config.samplingRatio);
+    // Check sampler precedence
+    if (this._config.tracesPerSecond && this._config.tracesPerSecond >= 0) {
+      // If tracesPerSecond is set, use RateLimitedSampler
+      this._sampler = new RateLimitedSampler(this._config.tracesPerSecond);
+    } else {
+      // Otherwise, use PercentageSampler with samplingRatio
+      this._sampler = new ApplicationInsightsSampler(this._config.samplingRatio);
+    }
     this._azureExporter = new AzureMonitorTraceExporter(this._config.azureMonitorExporterOptions);
     const bufferConfig: BufferConfig = {
       maxExportBatchSize: 512,
@@ -60,8 +71,8 @@ export class TraceHandler {
     this._initializeInstrumentations();
   }
 
-  public getSampler(): ApplicationInsightsSampler {
-    return this._aiSampler;
+  public getSampler(): Sampler {
+    return this._sampler;
   }
 
   public getBatchSpanProcessor(): BatchSpanProcessor {

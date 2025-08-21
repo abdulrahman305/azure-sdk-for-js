@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Deletes the specified Managed Certificate.
  *
  * @summary Deletes the specified Managed Certificate.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedCertificate_Delete.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedCertificate_Delete.json
  */
 async function deleteCertificate() {
   const subscriptionId =
@@ -35,7 +35,7 @@ async function deleteCertificate() {
 }
 
 async function main() {
-  deleteCertificate();
+  await deleteCertificate();
 }
 
 main().catch(console.error);

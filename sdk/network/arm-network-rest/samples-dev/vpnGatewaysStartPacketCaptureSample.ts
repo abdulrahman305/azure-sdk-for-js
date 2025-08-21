@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createNetworkManagementClient, {
-  VpnGatewaysStartPacketCaptureParameters,
-  getLongRunningPoller,
-} from "@azure-rest/arm-network";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Starts packet capture on vpn gateway in the specified resource group.
  *
  * @summary Starts packet capture on vpn gateway in the specified resource group.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/VpnGatewayStartPacketCaptureFilterData.json
  */
-async function startPacketCaptureOnVpnGatewayWithFilter() {
+
+import type { VpnGatewaysStartPacketCaptureParameters } from "@azure-rest/arm-network";
+import createNetworkManagementClient, { getLongRunningPoller } from "@azure-rest/arm-network";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function startPacketCaptureOnVpnGatewayWithFilter(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";
@@ -51,7 +46,7 @@ startPacketCaptureOnVpnGatewayWithFilter().catch(console.error);
  * @summary Starts packet capture on vpn gateway in the specified resource group.
  * x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-05-01/examples/VpnGatewayStartPacketCapture.json
  */
-async function startPacketCaptureOnVpnGatewayWithoutFilter() {
+async function startPacketCaptureOnVpnGatewayWithoutFilter(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createNetworkManagementClient(credential);
   const subscriptionId = "";

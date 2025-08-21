@@ -1,24 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-import createComputeManagementClient, {
-  GalleryImageVersionsUpdateParameters,
-  getLongRunningPoller,
-} from "@azure-rest/arm-compute";
-import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
 /**
  * This sample demonstrates how to Update a gallery image version.
  *
  * @summary Update a gallery image version.
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/GalleryRP/stable/2022-01-03/examples/galleryExamples/GalleryImageVersion_Update.json
  */
-async function updateASimpleGalleryImageVersionManagedImageAsSource() {
+
+import type { GalleryImageVersionsUpdateParameters } from "@azure-rest/arm-compute";
+import createComputeManagementClient, { getLongRunningPoller } from "@azure-rest/arm-compute";
+import { DefaultAzureCredential } from "@azure/identity";
+import "dotenv/config";
+
+async function updateASimpleGalleryImageVersionManagedImageAsSource(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";
@@ -58,7 +53,7 @@ async function updateASimpleGalleryImageVersionManagedImageAsSource() {
       galleryImageVersionName,
     )
     .patch(options);
-  const poller = getLongRunningPoller(client, initialResponse);
+  const poller = await getLongRunningPoller(client, initialResponse);
   const result = await poller.pollUntilDone();
   console.log(result);
 }
@@ -70,7 +65,7 @@ updateASimpleGalleryImageVersionManagedImageAsSource().catch(console.error);
  * @summary Update a gallery image version.
  * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/GalleryRP/stable/2022-01-03/examples/galleryExamples/GalleryImageVersion_Update_WithoutSourceId.json
  */
-async function updateASimpleGalleryImageVersionWithoutSourceId() {
+async function updateASimpleGalleryImageVersionWithoutSourceId(): Promise<void> {
   const credential = new DefaultAzureCredential();
   const client = createComputeManagementClient(credential);
   const subscriptionId = "";
@@ -106,7 +101,7 @@ async function updateASimpleGalleryImageVersionWithoutSourceId() {
       galleryImageVersionName,
     )
     .patch(options);
-  const poller = getLongRunningPoller(client, initialResponse);
+  const poller = await getLongRunningPoller(client, initialResponse);
   const result = await poller.pollUntilDone();
   console.log(result);
 }

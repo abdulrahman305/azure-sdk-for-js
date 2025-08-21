@@ -11,7 +11,6 @@
   "dependencies": {
     "@azure/identity": "^4.0.1",
     "@azure/keyvault-secrets": "^4.1.0",
-    "azurearctest": "file:",
     "typescript": "^4.2.4"
   }
 }

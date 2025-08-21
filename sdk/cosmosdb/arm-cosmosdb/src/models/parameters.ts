@@ -42,7 +42,7 @@ import {
   NotebookWorkspaceCreateUpdateParameters as NotebookWorkspaceCreateUpdateParametersMapper,
   PrivateEndpointConnection as PrivateEndpointConnectionMapper,
   ServiceResourceCreateUpdateParameters as ServiceResourceCreateUpdateParametersMapper,
-} from "../models/mappers";
+} from "../models/mappers.js";
 
 export const accept: OperationParameter = {
   parameterPath: "accept",
@@ -116,7 +116,7 @@ export const accountName: OperationURLParameter = {
 export const apiVersion: OperationQueryParameter = {
   parameterPath: "apiVersion",
   mapper: {
-    defaultValue: "2024-05-15",
+    defaultValue: "2025-04-15",
     isConstant: true,
     serializedName: "api-version",
     type: {

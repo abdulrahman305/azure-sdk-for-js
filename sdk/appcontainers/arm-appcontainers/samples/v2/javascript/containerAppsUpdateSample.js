@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Patches a Container App using JSON Merge Patch
  *
  * @summary Patches a Container App using JSON Merge Patch
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerApps_Patch.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_Patch.json
  */
 async function patchContainerApp() {
   const subscriptionId =
@@ -75,6 +75,7 @@ async function patchContainerApp() {
         ],
       },
       maxInactiveRevisions: 10,
+      runtime: { java: { enableMetrics: true } },
       service: { type: "redis" },
     },
     location: "East US",
@@ -106,8 +107,10 @@ async function patchContainerApp() {
         },
       ],
       scale: {
+        cooldownPeriod: 350,
         maxReplicas: 5,
         minReplicas: 1,
+        pollingInterval: 35,
         rules: [
           {
             name: "httpscalingrule",
@@ -135,7 +138,7 @@ async function patchContainerApp() {
 }
 
 async function main() {
-  patchContainerApp();
+  await patchContainerApp();
 }
 
 main().catch(console.error);

@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Start a container app
  *
  * @summary Start a container app
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerApps_Start.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_Start.json
  */
 async function startContainerApp() {
   const subscriptionId =
@@ -30,7 +30,7 @@ async function startContainerApp() {
 }
 
 async function main() {
-  startContainerApp();
+  await startContainerApp();
 }
 
 main().catch(console.error);

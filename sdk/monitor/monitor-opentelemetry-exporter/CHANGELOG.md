@@ -1,6 +1,116 @@
 # Release History
 
-## 1.0.0-beta.26 ()
+## 1.0.0-beta.34 ()
+
+### Features Added
+
+- Added support for configuring customer SDK Stats export interval using the `APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL` environment variable (specified in seconds).
+
+### Other Changes
+
+- Renamed Customer Statsbeat feature to customer SDK Stats.
+
+## 1.0.0-beta.33 (2025-08-04)
+
+### Features Added
+
+- Track CLIENT_READONLY and CLIENT_TIMEOUT customer SDK Stats.
+
+### Bugs Fixed
+
+- Fix auto-detection of RP environment for azure functions.
+
+### Other Changes
+
+- Respect parent sampling result in ApplicationInsightsSampler.
+
+## 1.0.0-beta.32 (2025-06-09)
+
+### Features Added
+
+- Added customer-facing SDK Stats preview.
+
+### Features Added
+
+- Add RateLimitedSampler.
+
+### Other Changes
+
+- Ensure that the longIntervalStatsbeat reader is properly bound to a MetricProducer.
+- Removed error logging upon failure to initialize long interval statsbeat.
+- No longer send statsbeat counters when values are zero.
+- Fix statsbeat throttle recording logic.
+- SEMATTRS_ENDUSER_ID is properly added to tags but not to properties in telemetry envelopes.
+- Update network statsbeat to follow a singleton pattern.
+- Stop sending client OS value.
+
+## 1.0.0-beta.31 (2025-04-16)
+
+### Features Added
+
+- Support `syntheticSource` from `user_agent.synthetic.type` semantic convention.
+
+### Bugs Fixed
+
+- Fixed process time normalized calculation returning NaN.
+
+## Other Changes
+
+- Hide iKey in debug logs.
+- Add to statsbeat success count when a batch of envelopes is partially accepted by breeze.
+
+## 1.0.0-beta.30 (2025-04-09)
+
+### Features Added
+
+- Support setting the AiLocationIp on logs and events.
+- Add support for performance counters.
+
+### Other Changes
+
+- Filter OpenTelemetry semantic attributes from being double recorded as custom dimensions.
+- Add support for detecting the Application Insights shim on internal verison.
+- Do not filter out `_MS.ProcessedByMetricExtractors` value on envelopes.
+
+## 1.0.0-beta.29 (2025-03-04)
+
+### Features Added
+
+- Support the AMW de-duping flag in AKS auto-attach scenarios.
+- Support sending custom events via specifying `microsoft.custom_event.name` on logs.
+- Support the stable OpenTelemetry HTTP semantic conventions.
+
+### Other Changes
+
+- Removed faulty span exception exporting logic.
+- Remove applying cloud.\* tags to statsbeat telemetry.
+- Correctly capture attach type on statsbeat metrics.
+
+## 1.0.0-beta.28 (2025-01-28)
+
+### Features Added
+
+- Added support for operation name on dependencies and logs.
+
+### Bugs Fixed
+
+- Fixed usage of environment variable to disable resource metric creation.
+
+### Other Changes
+
+- Fix setting statsbeat custom dimensions.
+- EAI_AGAIN REST errors are considered retriable.
+- Add 15 second warmup before export of long interval statsbeat.
+
+## 1.0.0-beta.27 (2024-10-23)
+
+### Other Changes
+
+- Update Statsbeat shutdown logic to include more status codes for shutdown.
+- Add non-essential statsbeat metrics.
+- Update logic for when to emit exceptions.
+
+## 1.0.0-beta.26 (2024-09-13)
 
 ### Other Changes
 
@@ -94,7 +204,6 @@
 
 - Update OpenTelemetry dependencies.
 - Add instructions to export Logs in readme.
-
 
 ## 1.0.0-beta.17 (2023-10-09)
 

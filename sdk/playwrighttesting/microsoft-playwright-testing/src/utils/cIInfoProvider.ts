@@ -17,7 +17,7 @@ export type CIInfo = {
   revisionUrl: string | null;
   runId: string | null;
   runAttempt: number | null;
-  jobId: string | null;
+  jobName: string | null;
 };
 
 export class CIInfoProvider {
@@ -52,7 +52,7 @@ export class CIInfoProvider {
         runAttempt: process.env["GITHUB_RUN_ATTEMPT"]
           ? parseInt(process.env["GITHUB_RUN_ATTEMPT"], 10)
           : null,
-        jobId: process.env["GITHUB_JOB"] || null,
+        jobName: process.env["GITHUB_JOB"] || null,
       };
     } else if (ciProvider === CI_PROVIDERS.ADO) {
       // Logic to get Azure DevOps CIInfo
@@ -69,22 +69,21 @@ export class CIInfoProvider {
         runAttempt: process.env["RELEASE_ATTEMPTNUMBER"]
           ? parseInt(process.env["RELEASE_ATTEMPTNUMBER"], 10)
           : parseInt(process.env["SYSTEM_JOBATTEMPT"] ?? "", 10),
-        jobId: process.env["RELEASE_DEPLOYMENTID"]
-          ? process.env["RELEASE_DEPLOYMENTID"]
-          : process.env["SYSTEM_JOBID"] || null,
+        jobName:
+          process.env["SYSTEM_JOBDISPLAYNAME"] || process.env["RELEASE_DEPLOYMENTID"] || null,
       };
     } else {
       // Handle unsupported CI provider
       return {
         provider: CI_PROVIDERS.DEFAULT,
-        repo: process.env["REPO"] ?? "",
-        branch: process.env["BRANCH"] ?? "",
-        author: process.env["AUTHOR"] ?? "",
-        commitId: process.env["COMMIT_ID"] ?? "",
-        revisionUrl: process.env["REVISION_URL"] ?? "",
-        runId: process.env["RUN_ID"] ?? "",
+        repo: process.env["REPO"] ?? null,
+        branch: process.env["BRANCH"] ?? null,
+        author: process.env["AUTHOR"] ?? null,
+        commitId: process.env["COMMIT_ID"] ?? null,
+        revisionUrl: process.env["REVISION_URL"] ?? null,
+        runId: process.env["RUN_ID"] ?? null,
         runAttempt: process.env["RUN_ATTEMPT"] ? parseInt(process.env["RUN_ATTEMPT"], 10) : null,
-        jobId: process.env["JOB_ID"] ?? "",
+        jobName: process.env["JOB_ID"] ?? null,
       };
     }
   }
@@ -95,15 +94,13 @@ export class CIInfoProvider {
     );
   }
 
-  private static getADORunId(): string {
-    if (
-      process.env["RELEASE_DEFINITIONID"] !== null &&
-      process.env["RELEASE_DEPLOYMENTID"] !== null
-    ) {
+  private static getADORunId(): string | null {
+    if (process.env["RELEASE_DEFINITIONID"] && process.env["RELEASE_DEPLOYMENTID"]) {
       return `${process.env["RELEASE_DEFINITIONID"]}-${process.env["RELEASE_DEPLOYMENTID"]}`;
-    } else {
+    } else if (process.env["SYSTEM_DEFINITIONID"] && process.env["SYSTEM_JOBID"]) {
       return `${process.env["SYSTEM_DEFINITIONID"]}-${process.env["SYSTEM_JOBID"]}`;
     }
+    return null;
   }
 
   private static getGHBranchName(): string {

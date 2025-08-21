@@ -12,9 +12,9 @@ import {
   PipelineResponse,
   SendRequest,
 } from "@azure/core-rest-pipeline";
-import { HealthApiImpl, WebPubSubImpl } from "./operations";
-import { HealthApi, WebPubSub } from "./operationsInterfaces";
-import { GeneratedClientOptionalParams } from "./models";
+import { HealthApiImpl, WebPubSubImpl } from "./operations/index.js";
+import { HealthApi, WebPubSub } from "./operationsInterfaces/index.js";
+import { GeneratedClientOptionalParams } from "./models/index.js";
 
 /** @internal */
 export class GeneratedClient extends coreClient.ServiceClient {
@@ -39,7 +39,7 @@ export class GeneratedClient extends coreClient.ServiceClient {
       requestContentType: "application/json; charset=utf-8",
     };
 
-    const packageDetails = `azsdk-js-web-pubsub/1.1.3`;
+    const packageDetails = `azsdk-js-web-pubsub/1.2.0`;
     const userAgentPrefix =
       options.userAgentOptions && options.userAgentOptions.userAgentPrefix
         ? `${options.userAgentOptions.userAgentPrefix} ${packageDetails}`
@@ -58,7 +58,7 @@ export class GeneratedClient extends coreClient.ServiceClient {
     this.endpoint = endpoint;
 
     // Assigning values to Constant parameters
-    this.apiVersion = options.apiVersion || "2024-01-01";
+    this.apiVersion = options.apiVersion || "2024-12-01";
     this.healthApi = new HealthApiImpl(this);
     this.webPubSub = new WebPubSubImpl(this);
     this.addCustomApiVersionPolicy(options.apiVersion);

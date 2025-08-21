@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Patch properties of the provided bare metal machine, or update tags associated with the bare metal machine. Properties and tag updates can be done independently.
  *
  * @summary Patch properties of the provided bare metal machine, or update tags associated with the bare metal machine. Properties and tag updates can be done independently.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/BareMetalMachines_Patch.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/BareMetalMachines_Patch.json
  */
 async function patchBareMetalMachine() {
   const subscriptionId =
@@ -35,13 +33,13 @@ async function patchBareMetalMachine() {
   const result = await client.bareMetalMachines.beginUpdateAndWait(
     resourceGroupName,
     bareMetalMachineName,
-    options
+    options,
   );
   console.log(result);
 }
 
 async function main() {
-  patchBareMetalMachine();
+  await patchBareMetalMachine();
 }
 
 main().catch(console.error);

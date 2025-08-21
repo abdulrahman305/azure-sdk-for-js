@@ -6,24 +6,20 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 import {
   SqlDatabaseCreateUpdateParameters,
   CosmosDBManagementClient,
 } from "@azure/arm-cosmosdb";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Create or update an Azure Cosmos DB SQL database
  *
  * @summary Create or update an Azure Cosmos DB SQL database
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBSqlDatabaseCreateUpdate.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBSqlDatabaseCreateUpdate.json
  */
-async function cosmosDbSqlDatabaseCreateUpdate() {
+async function cosmosDbSqlDatabaseCreateUpdate(): Promise<void> {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
   const resourceGroupName = process.env["COSMOSDB_RESOURCE_GROUP"] || "rg1";
   const accountName = "ddb1";
@@ -45,8 +41,8 @@ async function cosmosDbSqlDatabaseCreateUpdate() {
   console.log(result);
 }
 
-async function main() {
-  cosmosDbSqlDatabaseCreateUpdate();
+async function main(): Promise<void> {
+  await cosmosDbSqlDatabaseCreateUpdate();
 }
 
 main().catch(console.error);

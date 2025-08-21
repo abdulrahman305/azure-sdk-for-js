@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Update some of the properties of a managed Cassandra data center.
  *
  * @summary Update some of the properties of a managed Cassandra data center.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBManagedCassandraDataCenterPatch.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBManagedCassandraDataCenterPatch.json
  */
 async function cosmosDbManagedCassandraDataCenterUpdate() {
   const subscriptionId =
@@ -46,7 +44,7 @@ async function cosmosDbManagedCassandraDataCenterUpdate() {
 }
 
 async function main() {
-  cosmosDbManagedCassandraDataCenterUpdate();
+  await cosmosDbManagedCassandraDataCenterUpdate();
 }
 
 main().catch(console.error);

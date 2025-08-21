@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get details of a single job execution
  *
  * @summary Get details of a single job execution
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Job_Execution_Get.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Job_Execution_Get.json
  */
 async function getASingleJobExecution() {
   const subscriptionId =
@@ -31,7 +31,7 @@ async function getASingleJobExecution() {
 }
 
 async function main() {
-  getASingleJobExecution();
+  await getASingleJobExecution();
 }
 
 main().catch(console.error);

@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Azure Event Hubs client library samples for JavaScript",
   "engine": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "build": "webpack-cli ./src/index.js -o ./dist/app.js",
@@ -28,7 +28,6 @@
   "homepage": "https://github.com/Azure/azure-sdk-for-js#readme",
   "sideEffects": false,
   "dependencies": {
-    "@azure-samples/event-hubs-samples-browser": "file:",
     "@azure/event-hubs": "^5.12.0",
     "@azure/identity": "^4.3.0"
   },

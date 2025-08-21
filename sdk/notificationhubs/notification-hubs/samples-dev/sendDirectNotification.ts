@@ -6,7 +6,7 @@
  * notification using APNs.  This sends a JSON message to an APNs given device token and returns
  * a Tracking ID which can be used for troubleshooting with the Azure Notification Hubs team.
  *
- * See https://docs.microsoft.com/rest/api/notificationhubs/direct-send
+ * See https://learn.microsoft.com/rest/api/notificationhubs/direct-send
  * to learn about Direct Send.
  *
  *
@@ -14,7 +14,7 @@
  * @azsdk-weight 100
  */
 
-import * as dotenv from "dotenv";
+import "dotenv/config";
 import {
   NotificationDetails,
   NotificationOutcomeState,
@@ -28,9 +28,6 @@ import {
 } from "@azure/notification-hubs/api";
 import { delay } from "@azure/core-util";
 import { isRestError } from "@azure/core-rest-pipeline";
-
-// Load the .env file if it exists
-dotenv.config();
 
 // Define connection string and hub name
 const connectionString = process.env.NOTIFICATIONHUBS_CONNECTION_STRING || "<connection string>";

@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-import { env, isPlaybackMode, Recorder, isRecordMode } from "@azure-tools/test-recorder";
+import type { Recorder } from "@azure-tools/test-recorder";
+import { env, isPlaybackMode, isRecordMode } from "@azure-tools/test-recorder";
 
-import { CertificateClient } from "../../src/index.js";
+import type { CertificateClient } from "../../src/index.js";
 import { testPollerProperties } from "./utils/recorderUtils.js";
 import { authenticate } from "./utils/testAuthentication.js";
-import TestClient from "./utils/testClient.js";
+import type TestClient from "./utils/testClient.js";
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 
 describe("Certificates client - restore certificates and recover backups", () => {
@@ -101,7 +102,7 @@ describe("Certificates client - restore certificates and recover backups", () =>
     });
   }
 
-  it("can restore a certificate (Malformed Backup Bytes)", async function () {
+  it("can restore a certificate (Malformed Backup Bytes)", async () => {
     const backup = new Uint8Array(4728);
     let error;
     try {

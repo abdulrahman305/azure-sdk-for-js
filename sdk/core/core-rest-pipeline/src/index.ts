@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 declare global {
   interface FormData {}
   interface Blob {}
@@ -9,8 +8,8 @@ declare global {
   interface ReadableStream<R = any> {}
   interface TransformStream<I = any, O = any> {}
 }
-/* eslint-enable @typescript-eslint/no-unused-vars */
 
+export type { HttpMethods } from "@azure/core-util";
 export type {
   Agent,
   BodyPart,
@@ -18,7 +17,6 @@ export type {
   FormDataValue,
   HttpClient,
   HttpHeaders,
-  HttpMethods,
   KeyObject,
   MultipartRequestBody,
   PipelineRequest,
@@ -49,7 +47,12 @@ export {
 export { createDefaultHttpClient } from "./defaultHttpClient.js";
 export { createHttpHeaders } from "./httpHeaders.js";
 export { createPipelineRequest, type PipelineRequestOptions } from "./pipelineRequest.js";
-export { RestError, type RestErrorOptions, isRestError } from "./restError.js";
+export {
+  RestError,
+  type RestErrorOptions,
+  type RestErrorConstructor,
+  isRestError,
+} from "./restError.js";
 export {
   decompressResponsePolicy,
   decompressResponsePolicyName,
@@ -81,12 +84,13 @@ export {
   throttlingRetryPolicyName,
   type ThrottlingRetryPolicyOptions,
 } from "./policies/throttlingRetryPolicy.js";
-export { retryPolicy, type RetryPolicyOptions } from "./policies/retryPolicy.js";
-export type {
-  RetryStrategy,
-  RetryInformation,
-  RetryModifiers,
-} from "./retryStrategies/retryStrategy.js";
+export {
+  retryPolicy,
+  type RetryPolicyOptions,
+  type RetryStrategy,
+  type RetryInformation,
+  type RetryModifiers,
+} from "./policies/retryPolicy.js";
 export {
   tracingPolicy,
   tracingPolicyName,
@@ -117,6 +121,7 @@ export {
   type AuxiliaryAuthenticationHeaderPolicyOptions,
   auxiliaryAuthenticationHeaderPolicyName,
 } from "./policies/auxiliaryAuthenticationHeaderPolicy.js";
+export { agentPolicy, agentPolicyName } from "./policies/agentPolicy.js";
 export {
   createFile,
   createFileFromStream,

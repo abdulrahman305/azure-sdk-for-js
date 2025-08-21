@@ -2,16 +2,16 @@
 // Licensed under the MIT License.
 
 import { createRecorder, createModelClient } from "./utils/recordedClient.js";
-import { Recorder } from "@azure-tools/test-recorder";
+import type { Recorder } from "@azure-tools/test-recorder";
 import { assert, beforeEach, afterEach, it, describe } from "vitest";
-import {
+import type {
   ChatCompletionsOutput,
   ModelClient,
-  ChatCompletionsFunctionToolCallOutput,
+  ChatCompletionsToolCall,
   ChatMessageContentItem,
   ChatMessageImageContentItem,
-  isUnexpected
 } from "../../src/index.js";
+import { isUnexpected } from "../../src/index.js";
 
 describe("chat test suite", () => {
   let recorder: Recorder;
@@ -26,16 +26,17 @@ describe("chat test suite", () => {
     await recorder.stop();
   });
 
-  it("client test", async function () {
+  it("client test", async () => {
     assert.isNotNull(client);
     assert.isNotNull(client.path);
     assert.isNotNull(client.pipeline);
   });
 
-  it("chat regression test", async function () {
-    const url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg";
+  it("chat regression test", async () => {
+    const url =
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg";
     const headers = { "extra-parameters": "allow" };
-    const body = {
+    const body: any = {
       messages: [
         { role: "system", content: "You are a helpful assistant." },
         { role: "user", content: "How many feet are in a mile?" },
@@ -52,16 +53,16 @@ describe("chat test suite", () => {
       model: "foo",
       response_format: "foo",
       tool_choice: "auto",
-      tools: [{ type: "function", function: { name: "foo", description: "bar" } }]
-    }
+      tools: [{ type: "function", function: { name: "foo", description: "bar" } }],
+    };
     const response = await client.path("/chat/completions").post({
       headers,
-      body
+      body,
     });
     const responseHeaders = response.request.headers.toJSON();
     assert.isDefined(responseHeaders);
     assert.isDefined(responseHeaders["extra-parameters"]);
-    assert.isTrue(responseHeaders["extra-parameters"] == headers["extra-parameters"]);
+    assert.isTrue(responseHeaders["extra-parameters"] === headers["extra-parameters"]);
 
     const request = response.request;
     assert.isDefined(request);
@@ -74,60 +75,57 @@ describe("chat test suite", () => {
     if (json["messages"]) {
       assert.isNotEmpty(json["messages"]);
       assert.isDefined(json["messages"][0]);
-      assert.isTrue(json["messages"][0]["role"] == body.messages[0].role);
-      assert.isTrue(json["messages"][0]["content"] == body.messages[0].content);
-      assert.isTrue(json["messages"][1]["role"] == body.messages[1].role);
-      assert.isTrue(json["messages"][1]["content"] == body.messages[1].content);
-      assert.isTrue(json["messages"][2]["role"] == body.messages[2].role);
+      assert.isTrue(json["messages"][0]["role"] === body.messages[0].role);
+      assert.isTrue(json["messages"][0]["content"] === body.messages[0].content);
+      assert.isTrue(json["messages"][1]["role"] === body.messages[1].role);
+      assert.isTrue(json["messages"][1]["content"] === body.messages[1].content);
+      assert.isTrue(json["messages"][2]["role"] === body.messages[2].role);
 
       const contentArray = json["messages"][2]["content"];
       assert.isDefined(contentArray);
       assert.isNotEmpty(contentArray);
       if (contentArray) {
         const sourceArray = body.messages[2].content as Array<ChatMessageContentItem>;
-        assert.isTrue(contentArray[0].type == sourceArray[0].type);
+        assert.isTrue(contentArray[0].type === sourceArray[0].type);
         const imageUrlItem = sourceArray[0] as ChatMessageImageContentItem;
-        assert.isTrue(contentArray[0].image_url.url == imageUrlItem.image_url.url);
-        assert.isTrue(contentArray[0].image_url.detail == imageUrlItem.image_url.detail);
+        assert.isTrue(contentArray[0].image_url.url === imageUrlItem.image_url.url);
+        assert.isTrue(contentArray[0].image_url.detail === imageUrlItem.image_url.detail);
       }
     }
-    assert.isTrue(json["frequency_penalty"] == body.frequency_penalty);
-    assert.isTrue(json["stream"] == body.stream);
-    assert.isTrue(json["presence_penalty"] == body.presence_penalty);
-    assert.isTrue(json["temperature"] == body.temperature);
-    assert.isTrue(json["top_p"] == body.top_p);
-    assert.isTrue(json["max_tokens"] == body.max_tokens);
+    assert.isTrue(json["frequency_penalty"] === body.frequency_penalty);
+    assert.isTrue(json["stream"] === body.stream);
+    assert.isTrue(json["presence_penalty"] === body.presence_penalty);
+    assert.isTrue(json["temperature"] === body.temperature);
+    assert.isTrue(json["top_p"] === body.top_p);
+    assert.isTrue(json["max_tokens"] === body.max_tokens);
     assert.isDefined(json["stop"]);
     assert.isArray(json["stop"]);
     assert.isNotEmpty(json["stop"]);
 
     if (json["stop"]) {
       assert.isDefined(json["stop"][0]);
-      assert.isTrue(json["stop"][0] == body.stop[0]);
+      assert.isTrue(json["stop"][0] === body.stop[0]);
     }
-    assert.isTrue(json["seed"] == body.seed);
-    assert.isTrue(json["model"] == body.model);
-    assert.isTrue(json["response_format"] == body.response_format);
-    assert.isTrue(json["tool_choice"] == body.tool_choice);
+    assert.isTrue(json["seed"] === body.seed);
+    assert.isTrue(json["model"] === body.model);
+    assert.isTrue(json["response_format"] === body.response_format);
+    assert.isTrue(json["tool_choice"] === body.tool_choice);
     assert.isDefined(json["tools"]);
     assert.isArray(json["tools"]);
     assert.isNotEmpty(json["tools"]);
     if (json["tools"]) {
       assert.isDefined(json["tools"][0]);
-      assert.isTrue(json["tools"][0].type == body.tools[0].type);
-      assert.isTrue(json["tools"][0].function.name == body.tools[0].function.name);
-      assert.isTrue(json["tools"][0].function.description == body.tools[0].function.description);
+      assert.isTrue(json["tools"][0].type === body.tools[0].type);
+      assert.isTrue(json["tools"][0].function.name === body.tools[0].function.name);
+      assert.isTrue(json["tools"][0].function.description === body.tools[0].function.description);
     }
   });
 
-
-  it("simple chat test", async function () {
+  it("simple chat test", async () => {
     const response = await client.path("/chat/completions").post({
       body: {
-        messages: [
-          { role: "user", content: "How many feet are in a mile?" },
-        ]
-      }
+        messages: [{ role: "user", content: "How many feet are in a mile?" }],
+      },
     });
 
     assert.isFalse(isUnexpected(response));
@@ -139,7 +137,7 @@ describe("chat test suite", () => {
     assert.isDefined(completion.choices[0].message.content);
   });
 
-  it("function calling test", async function () {
+  it("function calling test", async () => {
     const getCurrentWeather = {
       name: "get_current_weather",
       description: "Get the current weather in a given location",
@@ -168,7 +166,7 @@ describe("chat test suite", () => {
             function: getCurrentWeather,
           },
         ],
-      }
+      },
     });
     assert.isFalse(isUnexpected(response));
 
@@ -178,31 +176,38 @@ describe("chat test suite", () => {
     assert.isDefined(completion.choices[0].finish_reason);
     assert.isTrue(completion.choices[0].finish_reason === "tool_calls");
     assert.isDefined(completion.choices[0].message.tool_calls);
-    assert.isDefined(completion.choices[0].message.tool_calls[0]);
-    assert.isTrue(completion.choices[0].message.tool_calls[0].type === "function");
+    assert.isDefined(completion.choices[0].message.tool_calls?.[0]);
+    assert.isTrue(completion.choices[0].message.tool_calls?.[0].type === "function");
 
-    const toolCall = completion.choices[0].message.tool_calls[0] as ChatCompletionsFunctionToolCallOutput;
+    const toolCall = completion.choices[0].message.tool_calls?.[0] as ChatCompletionsToolCall;
     assert.isDefined(toolCall);
     assert.isDefined(toolCall.function);
     assert.isNotEmpty(toolCall.function.name);
     assert.isTrue(toolCall.function.arguments.includes("location"));
   });
 
-  it("image url test", async function () {
-    const url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg";
+  it("image url test", async () => {
+    const url =
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg";
 
     const response = await client.path("/chat/completions").post({
       body: {
-        messages: [{
-          role: "user", content: [{
-            type: "image_url",
-            image_url: {
-              url,
-              detail: "auto"
-            }
-          }]
-        }, { role: "user", content: "describe the image" }],
-      }
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "image_url",
+                image_url: {
+                  url,
+                  detail: "auto",
+                },
+              },
+            ],
+          },
+          { role: "user", content: "describe the image" },
+        ],
+      },
     });
 
     assert.isFalse(isUnexpected(response));
@@ -214,13 +219,16 @@ describe("chat test suite", () => {
     assert.isDefined(completion.choices[0].message.content);
   });
 
-  it("multi-turn chat test", async function () {
+  it("multi-turn chat test", async () => {
     const messages = [
-      { role: "system", content: "You are a helpful assistant answering questions regarding length units." },
+      {
+        role: "system",
+        content: "You are a helpful assistant answering questions regarding length units.",
+      },
       { role: "user", content: "How many feet are in a mile?" },
     ];
     const response = await client.path("/chat/completions").post({
-      body: { messages }
+      body: { messages },
     });
 
     assert.isFalse(isUnexpected(response));
@@ -237,7 +245,7 @@ describe("chat test suite", () => {
     messages.push({ role: "user", content: "and how many yards?" });
 
     const secondResponse = await client.path("/chat/completions").post({
-      body: { messages }
+      body: { messages },
     });
 
     assert.isFalse(isUnexpected(secondResponse));
@@ -253,17 +261,14 @@ describe("chat test suite", () => {
     assert.isTrue(yardsMessage.includes("760"));
   });
 
-  it("chat auth error test", async function () {
+  it("chat auth error test", async () => {
     client = await createModelClient("dummy", recorder);
     const response = await client.path("/chat/completions").post({
       body: {
-        messages: [
-          { role: "user", content: "How many feet are in a mile?" },
-        ]
-      }
+        messages: [{ role: "user", content: "How many feet are in a mile?" }],
+      },
     });
 
     assert.isTrue(isUnexpected(response));
   });
-
 });

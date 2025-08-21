@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to List secrets for a container apps job
  *
  * @summary List secrets for a container apps job
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/Job_ListSecrets.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Job_ListSecrets.json
  */
 async function listContainerAppsJobSecrets() {
   const subscriptionId =
@@ -30,7 +30,7 @@ async function listContainerAppsJobSecrets() {
 }
 
 async function main() {
-  listContainerAppsJobSecrets();
+  await listContainerAppsJobSecrets();
 }
 
 main().catch(console.error);

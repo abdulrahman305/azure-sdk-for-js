@@ -1,15 +1,18 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
+import type {
   ConfigurationSetting,
   ConfigurationSettingParam,
   HttpResponseField,
   HttpResponseFields,
+  ConfigurationSettingId,
+} from "../../src/index.js";
+import {
   featureFlagContentType,
   secretReferenceContentType,
-  ConfigurationSettingId,
-} from "../../src";
+  KnownAppConfigAudience,
+} from "../../src/index.js";
 import {
   checkAndFormatIfAndIfNoneMatch,
   extractAfterTokenFromLinkHeader,
@@ -22,11 +25,12 @@ import {
   transformKeyValue,
   transformKeyValueResponse,
   transformKeyValueResponseWithStatusCode,
-} from "../../src/internal/helpers";
-import { FeatureFlagValue } from "../../src/featureFlag";
-import { WebResourceLike } from "@azure/core-http-compat";
-import { SecretReferenceValue } from "../../src/secretReference";
-import { assert } from "chai";
+  getScope,
+} from "../../src/internal/helpers.js";
+import type { FeatureFlagValue } from "../../src/featureFlag.js";
+import type { WebResourceLike } from "@azure/core-http-compat";
+import type { SecretReferenceValue } from "../../src/secretReference.js";
+import { describe, it, assert } from "vitest";
 
 describe("helper methods", () => {
   it("checkAndFormatIfAndIfNoneMatch", () => {
@@ -186,9 +190,9 @@ describe("helper methods", () => {
         url: "unused",
         abortSignal: {
           aborted: true,
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
+
           addEventListener: () => {},
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
+
           removeEventListener: () => {},
         },
         method: "GET",
@@ -352,4 +356,47 @@ describe("helper methods", () => {
 
     return keys as Exclude<keyof ConfigurationSetting, "key">[];
   }
+
+  describe("getScope", () => {
+    const testCases = [
+      {
+        name: "uses provided audience over endpoint detection",
+        endpoint: "https://example.appconfig.azure.us",
+        audience: KnownAppConfigAudience.AzureChina,
+        expected: `${KnownAppConfigAudience.AzureChina}/.default`,
+      },
+      {
+        name: "detects US Government cloud",
+        endpoint: "https://example.appconfig.azure.us",
+        expected: `${KnownAppConfigAudience.AzureGovernment}/.default`,
+      },
+      {
+        name: "detects US Government cloud for azconfig",
+        endpoint: "https://example.azconfig.azure.us",
+        expected: `${KnownAppConfigAudience.AzureGovernment}/.default`,
+      },
+      {
+        name: "detects China cloud for azconfig",
+        endpoint: "https://example.azconfig.azure.cn",
+        expected: `${KnownAppConfigAudience.AzureChina}/.default`,
+      },
+      {
+        name: "detects China cloud",
+        endpoint: "https://example.appconfig.azure.cn",
+        expected: `${KnownAppConfigAudience.AzureChina}/.default`,
+      },
+      {
+        name: "defaults to Public cloud",
+        endpoint: "https://example.azconfig.azure.com",
+        expected: `${KnownAppConfigAudience.AzurePublicCloud}/.default`,
+      },
+    ];
+
+    testCases.forEach(({ name, endpoint, audience, expected }) => {
+      it(name, () => {
+        const scope = getScope(endpoint, audience);
+        assert.equal(scope, expected);
+      });
+    });
+  });
 });

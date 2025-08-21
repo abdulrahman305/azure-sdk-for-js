@@ -1,16 +1,32 @@
 # Release History
 
-## 1.1.0-beta.1 (Unreleased)
+## 2.2.0-beta.1 (2025-04-14)
 
 ### Features Added
 
+- Add Unified Messaging.
+
+## 2.1.0-beta.1 (2025-02-11)
+
+### Features Added
+
+- Added Interactive Message.
+- Added Reaction Message.
+- Added Sticker Message.
+
+## 2.0.0 (2024-10-23)
+
+### Features Added
+
+- Added ImageNotificationContent to send image messgae.
+- Added DocumentNotificationContent to send document message.
+- Added VideoNotificationContent to send video message.
+- Added AudioNotificationContent to  send audio message.
+- Deprecated MediaNotificationContent.
+
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
-
-- Fix the test recording
+- MediaNotificationContent interface kind field is update with value "image_v0" from "image".
 
 ## 1.0.1 (2024-03-07)
 

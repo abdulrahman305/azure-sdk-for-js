@@ -10,13 +10,13 @@ import * as coreClient from "@azure/core-client";
 import * as coreRestPipeline from "@azure/core-rest-pipeline";
 import * as coreAuth from "@azure/core-auth";
 import { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
-import { setContinuationToken } from "./pagingHelper";
+import { setContinuationToken } from "./pagingHelper.js";
 import {
   SimplePollerLike,
   OperationState,
   createHttpPoller,
 } from "@azure/core-lro";
-import { createLroSpec } from "./lroImpl";
+import { createLroSpec } from "./lroImpl.js";
 import {
   ApplicationGatewaysImpl,
   ApplicationGatewayPrivateLinkResourcesImpl,
@@ -60,6 +60,8 @@ import {
   FirewallPolicyDraftsImpl,
   FirewallPolicyDeploymentsImpl,
   FirewallPolicyRuleCollectionGroupDraftsImpl,
+  IpamPoolsImpl,
+  StaticCidrsImpl,
   IpAllocationsImpl,
   IpGroupsImpl,
   LoadBalancersImpl,
@@ -82,14 +84,32 @@ import {
   ConnectivityConfigurationsImpl,
   NetworkGroupsImpl,
   StaticMembersImpl,
+  NetworkManagerRoutingConfigurationsImpl,
+  RoutingRuleCollectionsImpl,
+  RoutingRulesImpl,
   ScopeConnectionsImpl,
   SecurityAdminConfigurationsImpl,
   AdminRuleCollectionsImpl,
   AdminRulesImpl,
+  SecurityUserConfigurationsImpl,
+  SecurityUserRuleCollectionsImpl,
+  SecurityUserRulesImpl,
   NetworkProfilesImpl,
   NetworkSecurityGroupsImpl,
   SecurityRulesImpl,
   DefaultSecurityRulesImpl,
+  NetworkSecurityPerimetersImpl,
+  NetworkSecurityPerimeterProfilesImpl,
+  NetworkSecurityPerimeterAccessRulesImpl,
+  NetworkSecurityPerimeterAssociationsImpl,
+  NetworkSecurityPerimeterAssociableResourceTypesImpl,
+  NetworkSecurityPerimeterLinksImpl,
+  NetworkSecurityPerimeterLinkReferencesImpl,
+  NetworkSecurityPerimeterLoggingConfigurationsImpl,
+  NetworkSecurityPerimeterOperationStatusesImpl,
+  ReachabilityAnalysisIntentsImpl,
+  ReachabilityAnalysisRunsImpl,
+  VerifierWorkspacesImpl,
   NetworkVirtualAppliancesImpl,
   VirtualApplianceSitesImpl,
   VirtualApplianceSkusImpl,
@@ -153,7 +173,7 @@ import {
   HubRouteTablesImpl,
   RoutingIntentOperationsImpl,
   WebApplicationFirewallPoliciesImpl,
-} from "./operations";
+} from "./operations/index.js";
 import {
   ApplicationGateways,
   ApplicationGatewayPrivateLinkResources,
@@ -197,6 +217,8 @@ import {
   FirewallPolicyDrafts,
   FirewallPolicyDeployments,
   FirewallPolicyRuleCollectionGroupDrafts,
+  IpamPools,
+  StaticCidrs,
   IpAllocations,
   IpGroups,
   LoadBalancers,
@@ -219,14 +241,32 @@ import {
   ConnectivityConfigurations,
   NetworkGroups,
   StaticMembers,
+  NetworkManagerRoutingConfigurations,
+  RoutingRuleCollections,
+  RoutingRules,
   ScopeConnections,
   SecurityAdminConfigurations,
   AdminRuleCollections,
   AdminRules,
+  SecurityUserConfigurations,
+  SecurityUserRuleCollections,
+  SecurityUserRules,
   NetworkProfiles,
   NetworkSecurityGroups,
   SecurityRules,
   DefaultSecurityRules,
+  NetworkSecurityPerimeters,
+  NetworkSecurityPerimeterProfiles,
+  NetworkSecurityPerimeterAccessRules,
+  NetworkSecurityPerimeterAssociations,
+  NetworkSecurityPerimeterAssociableResourceTypes,
+  NetworkSecurityPerimeterLinks,
+  NetworkSecurityPerimeterLinkReferences,
+  NetworkSecurityPerimeterLoggingConfigurations,
+  NetworkSecurityPerimeterOperationStatuses,
+  ReachabilityAnalysisIntents,
+  ReachabilityAnalysisRuns,
+  VerifierWorkspaces,
   NetworkVirtualAppliances,
   VirtualApplianceSites,
   VirtualApplianceSkus,
@@ -290,9 +330,9 @@ import {
   HubRouteTables,
   RoutingIntentOperations,
   WebApplicationFirewallPolicies,
-} from "./operationsInterfaces";
-import * as Parameters from "./models/parameters";
-import * as Mappers from "./models/mappers";
+} from "./operationsInterfaces/index.js";
+import * as Parameters from "./models/parameters.js";
+import * as Mappers from "./models/mappers.js";
 import {
   NetworkManagementClientOptionalParams,
   BastionShareableLink,
@@ -339,7 +379,7 @@ import {
   GetBastionShareableLinkNextResponse,
   GetActiveSessionsNextResponse,
   DisconnectActiveSessionsNextResponse,
-} from "./models";
+} from "./models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 export class NetworkManagementClient extends coreClient.ServiceClient {
@@ -388,7 +428,7 @@ export class NetworkManagementClient extends coreClient.ServiceClient {
       credential: credentials,
     };
 
-    const packageDetails = `azsdk-js-arm-network/33.3.1`;
+    const packageDetails = `azsdk-js-arm-network/34.0.0`;
     const userAgentPrefix =
       options.userAgentOptions && options.userAgentOptions.userAgentPrefix
         ? `${options.userAgentOptions.userAgentPrefix} ${packageDetails}`
@@ -509,6 +549,8 @@ export class NetworkManagementClient extends coreClient.ServiceClient {
     this.firewallPolicyDeployments = new FirewallPolicyDeploymentsImpl(this);
     this.firewallPolicyRuleCollectionGroupDrafts =
       new FirewallPolicyRuleCollectionGroupDraftsImpl(this);
+    this.ipamPools = new IpamPoolsImpl(this);
+    this.staticCidrs = new StaticCidrsImpl(this);
     this.ipAllocations = new IpAllocationsImpl(this);
     this.ipGroups = new IpGroupsImpl(this);
     this.loadBalancers = new LoadBalancersImpl(this);
@@ -543,16 +585,48 @@ export class NetworkManagementClient extends coreClient.ServiceClient {
     this.connectivityConfigurations = new ConnectivityConfigurationsImpl(this);
     this.networkGroups = new NetworkGroupsImpl(this);
     this.staticMembers = new StaticMembersImpl(this);
+    this.networkManagerRoutingConfigurations =
+      new NetworkManagerRoutingConfigurationsImpl(this);
+    this.routingRuleCollections = new RoutingRuleCollectionsImpl(this);
+    this.routingRules = new RoutingRulesImpl(this);
     this.scopeConnections = new ScopeConnectionsImpl(this);
     this.securityAdminConfigurations = new SecurityAdminConfigurationsImpl(
       this,
     );
     this.adminRuleCollections = new AdminRuleCollectionsImpl(this);
     this.adminRules = new AdminRulesImpl(this);
+    this.securityUserConfigurations = new SecurityUserConfigurationsImpl(this);
+    this.securityUserRuleCollections = new SecurityUserRuleCollectionsImpl(
+      this,
+    );
+    this.securityUserRules = new SecurityUserRulesImpl(this);
     this.networkProfiles = new NetworkProfilesImpl(this);
     this.networkSecurityGroups = new NetworkSecurityGroupsImpl(this);
     this.securityRules = new SecurityRulesImpl(this);
     this.defaultSecurityRules = new DefaultSecurityRulesImpl(this);
+    this.networkSecurityPerimeters = new NetworkSecurityPerimetersImpl(this);
+    this.networkSecurityPerimeterProfiles =
+      new NetworkSecurityPerimeterProfilesImpl(this);
+    this.networkSecurityPerimeterAccessRules =
+      new NetworkSecurityPerimeterAccessRulesImpl(this);
+    this.networkSecurityPerimeterAssociations =
+      new NetworkSecurityPerimeterAssociationsImpl(this);
+    this.networkSecurityPerimeterAssociableResourceTypes =
+      new NetworkSecurityPerimeterAssociableResourceTypesImpl(this);
+    this.networkSecurityPerimeterLinks = new NetworkSecurityPerimeterLinksImpl(
+      this,
+    );
+    this.networkSecurityPerimeterLinkReferences =
+      new NetworkSecurityPerimeterLinkReferencesImpl(this);
+    this.networkSecurityPerimeterLoggingConfigurations =
+      new NetworkSecurityPerimeterLoggingConfigurationsImpl(this);
+    this.networkSecurityPerimeterOperationStatuses =
+      new NetworkSecurityPerimeterOperationStatusesImpl(this);
+    this.reachabilityAnalysisIntents = new ReachabilityAnalysisIntentsImpl(
+      this,
+    );
+    this.reachabilityAnalysisRuns = new ReachabilityAnalysisRunsImpl(this);
+    this.verifierWorkspaces = new VerifierWorkspacesImpl(this);
     this.networkVirtualAppliances = new NetworkVirtualAppliancesImpl(this);
     this.virtualApplianceSites = new VirtualApplianceSitesImpl(this);
     this.virtualApplianceSkus = new VirtualApplianceSkusImpl(this);
@@ -1714,6 +1788,8 @@ export class NetworkManagementClient extends coreClient.ServiceClient {
   firewallPolicyDrafts: FirewallPolicyDrafts;
   firewallPolicyDeployments: FirewallPolicyDeployments;
   firewallPolicyRuleCollectionGroupDrafts: FirewallPolicyRuleCollectionGroupDrafts;
+  ipamPools: IpamPools;
+  staticCidrs: StaticCidrs;
   ipAllocations: IpAllocations;
   ipGroups: IpGroups;
   loadBalancers: LoadBalancers;
@@ -1736,14 +1812,32 @@ export class NetworkManagementClient extends coreClient.ServiceClient {
   connectivityConfigurations: ConnectivityConfigurations;
   networkGroups: NetworkGroups;
   staticMembers: StaticMembers;
+  networkManagerRoutingConfigurations: NetworkManagerRoutingConfigurations;
+  routingRuleCollections: RoutingRuleCollections;
+  routingRules: RoutingRules;
   scopeConnections: ScopeConnections;
   securityAdminConfigurations: SecurityAdminConfigurations;
   adminRuleCollections: AdminRuleCollections;
   adminRules: AdminRules;
+  securityUserConfigurations: SecurityUserConfigurations;
+  securityUserRuleCollections: SecurityUserRuleCollections;
+  securityUserRules: SecurityUserRules;
   networkProfiles: NetworkProfiles;
   networkSecurityGroups: NetworkSecurityGroups;
   securityRules: SecurityRules;
   defaultSecurityRules: DefaultSecurityRules;
+  networkSecurityPerimeters: NetworkSecurityPerimeters;
+  networkSecurityPerimeterProfiles: NetworkSecurityPerimeterProfiles;
+  networkSecurityPerimeterAccessRules: NetworkSecurityPerimeterAccessRules;
+  networkSecurityPerimeterAssociations: NetworkSecurityPerimeterAssociations;
+  networkSecurityPerimeterAssociableResourceTypes: NetworkSecurityPerimeterAssociableResourceTypes;
+  networkSecurityPerimeterLinks: NetworkSecurityPerimeterLinks;
+  networkSecurityPerimeterLinkReferences: NetworkSecurityPerimeterLinkReferences;
+  networkSecurityPerimeterLoggingConfigurations: NetworkSecurityPerimeterLoggingConfigurations;
+  networkSecurityPerimeterOperationStatuses: NetworkSecurityPerimeterOperationStatuses;
+  reachabilityAnalysisIntents: ReachabilityAnalysisIntents;
+  reachabilityAnalysisRuns: ReachabilityAnalysisRuns;
+  verifierWorkspaces: VerifierWorkspaces;
   networkVirtualAppliances: NetworkVirtualAppliances;
   virtualApplianceSites: VirtualApplianceSites;
   virtualApplianceSkus: VirtualApplianceSkus;

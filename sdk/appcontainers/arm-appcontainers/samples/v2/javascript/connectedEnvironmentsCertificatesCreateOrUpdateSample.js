@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create or Update a Certificate.
  *
  * @summary Create or Update a Certificate.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironmentsCertificate_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironmentsCertificate_CreateOrUpdate.json
  */
 async function createOrUpdateCertificate() {
   const subscriptionId =
@@ -44,7 +44,7 @@ async function createOrUpdateCertificate() {
 }
 
 async function main() {
-  createOrUpdateCertificate();
+  await createOrUpdateCertificate();
 }
 
 main().catch(console.error);

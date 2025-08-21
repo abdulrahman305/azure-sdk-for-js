@@ -7,18 +7,18 @@
  */
 
 import { PagedAsyncIterableIterator, PageSettings } from "@azure/core-paging";
-import { setContinuationToken } from "../pagingHelper";
-import { BatchAccountOperations } from "../operationsInterfaces";
+import { setContinuationToken } from "../pagingHelper.js";
+import { BatchAccountOperations } from "../operationsInterfaces/index.js";
 import * as coreClient from "@azure/core-client";
-import * as Mappers from "../models/mappers";
-import * as Parameters from "../models/parameters";
-import { BatchManagementClient } from "../batchManagementClient";
+import * as Mappers from "../models/mappers.js";
+import * as Parameters from "../models/parameters.js";
+import { BatchManagementClient } from "../batchManagementClient.js";
 import {
   SimplePollerLike,
   OperationState,
   createHttpPoller,
 } from "@azure/core-lro";
-import { createLroSpec } from "../lroImpl";
+import { createLroSpec } from "../lroImpl.js";
 import {
   BatchAccount,
   BatchAccountListNextOptionalParams,
@@ -56,7 +56,7 @@ import {
   BatchAccountListByResourceGroupNextResponse,
   BatchAccountListDetectorsNextResponse,
   BatchAccountListOutboundNetworkDependenciesEndpointsNextResponse,
-} from "../models";
+} from "../models/index.js";
 
 /// <reference lib="esnext.asynciterable" />
 /** Class containing BatchAccountOperations operations. */
@@ -284,7 +284,7 @@ export class BatchAccountOperationsImpl implements BatchAccountOperations {
    * you must make sure your network allows outbound access to these endpoints. Failure to allow access
    * to these endpoints may cause Batch to mark the affected nodes as unusable. For more information
    * about creating a pool inside of a virtual network, see
-   * https://docs.microsoft.com/en-us/azure/batch/batch-virtual-network.
+   * https://docs.microsoft.com/azure/batch/batch-virtual-network.
    * @param resourceGroupName The name of the resource group that contains the Batch account.
    * @param accountName The name of the Batch account.
    * @param options The options parameters.
@@ -715,7 +715,7 @@ export class BatchAccountOperationsImpl implements BatchAccountOperations {
    * you must make sure your network allows outbound access to these endpoints. Failure to allow access
    * to these endpoints may cause Batch to mark the affected nodes as unusable. For more information
    * about creating a pool inside of a virtual network, see
-   * https://docs.microsoft.com/en-us/azure/batch/batch-virtual-network.
+   * https://docs.microsoft.com/azure/batch/batch-virtual-network.
    * @param resourceGroupName The name of the resource group that contains the Batch account.
    * @param accountName The name of the Batch account.
    * @param options The options parameters.
@@ -1046,27 +1046,27 @@ const getDetectorOperationSpec: coreClient.OperationSpec = {
   serializer,
 };
 const listOutboundNetworkDependenciesEndpointsOperationSpec: coreClient.OperationSpec =
-  {
-    path: "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/outboundNetworkDependenciesEndpoints",
-    httpMethod: "GET",
-    responses: {
-      200: {
-        bodyMapper: Mappers.OutboundEnvironmentEndpointCollection,
-      },
-      default: {
-        bodyMapper: Mappers.CloudError,
-      },
+{
+  path: "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/outboundNetworkDependenciesEndpoints",
+  httpMethod: "GET",
+  responses: {
+    200: {
+      bodyMapper: Mappers.OutboundEnvironmentEndpointCollection,
     },
-    queryParameters: [Parameters.apiVersion],
-    urlParameters: [
-      Parameters.$host,
-      Parameters.resourceGroupName,
-      Parameters.subscriptionId,
-      Parameters.accountName1,
-    ],
-    headerParameters: [Parameters.accept],
-    serializer,
-  };
+    default: {
+      bodyMapper: Mappers.CloudError,
+    },
+  },
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [
+    Parameters.$host,
+    Parameters.resourceGroupName,
+    Parameters.subscriptionId,
+    Parameters.accountName1,
+  ],
+  headerParameters: [Parameters.accept],
+  serializer,
+};
 const listNextOperationSpec: coreClient.OperationSpec = {
   path: "{nextLink}",
   httpMethod: "GET",
@@ -1128,24 +1128,24 @@ const listDetectorsNextOperationSpec: coreClient.OperationSpec = {
   serializer,
 };
 const listOutboundNetworkDependenciesEndpointsNextOperationSpec: coreClient.OperationSpec =
-  {
-    path: "{nextLink}",
-    httpMethod: "GET",
-    responses: {
-      200: {
-        bodyMapper: Mappers.OutboundEnvironmentEndpointCollection,
-      },
-      default: {
-        bodyMapper: Mappers.CloudError,
-      },
+{
+  path: "{nextLink}",
+  httpMethod: "GET",
+  responses: {
+    200: {
+      bodyMapper: Mappers.OutboundEnvironmentEndpointCollection,
     },
-    urlParameters: [
-      Parameters.$host,
-      Parameters.resourceGroupName,
-      Parameters.subscriptionId,
-      Parameters.accountName1,
-      Parameters.nextLink,
-    ],
-    headerParameters: [Parameters.accept],
-    serializer,
-  };
+    default: {
+      bodyMapper: Mappers.CloudError,
+    },
+  },
+  urlParameters: [
+    Parameters.$host,
+    Parameters.resourceGroupName,
+    Parameters.subscriptionId,
+    Parameters.accountName1,
+    Parameters.nextLink,
+  ],
+  headerParameters: [Parameters.accept],
+  serializer,
+};

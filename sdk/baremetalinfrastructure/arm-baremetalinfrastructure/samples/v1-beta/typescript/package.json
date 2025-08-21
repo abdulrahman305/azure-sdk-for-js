@@ -29,14 +29,13 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/baremetalinfrastructure/arm-baremetalinfrastructure",
   "dependencies": {
-    "@azure-samples/arm-baremetalinfrastructure-ts-beta": "file:",
     "@azure/arm-baremetalinfrastructure": "next",
-    "@azure/identity": "^4.2.1",
-    "dotenv": "latest"
+    "dotenv": "latest",
+    "@azure/identity": "^4.2.1"
   },
   "devDependencies": {
     "@types/node": "^14.0.0",
-    "rimraf": "latest",
-    "typescript": "~5.5.3"
+    "typescript": "~5.8.2",
+    "rimraf": "latest"
   }
 }

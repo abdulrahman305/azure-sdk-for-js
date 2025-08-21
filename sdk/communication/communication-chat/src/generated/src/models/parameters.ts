@@ -20,7 +20,7 @@ import {
   UpdateChatThreadRequest as UpdateChatThreadRequestMapper,
   SendTypingNotificationRequest as SendTypingNotificationRequestMapper,
   CreateChatThreadRequest as CreateChatThreadRequestMapper,
-} from "../models/mappers";
+} from "../models/mappers.js";
 
 export const accept: OperationParameter = {
   parameterPath: "accept",
@@ -80,7 +80,7 @@ export const skip: OperationQueryParameter = {
 export const apiVersion: OperationQueryParameter = {
   parameterPath: "apiVersion",
   mapper: {
-    defaultValue: "2024-03-07",
+    defaultValue: "2025-03-15",
     isConstant: true,
     serializedName: "api-version",
     type: {

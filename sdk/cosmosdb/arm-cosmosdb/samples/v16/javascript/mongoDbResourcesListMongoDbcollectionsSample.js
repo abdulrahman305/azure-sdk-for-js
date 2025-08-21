@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Lists the MongoDB collection under an existing Azure Cosmos DB database account.
  *
  * @summary Lists the MongoDB collection under an existing Azure Cosmos DB database account.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBMongoDBCollectionList.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBMongoDBCollectionList.json
  */
 async function cosmosDbMongoDbcollectionList() {
   const subscriptionId = process.env["COSMOSDB_SUBSCRIPTION_ID"] || "subid";
@@ -26,7 +24,7 @@ async function cosmosDbMongoDbcollectionList() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.mongoDBResources.listMongoDBCollections(
+  for await (const item of client.mongoDBResources.listMongoDBCollections(
     resourceGroupName,
     accountName,
     databaseName,
@@ -37,7 +35,7 @@ async function cosmosDbMongoDbcollectionList() {
 }
 
 async function main() {
-  cosmosDbMongoDbcollectionList();
+  await cosmosDbMongoDbcollectionList();
 }
 
 main().catch(console.error);

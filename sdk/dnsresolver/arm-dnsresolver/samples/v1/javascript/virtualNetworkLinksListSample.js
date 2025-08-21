@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Lists virtual network links to a DNS forwarding ruleset.
  *
  * @summary Lists virtual network links to a DNS forwarding ruleset.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/VirtualNetworkLink_List.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/VirtualNetworkLink_List.json
  */
 async function listVirtualNetworkLinksToADnsForwardingRuleset() {
   const subscriptionId =
@@ -26,9 +24,9 @@ async function listVirtualNetworkLinksToADnsForwardingRuleset() {
   const credential = new DefaultAzureCredential();
   const client = new DnsResolverManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.virtualNetworkLinks.list(
+  for await (const item of client.virtualNetworkLinks.list(
     resourceGroupName,
-    dnsForwardingRulesetName
+    dnsForwardingRulesetName,
   )) {
     resArray.push(item);
   }
@@ -36,7 +34,7 @@ async function listVirtualNetworkLinksToADnsForwardingRuleset() {
 }
 
 async function main() {
-  listVirtualNetworkLinksToADnsForwardingRuleset();
+  await listVirtualNetworkLinksToADnsForwardingRuleset();
 }
 
 main().catch(console.error);

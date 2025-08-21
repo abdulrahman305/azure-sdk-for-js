@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get the Container Apps in a given resource group.
  *
  * @summary Get the Container Apps in a given resource group.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ContainerApps_ListByResourceGroup.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_ListByResourceGroup.json
  */
 async function listContainerAppsByResourceGroup() {
   const subscriptionId =
@@ -25,14 +25,14 @@ async function listContainerAppsByResourceGroup() {
   const credential = new DefaultAzureCredential();
   const client = new ContainerAppsAPIClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.containerApps.listByResourceGroup(resourceGroupName)) {
+  for await (const item of client.containerApps.listByResourceGroup(resourceGroupName)) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  listContainerAppsByResourceGroup();
+  await listContainerAppsByResourceGroup();
 }
 
 main().catch(console.error);

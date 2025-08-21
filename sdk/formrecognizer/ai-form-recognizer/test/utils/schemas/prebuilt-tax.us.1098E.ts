@@ -6,7 +6,7 @@
 // API Version: 2023-07-31
 // Created:     Tue Aug 01 2023
 
-import * as fr from "../../../src";
+import * as fr from "../../../src/index.js";
 
 /**
  * Extract key information from United States Internal Revenue Service Form 1098-E (2021-current).
@@ -144,7 +144,7 @@ export interface TaxUs1098ELender {
 /**
  * The raw model schema.
  */
-function modelInfo() {
+function modelInfo(): any {
   return {
     modelId: "prebuilt-tax.us.1098E",
     description:

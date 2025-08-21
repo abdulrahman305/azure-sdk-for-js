@@ -3,31 +3,14 @@ trigger: none
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      PreSteps:
-      - task: AzureCLI@2
-        displayName: Set OIDC variables
-        env:
-          ARM_OIDC_TOKEN: $(ARM_OIDC_TOKEN)
-          ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-          ARM_TENANT_ID: $(ARM_TENANT_ID)
-        inputs:
-          azureSubscription: azure-sdk-tests
-          scriptType: pscore
-          scriptLocation: inlineScript
-          addSpnToEnvironment: true
-          inlineScript: |
-            Write-Host "##vso[task.setvariable variable=ARM_CLIENT_ID;issecret=true]$($env:servicePrincipalId)"
-            Write-Host "##vso[task.setvariable variable=ARM_TENANT_ID;issecret=true]$($env:tenantId)"
-            Write-Host "##vso[task.setvariable variable=ARM_OIDC_TOKEN;issecret=true]$($env:idToken)"
+      Location: westus2
       PackageName: "@azure/identity"
       ServiceDirectory: identity
       TimeoutInMinutes: 120
-      SupportedClouds: 'Public,UsGov,China,Canary'
+      PersistOidcToken: true
       CloudConfig:
         Public:
-          ServiceConnection: azure-sdk-tests
           SubscriptionConfigurations:
-            - $(sub-config-azure-cloud-test-resources)
             # Contains alternate tenant, AAD app and cert info for testing
             - $(sub-config-identity-test-resources)
             - $(sub-config-identity-test-resources-js)
@@ -40,9 +23,6 @@ extends:
         - Pool=.*LINUXNEXTPOOL.*/azsdk-pool-mms-ubuntu-2204-identitymsi
         - OSVmImage=.*LINUXNEXTVMIMAGE.*/azsdk-pool-mms-ubuntu-2204-1espt
       EnvVars:
-        AZURE_CLIENT_ID: $(IDENTITY_CLIENT_ID)
-        AZURE_CLIENT_SECRET: $(IDENTITY_CLIENT_SECRET)
-        AZURE_TENANT_ID: $(IDENTITY_TENANT_ID)
-        ARM_OIDC_TOKEN: $(ARM_OIDC_TOKEN)
-        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-        ARM_TENANT_ID: $(ARM_TENANT_ID)
+        AZURE_CLIENT_ID: $(IDENTITY_SP_CLIENT_ID)
+        AZURE_CLIENT_SECRET: $(IDENTITY_SP_CLIENT_SECRET)
+        AZURE_TENANT_ID: $(IDENTITY_SP_TENANT_ID)

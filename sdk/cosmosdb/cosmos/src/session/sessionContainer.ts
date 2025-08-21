@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-import atob from "../utils/atob";
-import { Constants, getContainerLink, OperationType, ResourceType, trimSlashes } from "../common";
-import { CosmosHeaders } from "../queryExecutionContext";
-import { SessionContext } from "./SessionContext";
-import { VectorSessionToken } from "./VectorSessionToken";
+import atob from "../utils/atob.js";
+import type { ResourceType } from "../common/index.js";
+import { Constants, getContainerLink, OperationType, trimSlashes } from "../common/index.js";
+import type { CosmosHeaders } from "../queryExecutionContext/index.js";
+import type { SessionContext } from "./SessionContext.js";
+import { VectorSessionToken } from "./VectorSessionToken.js";
 
 /** @hidden */
 export class SessionContainer {

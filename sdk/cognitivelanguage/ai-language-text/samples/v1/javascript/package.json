@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Azure Cognitive Language Service client library samples for JavaScript",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "repository": {
     "type": "git",
@@ -26,9 +26,8 @@
   },
   "homepage": "https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/cognitivelanguage/ai-language-text",
   "dependencies": {
-    "@azure-samples/ai-language-text-js": "file:",
     "@azure/ai-language-text": "latest",
-    "@azure/identity": "^4.2.1",
-    "dotenv": "latest"
+    "dotenv": "latest",
+    "@azure/identity": "^4.0.1"
   }
 }

@@ -13,17 +13,15 @@ import {
   ContainerAppsAPIClient,
 } from "@azure/arm-appcontainers";
 import { DefaultAzureCredential } from "@azure/identity";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 /**
  * This sample demonstrates how to Creates or updates a Managed Environment used to host container apps.
  *
  * @summary Creates or updates a Managed Environment used to host container apps.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironments_CustomInfrastructureResourceGroup_Create.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedEnvironments_CustomInfrastructureResourceGroup_Create.json
  */
-async function createEnvironmentWithCustomInfrastructureResourceGroup() {
+async function createEnvironmentWithCustomInfrastructureResourceGroup(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345";
@@ -84,9 +82,9 @@ async function createEnvironmentWithCustomInfrastructureResourceGroup() {
  * This sample demonstrates how to Creates or updates a Managed Environment used to host container apps.
  *
  * @summary Creates or updates a Managed Environment used to host container apps.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironments_CreateOrUpdate.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedEnvironments_CreateOrUpdate.json
  */
-async function createEnvironments() {
+async function createEnvironments(): Promise<void> {
   const subscriptionId =
     process.env["APPCONTAINERS_SUBSCRIPTION_ID"] ||
     "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345";
@@ -104,6 +102,13 @@ async function createEnvironments() {
     },
     daprAIConnectionString:
       "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://northcentralus-0.in.applicationinsights.azure.com/",
+    identity: {
+      type: "SystemAssigned, UserAssigned",
+      userAssignedIdentities: {
+        "/subscriptions/00000000000000000000000000000000/resourceGroups/contosoResources/providers/MicrosoftManagedIdentity/userAssignedIdentities/contosoIdentity":
+          {},
+      },
+    },
     location: "East US",
     peerAuthentication: { mtls: { enabled: true } },
     peerTrafficConfiguration: { encryption: { enabled: true } },
@@ -144,9 +149,9 @@ async function createEnvironments() {
   console.log(result);
 }
 
-async function main() {
-  createEnvironmentWithCustomInfrastructureResourceGroup();
-  createEnvironments();
+async function main(): Promise<void> {
+  await createEnvironmentWithCustomInfrastructureResourceGroup();
+  await createEnvironments();
 }
 
 main().catch(console.error);

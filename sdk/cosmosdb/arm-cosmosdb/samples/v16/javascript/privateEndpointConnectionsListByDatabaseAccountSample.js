@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to List all private endpoint connections on a Cosmos DB account.
  *
  * @summary List all private endpoint connections on a Cosmos DB account.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBPrivateEndpointConnectionListGet.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBPrivateEndpointConnectionListGet.json
  */
 async function getsPrivateEndpointConnection() {
   const subscriptionId =
@@ -26,7 +24,7 @@ async function getsPrivateEndpointConnection() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.privateEndpointConnections.listByDatabaseAccount(
+  for await (const item of client.privateEndpointConnections.listByDatabaseAccount(
     resourceGroupName,
     accountName,
   )) {
@@ -36,7 +34,7 @@ async function getsPrivateEndpointConnection() {
 }
 
 async function main() {
-  getsPrivateEndpointConnection();
+  await getsPrivateEndpointConnection();
 }
 
 main().catch(console.error);

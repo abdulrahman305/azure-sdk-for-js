@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get a list of storage appliances in the provided subscription.
  *
  * @summary Get a list of storage appliances in the provided subscription.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/StorageAppliances_ListBySubscription.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/StorageAppliances_ListBySubscription.json
  */
 async function listStorageAppliancesForSubscription() {
   const subscriptionId =
@@ -24,14 +22,14 @@ async function listStorageAppliancesForSubscription() {
   const credential = new DefaultAzureCredential();
   const client = new NetworkCloud(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.storageAppliances.listBySubscription()) {
+  for await (const item of client.storageAppliances.listBySubscription()) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  listStorageAppliancesForSubscription();
+  await listStorageAppliancesForSubscription();
 }
 
 main().catch(console.error);

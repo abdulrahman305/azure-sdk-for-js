@@ -1,19 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AccessToken, GetTokenOptions, TokenCredential } from "@azure/core-auth";
+import type { AccessToken, GetTokenOptions, TokenCredential } from "@azure/core-auth";
 import {
   checkTenantId,
   processMultiTenantRequest,
   resolveAdditionallyAllowedTenantIds,
-} from "../util/tenantIdUtils";
-import { credentialLogger, formatError, formatSuccess } from "../util/logging";
-import { ensureValidScopeForDevTimeCreds, getScopeResource } from "../util/scopeUtils";
+} from "../util/tenantIdUtils.js";
+import { credentialLogger, formatError, formatSuccess } from "../util/logging.js";
+import { ensureValidScopeForDevTimeCreds, getScopeResource } from "../util/scopeUtils.js";
 
-import { AzurePowerShellCredentialOptions } from "./azurePowerShellCredentialOptions";
-import { CredentialUnavailableError } from "../errors";
-import { processUtils } from "../util/processUtils";
-import { tracingClient } from "../util/tracing";
+import type { AzurePowerShellCredentialOptions } from "./azurePowerShellCredentialOptions.js";
+import { CredentialUnavailableError } from "../errors.js";
+import { processUtils } from "../util/processUtils.js";
+import { tracingClient } from "../util/tracing.js";
 
 const logger = credentialLogger("AzurePowerShellCredential");
 
@@ -153,7 +153,7 @@ export class AzurePowerShellCredential implements TokenCredential {
           `
           $tenantId = "${tenantId ?? ""}"
           $m = Import-Module Az.Accounts -MinimumVersion 2.2.0 -PassThru
-          $useSecureString = $m.Version -ge [version]'2.17.0'
+          $useSecureString = $m.Version -ge [version]'2.17.0' -and $m.Version -lt [version]'5.0.0'
 
           $params = @{
             ResourceUrl = "${resource}"
@@ -171,9 +171,22 @@ export class AzurePowerShellCredential implements TokenCredential {
 
           $result = New-Object -TypeName PSObject
           $result | Add-Member -MemberType NoteProperty -Name ExpiresOn -Value $token.ExpiresOn
-          if ($useSecureString) {
-            $result | Add-Member -MemberType NoteProperty -Name Token -Value (ConvertFrom-SecureString -AsPlainText $token.Token)
-          } else {
+
+          if ($token.Token -is [System.Security.SecureString]) {
+            if ($PSVersionTable.PSVersion.Major -lt 7) {
+              $ssPtr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($token.Token)
+              try {
+                $result | Add-Member -MemberType NoteProperty -Name Token -Value ([System.Runtime.InteropServices.Marshal]::PtrToStringBSTR($ssPtr))
+              }
+              finally {
+                [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ssPtr)
+              }
+            }
+            else {
+              $result | Add-Member -MemberType NoteProperty -Name Token -Value ($token.Token | ConvertFrom-SecureString -AsPlainText)
+            }
+          }
+          else {
             $result | Add-Member -MemberType NoteProperty -Name Token -Value $token.Token
           }
 
@@ -218,7 +231,8 @@ export class AzurePowerShellCredential implements TokenCredential {
         return {
           token: response.Token,
           expiresOnTimestamp: new Date(response.ExpiresOn).getTime(),
-        };
+          tokenType: "Bearer",
+        } as AccessToken;
       } catch (err: any) {
         if (isNotInstalledError(err)) {
           const error = new CredentialUnavailableError(powerShellPublicErrorMessages.installed);

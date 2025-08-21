@@ -6,11 +6,9 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-export * from "./operations";
-export * from "./deployments";
-export * from "./providers";
-export * from "./providerResourceTypes";
-export * from "./resources";
-export * from "./resourceGroups";
-export * from "./tagsOperations";
-export * from "./deploymentOperations";
+export * from "./operations.js";
+export * from "./providers.js";
+export * from "./providerResourceTypes.js";
+export * from "./resources.js";
+export * from "./resourceGroups.js";
+export * from "./tagsOperations.js";

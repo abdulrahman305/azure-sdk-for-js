@@ -8,11 +8,7 @@
 
 import * as coreClient from "@azure/core-client";
 import * as coreRestPipeline from "@azure/core-rest-pipeline";
-import {
-  PipelineRequest,
-  PipelineResponse,
-  SendRequest,
-} from "@azure/core-rest-pipeline";
+import { PipelineRequest, PipelineResponse, SendRequest } from "@azure/core-rest-pipeline";
 import * as coreAuth from "@azure/core-auth";
 import {
   OperationsImpl,
@@ -24,7 +20,7 @@ import {
   SharedPrivateLinkResourcesImpl,
   UsagesImpl,
   NetworkSecurityPerimeterConfigurationsImpl,
-} from "./operations";
+} from "./operations/index.js";
 import {
   Operations,
   AdminKeys,
@@ -35,14 +31,14 @@ import {
   SharedPrivateLinkResources,
   Usages,
   NetworkSecurityPerimeterConfigurations,
-} from "./operationsInterfaces";
-import * as Parameters from "./models/parameters";
-import * as Mappers from "./models/mappers";
+} from "./operationsInterfaces/index.js";
+import * as Parameters from "./models/parameters.js";
+import * as Mappers from "./models/mappers.js";
 import {
   SearchManagementClientOptionalParams,
   UsageBySubscriptionSkuOptionalParams,
   UsageBySubscriptionSkuResponse,
-} from "./models";
+} from "./models/index.js";
 
 export class SearchManagementClient extends coreClient.ServiceClient {
   $host: string;
@@ -77,7 +73,7 @@ export class SearchManagementClient extends coreClient.ServiceClient {
       credential: credentials,
     };
 
-    const packageDetails = `azsdk-js-arm-search/4.0.0-beta.2`;
+    const packageDetails = `azsdk-js-arm-search/3.3.0`;
     const userAgentPrefix =
       options.userAgentOptions && options.userAgentOptions.userAgentPrefix
         ? `${options.userAgentOptions.userAgentPrefix} ${packageDetails}`
@@ -89,8 +85,7 @@ export class SearchManagementClient extends coreClient.ServiceClient {
       userAgentOptions: {
         userAgentPrefix,
       },
-      endpoint:
-        options.endpoint ?? options.baseUri ?? "https://management.azure.com",
+      endpoint: options.endpoint ?? options.baseUri ?? "https://management.azure.com",
     };
     super(optionsWithDefaults);
 
@@ -100,8 +95,7 @@ export class SearchManagementClient extends coreClient.ServiceClient {
         options.pipeline.getOrderedPolicies();
       bearerTokenAuthenticationPolicyFound = pipelinePolicies.some(
         (pipelinePolicy) =>
-          pipelinePolicy.name ===
-          coreRestPipeline.bearerTokenAuthenticationPolicyName,
+          pipelinePolicy.name === coreRestPipeline.bearerTokenAuthenticationPolicyName,
       );
     }
     if (
@@ -117,11 +111,9 @@ export class SearchManagementClient extends coreClient.ServiceClient {
         coreRestPipeline.bearerTokenAuthenticationPolicy({
           credential: credentials,
           scopes:
-            optionsWithDefaults.credentialScopes ??
-            `${optionsWithDefaults.endpoint}/.default`,
+            optionsWithDefaults.credentialScopes ?? `${optionsWithDefaults.endpoint}/.default`,
           challengeCallbacks: {
-            authorizeRequestOnChallenge:
-              coreClient.authorizeRequestOnClaimChallenge,
+            authorizeRequestOnChallenge: coreClient.authorizeRequestOnClaimChallenge,
           },
         }),
       );
@@ -131,7 +123,7 @@ export class SearchManagementClient extends coreClient.ServiceClient {
 
     // Assigning values to Constant parameters
     this.$host = options.$host || "https://management.azure.com";
-    this.apiVersion = options.apiVersion || "2024-06-01-preview";
+    this.apiVersion = options.apiVersion || "2025-05-01";
     this.operations = new OperationsImpl(this);
     this.adminKeys = new AdminKeysImpl(this);
     this.queryKeys = new QueryKeysImpl(this);
@@ -140,8 +132,9 @@ export class SearchManagementClient extends coreClient.ServiceClient {
     this.privateEndpointConnections = new PrivateEndpointConnectionsImpl(this);
     this.sharedPrivateLinkResources = new SharedPrivateLinkResourcesImpl(this);
     this.usages = new UsagesImpl(this);
-    this.networkSecurityPerimeterConfigurations =
-      new NetworkSecurityPerimeterConfigurationsImpl(this);
+    this.networkSecurityPerimeterConfigurations = new NetworkSecurityPerimeterConfigurationsImpl(
+      this,
+    );
     this.addCustomApiVersionPolicy(options.apiVersion);
   }
 
@@ -152,10 +145,7 @@ export class SearchManagementClient extends coreClient.ServiceClient {
     }
     const apiVersionPolicy = {
       name: "CustomApiVersionPolicy",
-      async sendRequest(
-        request: PipelineRequest,
-        next: SendRequest,
-      ): Promise<PipelineResponse> {
+      async sendRequest(request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> {
         const param = request.url.split("?");
         if (param.length > 1) {
           const newParams = param[1].split("&").map((item) => {
@@ -174,7 +164,7 @@ export class SearchManagementClient extends coreClient.ServiceClient {
   }
 
   /**
-   * Gets the quota usage for a search sku in the given subscription.
+   * Gets the quota usage for a search SKU in the given subscription.
    * @param location The unique location name for a Microsoft Azure geographic region.
    * @param skuName The unique SKU name that identifies a billable tier.
    * @param options The options parameters.

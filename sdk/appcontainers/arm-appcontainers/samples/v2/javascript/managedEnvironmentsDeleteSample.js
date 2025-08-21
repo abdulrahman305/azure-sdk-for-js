@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Delete a Managed Environment if it does not have any container apps.
  *
  * @summary Delete a Managed Environment if it does not have any container apps.
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironments_Delete.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedEnvironments_Delete.json
  */
 async function deleteEnvironmentByName() {
   const subscriptionId =
@@ -33,7 +33,7 @@ async function deleteEnvironmentByName() {
 }
 
 async function main() {
-  deleteEnvironmentByName();
+  await deleteEnvironmentByName();
 }
 
 main().catch(console.error);

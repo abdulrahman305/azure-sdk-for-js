@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Create a new layer 3 (L3) network or update the properties of the existing network.
  *
  * @summary Create a new layer 3 (L3) network or update the properties of the existing network.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/L3Networks_Create.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/L3Networks_Create.json
  */
 async function createOrUpdateL3Network() {
   const subscriptionId =
@@ -43,13 +41,13 @@ async function createOrUpdateL3Network() {
   const result = await client.l3Networks.beginCreateOrUpdateAndWait(
     resourceGroupName,
     l3NetworkName,
-    l3NetworkParameters
+    l3NetworkParameters,
   );
   console.log(result);
 }
 
 async function main() {
-  createOrUpdateL3Network();
+  await createOrUpdateL3Network();
 }
 
 main().catch(console.error);

@@ -10,13 +10,13 @@
 // Licensed under the MIT License.
 const { ContainerAppsAPIClient } = require("@azure/arm-appcontainers");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Patches a Managed Environment. Only patching of tags is supported currently
  *
  * @summary Patches a Managed Environment. Only patching of tags is supported currently
- * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironments_Patch.json
+ * x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironments_Patch.json
  */
 async function patchManagedEnvironment() {
   const subscriptionId =
@@ -33,7 +33,7 @@ async function patchManagedEnvironment() {
 }
 
 async function main() {
-  patchManagedEnvironment();
+  await patchManagedEnvironment();
 }
 
 main().catch(console.error);

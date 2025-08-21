@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { CosmosDBManagementClient } = require("@azure/arm-cosmosdb");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Return a list of database and collection combo that exist on the account at the given timestamp and location. This helps in scenarios to validate what resources exist at given timestamp and location. This API requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
  *
  * @summary Return a list of database and collection combo that exist on the account at the given timestamp and location. This helps in scenarios to validate what resources exist at given timestamp and location. This API requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
- * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBRestorableMongodbResourceList.json
+ * x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBRestorableMongodbResourceList.json
  */
 async function cosmosDbRestorableMongodbResourceList() {
   const subscriptionId =
@@ -32,14 +30,14 @@ async function cosmosDbRestorableMongodbResourceList() {
   const credential = new DefaultAzureCredential();
   const client = new CosmosDBManagementClient(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.restorableMongodbResources.list(location, instanceId, options)) {
+  for await (const item of client.restorableMongodbResources.list(location, instanceId, options)) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  cosmosDbRestorableMongodbResourceList();
+  await cosmosDbRestorableMongodbResourceList();
 }
 
 main().catch(console.error);

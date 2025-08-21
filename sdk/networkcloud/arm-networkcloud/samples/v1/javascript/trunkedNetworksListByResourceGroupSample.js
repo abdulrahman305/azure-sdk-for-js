@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Get a list of trunked networks in the provided resource group.
  *
  * @summary Get a list of trunked networks in the provided resource group.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/TrunkedNetworks_ListByResourceGroup.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/TrunkedNetworks_ListByResourceGroup.json
  */
 async function listTrunkedNetworksForResourceGroup() {
   const subscriptionId =
@@ -25,14 +23,14 @@ async function listTrunkedNetworksForResourceGroup() {
   const credential = new DefaultAzureCredential();
   const client = new NetworkCloud(credential, subscriptionId);
   const resArray = new Array();
-  for await (let item of client.trunkedNetworks.listByResourceGroup(resourceGroupName)) {
+  for await (const item of client.trunkedNetworks.listByResourceGroup(resourceGroupName)) {
     resArray.push(item);
   }
   console.log(resArray);
 }
 
 async function main() {
-  listTrunkedNetworksForResourceGroup();
+  await listTrunkedNetworksForResourceGroup();
 }
 
 main().catch(console.error);

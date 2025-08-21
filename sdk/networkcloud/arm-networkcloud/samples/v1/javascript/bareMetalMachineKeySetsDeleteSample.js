@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Delete the bare metal machine key set of the provided cluster.
  *
  * @summary Delete the bare metal machine key set of the provided cluster.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/BareMetalMachineKeySets_Delete.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/BareMetalMachineKeySets_Delete.json
  */
 async function deleteBareMetalMachineKeySetOfCluster() {
   const subscriptionId =
@@ -29,13 +27,13 @@ async function deleteBareMetalMachineKeySetOfCluster() {
   const result = await client.bareMetalMachineKeySets.beginDeleteAndWait(
     resourceGroupName,
     clusterName,
-    bareMetalMachineKeySetName
+    bareMetalMachineKeySetName,
   );
   console.log(result);
 }
 
 async function main() {
-  deleteBareMetalMachineKeySetOfCluster();
+  await deleteBareMetalMachineKeySetOfCluster();
 }
 
 main().catch(console.error);

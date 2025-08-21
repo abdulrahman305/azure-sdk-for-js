@@ -1,19 +1,27 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { assert } from "chai";
 import {
   getBSU,
+  getGenericBSU,
   getSASConnectionStringFromEnvironment,
   getTokenBSU,
   getUniqueName,
   recorderEnvSetup,
   uriSanitizers,
-} from "./utils";
-import { ShareClient, ShareServiceClient } from "../src";
-import { Recorder } from "@azure-tools/test-recorder";
-import { Context } from "mocha";
-import { configureStorageClient } from "./utils";
+} from "./utils/index.js";
+import type { ShareItem, ShareServiceClient, SignedIdentifier } from "../src/index.js";
+import { ShareClient } from "../src/index.js";
+import { delay, Recorder } from "@azure-tools/test-recorder";
+import { configureStorageClient } from "./utils/index.js";
+import { describe, it, assert, beforeEach, afterEach } from "vitest";
+import {
+  Pipeline,
+  PipelinePolicy,
+  PipelineRequest,
+  PipelineResponse,
+  SendRequest,
+} from "@azure/core-rest-pipeline";
 
 describe("ShareClient", () => {
   let serviceClient: ShareServiceClient;
@@ -22,8 +30,8 @@ describe("ShareClient", () => {
 
   let recorder: Recorder;
 
-  beforeEach(async function (this: Context) {
-    recorder = new Recorder(this.currentTest);
+  beforeEach(async (ctx) => {
+    recorder = new Recorder(ctx);
     await recorder.start(recorderEnvSetup);
     await recorder.addSanitizers({ uriSanitizers }, ["record", "playback"]);
     serviceClient = getBSU(recorder);
@@ -32,7 +40,7 @@ describe("ShareClient", () => {
     await shareClient.create();
   });
 
-  afterEach(async function () {
+  afterEach(async () => {
     await shareClient.delete();
     await recorder.stop();
   });
@@ -67,9 +75,8 @@ describe("ShareClient", () => {
     assert.ok(result.date);
   });
 
-  it("create with default parameters", (done) => {
+  it("create with default parameters", () => {
     // create() with default parameters has been tested in beforeEach
-    done();
   });
 
   it("create with all parameters configured", async () => {
@@ -96,9 +103,8 @@ describe("ShareClient", () => {
     await shareClient2.delete();
   });
 
-  it("delete", (done) => {
+  it("delete", () => {
     // delete() with default parameters has been tested in afterEach
-    done();
   });
 
   it("deleteIfExists", async () => {
@@ -106,6 +112,16 @@ describe("ShareClient", () => {
       recorder.variable(shareName, getUniqueName(shareName)),
     );
     await shareClient2.create();
+
+    const snapshotResult = await shareClient2.createSnapshot();
+    const snapshotClient = shareClient2.withSnapshot(snapshotResult.snapshot!);
+    let snapshotDeleteResult = await snapshotClient.deleteIfExists();
+    assert.ok(snapshotDeleteResult.succeeded);
+
+    snapshotDeleteResult = await snapshotClient.deleteIfExists();
+    assert.ok(!snapshotDeleteResult.succeeded);
+    assert.equal(snapshotDeleteResult.errorCode, "ShareSnapshotNotFound");
+
     const res = await shareClient2.deleteIfExists();
     assert.ok(res.succeeded);
 
@@ -330,15 +346,15 @@ describe("ShareClient - OAuth", () => {
 
   let recorder: Recorder;
 
-  beforeEach(async function (this: Context) {
-    recorder = new Recorder(this.currentTest);
+  beforeEach(async (ctx) => {
+    recorder = new Recorder(ctx);
     await recorder.start(recorderEnvSetup);
     await recorder.addSanitizers({ uriSanitizers }, ["record", "playback"]);
 
     try {
       serviceClient = getTokenBSU(recorder, "", "", { fileRequestIntent: "backup" });
     } catch (err) {
-      this.skip();
+      ctx.skip();
     }
     shareName = recorder.variable("share", getUniqueName("share"));
     shareClient = serviceClient.getShareClient(shareName);
@@ -346,7 +362,7 @@ describe("ShareClient - OAuth", () => {
     await shareClientWithKeyCredential.create();
   });
 
-  afterEach(async function () {
+  afterEach(async () => {
     if (shareClientWithKeyCredential) {
       await shareClientWithKeyCredential.delete();
     }
@@ -373,6 +389,41 @@ describe("ShareClient - OAuth", () => {
     assert.equal(getPermissionResp.errorCode, undefined);
     assert.ok(createPermResp.requestId!);
     assert.ok(createPermResp.version!);
+  });
+
+  it("create and get access policy", async () => {
+    const yesterday = new Date(recorder.variable("now", new Date().toISOString()));
+    const tomorrow = new Date(recorder.variable("now", new Date().toISOString()));
+    yesterday.setDate(yesterday.getDate() - 1);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const identifiers: SignedIdentifier[] = [
+      {
+        accessPolicy: {
+          expiresOn: tomorrow,
+          permissions: "rwd",
+          startsOn: yesterday,
+        },
+        id: "6D97528B-8412-48AE-9DB1-6BF69C9F83A6",
+      },
+    ];
+
+    await shareClient.setAccessPolicy(identifiers);
+    const getAccessPolicyResponse = await shareClient.getAccessPolicy();
+
+    assert.equal(getAccessPolicyResponse.signedIdentifiers[0].id, identifiers[0].id);
+    assert.equal(
+      getAccessPolicyResponse.signedIdentifiers[0].accessPolicy.expiresOn.getTime(),
+      identifiers[0].accessPolicy.expiresOn.getTime(),
+    );
+    assert.equal(
+      getAccessPolicyResponse.signedIdentifiers[0].accessPolicy.startsOn.getTime(),
+      identifiers[0].accessPolicy.startsOn.getTime(),
+    );
+    assert.equal(
+      getAccessPolicyResponse.signedIdentifiers[0].accessPolicy.permissions,
+      identifiers[0].accessPolicy.permissions,
+    );
   });
 
   it("create and delete directory", async () => {
@@ -405,8 +456,8 @@ describe("ShareClient", () => {
 
   let recorder: Recorder;
 
-  beforeEach(async function (this: Context) {
-    recorder = new Recorder(this.currentTest);
+  beforeEach(async (ctx) => {
+    recorder = new Recorder(ctx);
     await recorder.start(recorderEnvSetup);
     await recorder.addSanitizers({ uriSanitizers }, ["record", "playback"]);
     serviceClient = getBSU(recorder);
@@ -415,7 +466,7 @@ describe("ShareClient", () => {
     await shareClient.create();
   });
 
-  afterEach(async function () {
+  afterEach(async () => {
     await shareClient.delete();
     await recorder.stop();
   });
@@ -450,9 +501,8 @@ describe("ShareClient", () => {
     assert.ok(result.date);
   });
 
-  it("create with default parameters", (done) => {
+  it("create with default parameters", () => {
     // create() with default parameters has been tested in beforeEach
-    done();
   });
 
   it("create with all parameters configured", async () => {
@@ -479,9 +529,8 @@ describe("ShareClient", () => {
     await shareClient2.delete();
   });
 
-  it("delete", (done) => {
+  it("delete", () => {
     // delete() with default parameters has been tested in afterEach
-    done();
   });
 
   it("deleteIfExists", async () => {
@@ -689,6 +738,53 @@ describe("ShareClient", () => {
   });
 });
 
+describe("Version error test", () => {
+  let serviceClient: ShareServiceClient;
+  let shareName: string;
+  let shareClient: ShareClient;
+
+  let recorder: Recorder;
+
+  beforeEach(async (ctx) => {
+    recorder = new Recorder(ctx);
+    await recorder.start(recorderEnvSetup);
+    await recorder.addSanitizers({ uriSanitizers }, ["record", "playback"]);
+    serviceClient = getBSU(recorder);
+    shareName = recorder.variable("share", getUniqueName("share"));
+    shareClient = serviceClient.getShareClient(shareName);
+  });
+
+  afterEach(async () => {
+    await recorder.stop();
+  });
+
+  function XMSVersioninjectorPolicy(version: string): PipelinePolicy {
+    return {
+      name: "XMSVersioninjectorPolicy",
+      async sendRequest(request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> {
+        request.headers.set("x-ms-version", version);
+        return next(request);
+      },
+    };
+  }
+
+  it("Invalid service version", async () => {
+    const injector = XMSVersioninjectorPolicy(`3025-01-01`);
+
+    const pipeline: Pipeline = (shareClient as any).storageClientContext.pipeline;
+    pipeline.addPolicy(injector, { afterPhase: "Retry" });
+    try {
+      await shareClient.getProperties();
+    } catch (err) {
+      assert.ok(
+        (err as any).message.startsWith(
+          "The provided service version is not enabled on this storage account. Please see",
+        ),
+      );
+    }
+  });
+});
+
 describe("ShareDirectoryClient - Verify Name Properties", () => {
   const accountName = "myaccount";
   const shareName = "shareName";
@@ -726,5 +822,180 @@ describe("ShareDirectoryClient - Verify Name Properties", () => {
 
     assert.equal(newClient.accountName, "", "Account name is not the same as expected.");
     assert.equal(newClient.name, shareName, "Share name is not the same as the one provided.");
+  });
+});
+
+describe("ShareClient Provisioned", () => {
+  let recorder: Recorder;
+  let serviceClient: ShareServiceClient;
+
+  beforeEach(async (ctx) => {
+    recorder = new Recorder(ctx);
+    await recorder.start(recorderEnvSetup);
+    await recorder.addSanitizers({ uriSanitizers }, ["record", "playback"]);
+    try {
+      serviceClient = getGenericBSU(recorder, "PROVISIONED_FILE_");
+    } catch (error: any) {
+      console.log(error);
+      ctx.skip();
+    }
+  });
+
+  afterEach(async () => {
+    await recorder.stop();
+  });
+
+  // Skipped for now as it needs be enabled on the account.
+  it("Create share with Provisioned Max Iops and Bandwidth", async () => {
+    const shareName = recorder.variable("share", getUniqueName("share"));
+    const shareClient = serviceClient.getShareClient(shareName);
+
+    const result = await shareClient.create({
+      shareProvisionedIops: 500,
+      shareProvisionedBandwidthMibps: 125,
+    });
+    assert.equal(result.shareProvisionedBandwidthMibps, 125);
+    assert.equal(result.shareProvisionedIops, 500);
+    assert.ok(result.shareIncludedBurstIops);
+
+    const deleteResult = await shareClient.delete();
+    assert.ok(deleteResult.usageBytes !== undefined);
+    assert.ok(deleteResult.snapshotUsageBytes !== undefined);
+  });
+
+  it("setProperties with Provisioned Max Iops and Bandwidth", async () => {
+    const shareName = recorder.variable("share", getUniqueName("share"));
+    const shareClient = serviceClient.getShareClient(shareName);
+
+    await shareClient.create();
+
+    const result = await shareClient.setProperties({
+      shareProvisionedIops: 500,
+      shareProvisionedBandwidthMibps: 125,
+    });
+
+    assert.equal(result.provisionedIops, 500);
+    assert.equal(result.provisionedBandwidthMibps, 125);
+    assert.ok(result.includedBurstIops);
+    assert.ok(result.quota);
+    assert.ok(result.maxBurstCreditsForIops);
+    assert.ok(result.nextAllowedProvisionedBandwidthDowngradeTime);
+    assert.ok(result.nextAllowedProvisionedIopsDowngradeTime);
+    assert.ok(result.nextAllowedQuotaDowngradeTime);
+
+    const propertiesResult = await shareClient.getProperties();
+    assert.equal(propertiesResult.provisionedIops, 500);
+    assert.equal(propertiesResult.provisionedBandwidthMibps, 125);
+    assert.ok(propertiesResult.includedBurstIops);
+    assert.ok(propertiesResult.quota);
+    assert.ok(propertiesResult.maxBurstCreditsForIops);
+    assert.ok(propertiesResult.nextAllowedProvisionedBandwidthDowngradeTime);
+    assert.ok(propertiesResult.nextAllowedProvisionedIopsDowngradeTime);
+    assert.ok(propertiesResult.nextAllowedQuotaDowngradeTime);
+
+    let found = false;
+    for await (const item of serviceClient.listShares()) {
+      if (item.name === shareName) {
+        assert.equal(item.properties.provisionedIops, 500);
+        assert.equal(item.properties.provisionedBandwidthMiBps, 125);
+        found = true;
+      }
+      assert.ok(item.properties.includedBurstIops);
+      assert.ok(item.properties.quota);
+      assert.ok(item.properties.maxBurstCreditsForIops);
+      assert.ok(item.properties.nextAllowedProvisionedBandwidthDowngradeTime);
+      assert.ok(item.properties.nextAllowedProvisionedIopsDowngradeTime);
+      assert.ok(item.properties.nextAllowedQuotaDowngradeTime);
+      assert.ok(item.properties.includedBurstIops);
+    }
+
+    assert.ok(found);
+    const deleteResult = await shareClient.delete();
+    assert.ok(deleteResult.usageBytes !== undefined);
+    assert.ok(deleteResult.snapshotUsageBytes !== undefined);
+  });
+
+  it("Restore share", async () => {
+    const shareName = recorder.variable("share", getUniqueName("share"));
+    const shareClient = serviceClient.getShareClient(shareName);
+
+    const result = await shareClient.create({
+      shareProvisionedIops: 500,
+      shareProvisionedBandwidthMibps: 125,
+    });
+    assert.equal(result.shareProvisionedBandwidthMibps, 125);
+    assert.equal(result.shareProvisionedIops, 500);
+    assert.ok(result.shareIncludedBurstIops);
+
+    const deleteResult = await shareClient.delete();
+    assert.ok(deleteResult.usageBytes !== undefined);
+    assert.ok(deleteResult.snapshotUsageBytes !== undefined);
+
+    let found = false;
+    let shareDeleted: ShareItem | undefined;
+    for await (const share of serviceClient.listShares({ includeDeleted: true })) {
+      if (share.name === shareClient.name) {
+        found = true;
+        assert.ok(share.version);
+        assert.ok(share.deleted);
+        assert.ok(share.properties.deletedTime);
+        assert.ok(share.properties.remainingRetentionDays);
+
+        shareDeleted = share;
+      }
+    }
+    assert.ok(found);
+    assert.ok(shareDeleted);
+    await delay(60000);
+
+    await serviceClient.undeleteShare(shareDeleted!.name, shareDeleted!.version!);
+  });
+});
+
+describe("ShareClient Premium", () => {
+  let serviceClient: ShareServiceClient;
+  let recorder: Recorder;
+
+  beforeEach(async (ctx) => {
+    recorder = new Recorder(ctx);
+    await recorder.start(recorderEnvSetup);
+    await recorder.addSanitizers({ uriSanitizers }, ["record", "playback"]);
+    try {
+      serviceClient = getGenericBSU(recorder, "PREMIUM_FILE_");
+    } catch (error: any) {
+      console.log(error);
+      ctx.skip();
+    }
+  });
+
+  afterEach(async () => {
+    await recorder.stop();
+  });
+
+  it("create share with premium accessTier and listShare", async () => {
+    const newShareName = recorder.variable("newshare", getUniqueName("newshare"));
+    const newShareClient = serviceClient.getShareClient(newShareName);
+    await newShareClient.create({ accessTier: "Premium" });
+
+    for await (const shareItem of serviceClient.listShares({ prefix: newShareName })) {
+      if (shareItem.name === newShareName) {
+        assert.deepStrictEqual(shareItem.properties.accessTier, "Premium");
+        break;
+      }
+    }
+
+    await newShareClient.delete();
+  });
+
+  it("setProperties with premium access tier", async () => {
+    const newShareName = recorder.variable("newshare", getUniqueName("newshare"));
+    const newShareClient = serviceClient.getShareClient(newShareName);
+    await newShareClient.create();
+    const accessTier = "Premium";
+    await newShareClient.setProperties({ accessTier });
+    const getRes = await newShareClient.getProperties();
+
+    assert.deepStrictEqual(getRes.accessTier, accessTier);
+    await newShareClient.delete();
   });
 });

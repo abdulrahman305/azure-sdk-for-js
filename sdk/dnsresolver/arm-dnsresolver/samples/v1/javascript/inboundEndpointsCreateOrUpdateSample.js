@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { DnsResolverManagementClient } = require("@azure/arm-dnsresolver");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Creates or updates an inbound endpoint for a DNS resolver.
  *
  * @summary Creates or updates an inbound endpoint for a DNS resolver.
- * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2022-07-01/examples/InboundEndpoint_Put.json
+ * x-ms-original-file: specification/dnsresolver/resource-manager/Microsoft.Network/stable/2025-05-01/examples/InboundEndpoint_Put.json
  */
 async function upsertInboundEndpointForDnsResolver() {
   const subscriptionId =
@@ -27,8 +25,7 @@ async function upsertInboundEndpointForDnsResolver() {
   const parameters = {
     ipConfigurations: [
       {
-        privateIpAddress: "255.255.255.255",
-        privateIpAllocationMethod: "Static",
+        privateIpAllocationMethod: "Dynamic",
         subnet: {
           id: "/subscriptions/0403cfa9-9659-4f33-9f30-1f191c51d111/resourceGroups/sampleVnetResourceGroupName/providers/Microsoft.Network/virtualNetworks/sampleVirtualNetwork/subnets/sampleSubnet",
         },
@@ -43,13 +40,13 @@ async function upsertInboundEndpointForDnsResolver() {
     resourceGroupName,
     dnsResolverName,
     inboundEndpointName,
-    parameters
+    parameters,
   );
   console.log(result);
 }
 
 async function main() {
-  upsertInboundEndpointForDnsResolver();
+  await upsertInboundEndpointForDnsResolver();
 }
 
 main().catch(console.error);

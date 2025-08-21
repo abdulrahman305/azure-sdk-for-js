@@ -30,6 +30,7 @@ import {
   ManagedEnvironmentsDiagnosticsImpl,
   JobsImpl,
   OperationsImpl,
+  JavaComponentsImpl,
   JobsExecutionsImpl,
   ManagedEnvironmentsImpl,
   CertificatesImpl,
@@ -37,10 +38,11 @@ import {
   NamespacesImpl,
   DaprComponentsImpl,
   ManagedEnvironmentsStoragesImpl,
+  ContainerAppsSessionPoolsImpl,
   ContainerAppsSourceControlsImpl,
   UsagesImpl,
   ManagedEnvironmentUsagesImpl,
-} from "./operations";
+} from "./operations/index.js";
 import {
   ContainerAppsAuthConfigs,
   AvailableWorkloadProfiles,
@@ -57,6 +59,7 @@ import {
   ManagedEnvironmentsDiagnostics,
   Jobs,
   Operations,
+  JavaComponents,
   JobsExecutions,
   ManagedEnvironments,
   Certificates,
@@ -64,19 +67,20 @@ import {
   Namespaces,
   DaprComponents,
   ManagedEnvironmentsStorages,
+  ContainerAppsSessionPools,
   ContainerAppsSourceControls,
   Usages,
   ManagedEnvironmentUsages,
-} from "./operationsInterfaces";
-import * as Parameters from "./models/parameters";
-import * as Mappers from "./models/mappers";
+} from "./operationsInterfaces/index.js";
+import * as Parameters from "./models/parameters.js";
+import * as Mappers from "./models/mappers.js";
 import {
   ContainerAppsAPIClientOptionalParams,
   JobExecutionOptionalParams,
   JobExecutionResponse,
   GetCustomDomainVerificationIdOptionalParams,
   GetCustomDomainVerificationIdResponse,
-} from "./models";
+} from "./models/index.js";
 
 export class ContainerAppsAPIClient extends coreClient.ServiceClient {
   $host: string;
@@ -110,7 +114,7 @@ export class ContainerAppsAPIClient extends coreClient.ServiceClient {
       credential: credentials,
     };
 
-    const packageDetails = `azsdk-js-arm-appcontainers/2.1.0`;
+    const packageDetails = `azsdk-js-arm-appcontainers/2.2.0`;
     const userAgentPrefix =
       options.userAgentOptions && options.userAgentOptions.userAgentPrefix
         ? `${options.userAgentOptions.userAgentPrefix} ${packageDetails}`
@@ -164,7 +168,7 @@ export class ContainerAppsAPIClient extends coreClient.ServiceClient {
 
     // Assigning values to Constant parameters
     this.$host = options.$host || "https://management.azure.com";
-    this.apiVersion = options.apiVersion || "2024-03-01";
+    this.apiVersion = options.apiVersion || "2025-01-01";
     this.containerAppsAuthConfigs = new ContainerAppsAuthConfigsImpl(this);
     this.availableWorkloadProfiles = new AvailableWorkloadProfilesImpl(this);
     this.billingMeters = new BillingMetersImpl(this);
@@ -189,6 +193,7 @@ export class ContainerAppsAPIClient extends coreClient.ServiceClient {
       new ManagedEnvironmentsDiagnosticsImpl(this);
     this.jobs = new JobsImpl(this);
     this.operations = new OperationsImpl(this);
+    this.javaComponents = new JavaComponentsImpl(this);
     this.jobsExecutions = new JobsExecutionsImpl(this);
     this.managedEnvironments = new ManagedEnvironmentsImpl(this);
     this.certificates = new CertificatesImpl(this);
@@ -198,6 +203,7 @@ export class ContainerAppsAPIClient extends coreClient.ServiceClient {
     this.managedEnvironmentsStorages = new ManagedEnvironmentsStoragesImpl(
       this,
     );
+    this.containerAppsSessionPools = new ContainerAppsSessionPoolsImpl(this);
     this.containerAppsSourceControls = new ContainerAppsSourceControlsImpl(
       this,
     );
@@ -281,6 +287,7 @@ export class ContainerAppsAPIClient extends coreClient.ServiceClient {
   managedEnvironmentsDiagnostics: ManagedEnvironmentsDiagnostics;
   jobs: Jobs;
   operations: Operations;
+  javaComponents: JavaComponents;
   jobsExecutions: JobsExecutions;
   managedEnvironments: ManagedEnvironments;
   certificates: Certificates;
@@ -288,6 +295,7 @@ export class ContainerAppsAPIClient extends coreClient.ServiceClient {
   namespaces: Namespaces;
   daprComponents: DaprComponents;
   managedEnvironmentsStorages: ManagedEnvironmentsStorages;
+  containerAppsSessionPools: ContainerAppsSessionPools;
   containerAppsSourceControls: ContainerAppsSourceControls;
   usages: Usages;
   managedEnvironmentUsages: ManagedEnvironmentUsages;

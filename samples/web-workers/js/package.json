@@ -18,7 +18,6 @@
   ],
   "dependencies": {
     "@azure/storage-blob": "^12.5.0",
-    "jsdom": "^19.0.0",
-    "samples-web-workers-js": "file:"
+    "jsdom": "^19.0.0"
   }
 }

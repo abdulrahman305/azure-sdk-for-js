@@ -1,29 +1,21 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import chai from "chai";
-const should = chai.should();
-const assert: typeof chai.assert = chai.assert;
-import chaiAsPromised from "chai-as-promised";
-chai.use(chaiAsPromised);
+import type { OperationOptions, ServiceBusMessage } from "../../src/index.js";
+import { ServiceBusAdministrationClient, ServiceBusClient } from "../../src/index.js";
+import { TestClientType } from "../public/utils/testUtils.js";
+import type { EntityName, ServiceBusClientForTests } from "../public/utils/testutils2.js";
 import {
-  OperationOptions,
-  ServiceBusAdministrationClient,
-  ServiceBusClient,
-  ServiceBusMessage,
-} from "../../src";
-import { TestClientType } from "../public/utils/testUtils";
-import {
-  EntityName,
-  ServiceBusClientForTests,
   createServiceBusClientForTests,
   getRandomTestClientTypeWithSessions,
   getRandomTestClientTypeWithNoSessions,
-} from "../public/utils/testutils2";
-import { ServiceBusSender, ServiceBusSenderImpl } from "../../src/sender";
-import { getEnvVarValue } from "../public/utils/envVarUtils";
+} from "../public/utils/testutils2.js";
+import type { ServiceBusSender, ServiceBusSenderImpl } from "../../src/sender.js";
 import { delay } from "@azure/core-util";
-import { createTestCredential } from "@azure-tools/test-credential";
+import { createLiveCredential, createTestCredential } from "@azure-tools/test-credential";
+import { afterAll, afterEach, beforeAll, describe, it } from "vitest";
+import { assert, should } from "../public/utils/chai.js";
+import { getFullyQualifiedNamespacePremium } from "../utils/injectables.js";
 
 describe("Send Batch", () => {
   let sender: ServiceBusSender;
@@ -33,11 +25,11 @@ describe("Send Batch", () => {
   const noSessionTestClientType = getRandomTestClientTypeWithNoSessions();
   const withSessionTestClientType = getRandomTestClientTypeWithSessions();
 
-  before(() => {
+  beforeAll(() => {
     serviceBusClient = createServiceBusClientForTests();
   });
 
-  after(() => {
+  afterAll(() => {
     return serviceBusClient.test.after();
   });
 
@@ -523,14 +515,11 @@ describe("Send Batch", () => {
 });
 
 describe("Premium namespaces - Sending", () => {
-  const premiumNamespace = getEnvVarValue("SERVICEBUS_FQDN_PREMIUM");
+  const premiumNamespaceFQNS = getFullyQualifiedNamespacePremium();
   let atomClient: ServiceBusAdministrationClient;
 
-  before(function (this: Mocha.Context) {
-    if (!premiumNamespace) {
-      this.skip();
-    }
-    atomClient = new ServiceBusAdministrationClient(premiumNamespace, createTestCredential());
+  beforeAll(function () {
+    atomClient = new ServiceBusAdministrationClient(premiumNamespaceFQNS, createLiveCredential());
   });
   let sender: ServiceBusSender;
   let serviceBusClient: ServiceBusClient;
@@ -546,16 +535,16 @@ describe("Premium namespaces - Sending", () => {
       ? TestClientType.UnpartitionedQueueWithSessions
       : TestClientType.UnpartitionedTopicWithSessions;
 
-  before(() => {
-    serviceBusClient = new ServiceBusClient(premiumNamespace || "", createTestCredential());
+  beforeAll(() => {
+    serviceBusClient = new ServiceBusClient(premiumNamespaceFQNS, createLiveCredential());
   });
 
-  after(async () => {
+  afterAll(async () => {
     await serviceBusClient.close();
   });
 
   async function beforeEachTest(entityType: TestClientType): Promise<void> {
-    atomClient = new ServiceBusAdministrationClient(premiumNamespace || "", createTestCredential());
+    atomClient = new ServiceBusAdministrationClient(premiumNamespaceFQNS, createTestCredential());
     withSessions = entityType.includes("WithSessions");
     const randomSeed = Math.ceil(Math.random() * 10000 + 1000);
     const isQueue = entityType.includes("Queue");

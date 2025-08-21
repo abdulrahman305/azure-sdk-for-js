@@ -6,17 +6,15 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 const { NetworkCloud } = require("@azure/arm-networkcloud");
 const { DefaultAzureCredential } = require("@azure/identity");
-require("dotenv").config();
+require("dotenv/config");
 
 /**
  * This sample demonstrates how to Disable remote vendor management of the provided storage appliance.
  *
  * @summary Disable remote vendor management of the provided storage appliance.
- * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/StorageAppliances_DisableRemoteVendorManagement.json
+ * x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/StorageAppliances_DisableRemoteVendorManagement.json
  */
 async function turnOffRemoteVendorManagementForStorageAppliance() {
   const subscriptionId =
@@ -27,13 +25,13 @@ async function turnOffRemoteVendorManagementForStorageAppliance() {
   const client = new NetworkCloud(credential, subscriptionId);
   const result = await client.storageAppliances.beginDisableRemoteVendorManagementAndWait(
     resourceGroupName,
-    storageApplianceName
+    storageApplianceName,
   );
   console.log(result);
 }
 
 async function main() {
-  turnOffRemoteVendorManagementForStorageAppliance();
+  await turnOffRemoteVendorManagementForStorageAppliance();
 }
 
 main().catch(console.error);

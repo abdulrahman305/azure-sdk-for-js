@@ -6,7 +6,7 @@
 // API Version: 2023-07-31
 // Created:     Wed Apr 05 2023
 
-import * as fr from "../../../src";
+import * as fr from "../../../src/index.js";
 
 /**
  * Extract text from documents.
@@ -37,7 +37,7 @@ export interface PrebuiltReadResult extends fr.AnalyzeResultCommon {
 /**
  * The raw model schema.
  */
-function modelInfo() {
+function modelInfo(): any {
   return {
     modelId: "prebuilt-read",
     description: "Extract text from documents.",
